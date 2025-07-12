@@ -24,8 +24,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
  const [userData, setUserData] = useState<UserData | undefined>(undefined)
  const [session, setSession] = useState<Session | null>(null)
 
- console.log(userData)
-
  useEffect(() => {
   if (!supabase) {
    console.log('No supabase')
