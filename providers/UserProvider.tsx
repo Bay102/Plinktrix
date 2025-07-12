@@ -1,9 +1,6 @@
-import { UserData } from '@/supabase/types'
 import { createContext, ReactNode, useState } from 'react'
 
 export interface UserContextType {
- userData: UserData | null | undefined
- setUserData: (userData: UserData | null | undefined) => void
  settingsModalVisible: boolean
  setSettingsModalVisible: (visible: boolean) => void
 }
@@ -15,15 +12,9 @@ interface UserProviderProps {
 }
 
 export function UserProvider({ children }: UserProviderProps) {
- const [userData, setUserData] = useState<UserData | null | undefined>(
-  undefined
- )
-
  const [settingsModalVisible, setSettingsModalVisible] = useState(false)
 
  const value: UserContextType = {
-  userData,
-  setUserData,
   settingsModalVisible,
   setSettingsModalVisible,
  }

@@ -2,13 +2,8 @@ import { Colors } from '@/constants/Colors'
 import { useAuthProvider } from '@/providers'
 import { getUserStats } from '@/supabase/api/update-user-stats'
 import React, { useState } from 'react'
-import {
- Platform,
- StyleSheet,
- Text,
- TouchableOpacity,
- View,
-} from 'react-native'
+import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { Text } from 'react-native-paper'
 
 const FONT_FAMILY = Platform.OS === 'ios' ? 'VT323' : 'VT323'
 
@@ -22,8 +17,6 @@ export const UserStats = () => {
  const bonusBalls = userData?.bonus_balls
  const regularBalls = userData?.regular_balls
  const createdAt = userData?.created_at
-
- console.log('userData', userData)
 
  const refreshUserData = async () => {
   if (!user?.id || isRefreshing) return
@@ -53,7 +46,7 @@ export const UserStats = () => {
 
  // Format account level
  const formatAccountLevel = (level: string | null | undefined) => {
-  if (!level) return 'UNASSIGNED'
+  if (!level) return 'FREE'
   return level.toUpperCase()
  }
 

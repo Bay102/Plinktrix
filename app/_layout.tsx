@@ -6,7 +6,6 @@ import {
 } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { AuthProvider } from '@/providers/AuthProvider'
-import { UserProvider } from '@/providers/UserProvider'
 import { ThemeProvider } from '@react-navigation/native'
 import { useFonts } from 'expo-font'
 import { Stack } from 'expo-router'
@@ -27,25 +26,25 @@ export default function RootLayout() {
 
  return (
   <AuthProvider>
-   <UserProvider>
-    <PaperProvider
-     theme={colorScheme === 'dark' ? CustomDarkTheme : CustomLightTheme}
+   {/* <UserProvider> */}
+   <PaperProvider
+    theme={colorScheme === 'dark' ? CustomDarkTheme : CustomLightTheme}
+   >
+    <ThemeProvider
+     value={
+      colorScheme === 'dark'
+       ? CustomNavigationDarkTheme
+       : CustomNavigationLightTheme
+     }
     >
-     <ThemeProvider
-      value={
-       colorScheme === 'dark'
-        ? CustomNavigationDarkTheme
-        : CustomNavigationLightTheme
-      }
-     >
-      <Stack>
-       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-       <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-     </ThemeProvider>
-    </PaperProvider>
-   </UserProvider>
+     <Stack>
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="+not-found" />
+     </Stack>
+     <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
+    </ThemeProvider>
+   </PaperProvider>
+   {/* </UserProvider> */}
   </AuthProvider>
  )
 }

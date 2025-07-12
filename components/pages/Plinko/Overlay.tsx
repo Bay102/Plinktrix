@@ -33,6 +33,8 @@ interface OverlayProps {
  maxRegularBalls: number
  maxGoldBalls: number
  hasInsufficientBalls: boolean
+ hasTooManyBalls: boolean
+ maxTotalBalls: number
  isLoadingStats: boolean
  isUpdatingStats: boolean
  userLoggedIn: boolean
@@ -53,12 +55,23 @@ const Overlay: React.FC<OverlayProps> = ({
  maxRegularBalls,
  maxGoldBalls,
  hasInsufficientBalls,
+ hasTooManyBalls,
+ maxTotalBalls,
  isLoadingStats,
  isUpdatingStats,
  userLoggedIn,
 }) => {
  // Don't render overlay when dropping
  if (isDropping) return null
+
+ // Calculate dynamic maximum values for sliders based on 100-ball limit
+ const remainingBalls = maxTotalBalls - (regularBallCount + goldBallCount)
+ const maxRegularForSlider = userLoggedIn
+  ? Math.min(maxRegularBalls, regularBallCount + remainingBalls)
+  : Math.min(40, regularBallCount + remainingBalls)
+ const maxGoldForSlider = userLoggedIn
+  ? Math.min(maxGoldBalls, goldBallCount + remainingBalls)
+  : Math.min(10, goldBallCount + remainingBalls)
 
  return (
   <View style={styles.gameOverlay}>
@@ -77,7 +90,7 @@ const Overlay: React.FC<OverlayProps> = ({
      <Slider
       style={{ width: '100%', height: 40 }}
       minimumValue={1}
-      maximumValue={userLoggedIn ? Math.max(1, maxRegularBalls) : 40}
+      maximumValue={Math.max(1, maxRegularForSlider)}
       step={1}
       value={regularBallCount}
       onValueChange={setRegularBallCount}
@@ -102,7 +115,7 @@ const Overlay: React.FC<OverlayProps> = ({
      <Slider
       style={{ width: '100%', height: 40 }}
       minimumValue={0}
-      maximumValue={userLoggedIn ? maxGoldBalls : 10}
+      maximumValue={Math.max(0, maxGoldForSlider)}
       step={1}
       value={goldBallCount}
       onValueChange={setGoldBallCount}
@@ -111,6 +124,15 @@ const Overlay: React.FC<OverlayProps> = ({
       maximumTrackTintColor="#554200"
       thumbTintColor={Platform.OS === 'ios' ? undefined : '#FFD700'}
      />
+    </View>
+
+    {/* Total balls counter */}
+    <View style={styles.totalBallsContainer}>
+     <Text style={styles.totalBallsText}>
+      Total Balls:{' '}
+      <Text style={{ color: '#FFF' }}>{regularBallCount + goldBallCount}</Text>
+      <Text style={{ color: '#AAA' }}> / {maxTotalBalls}</Text>
+     </Text>
     </View>
 
     {!userLoggedIn && (
@@ -125,6 +147,14 @@ const Overlay: React.FC<OverlayProps> = ({
      </View>
     )}
 
+    {hasTooManyBalls && (
+     <View style={styles.warningContainer}>
+      <Text style={styles.warningText}>
+       ⚠️ Maximum {maxTotalBalls} balls allowed per drop
+      </Text>
+     </View>
+    )}
+
     {userLoggedIn && isLoadingStats && (
      <View style={styles.warningContainer}>
       <Text style={styles.warningText}>Loading user data...</Text>
@@ -135,12 +165,14 @@ const Overlay: React.FC<OverlayProps> = ({
      onPress={handleDropBall}
      disabled={
       isDropping ||
+      hasTooManyBalls ||
       (userLoggedIn &&
        (hasInsufficientBalls || isLoadingStats || isUpdatingStats))
      }
      style={[
       styles.button,
       (isDropping ||
+       hasTooManyBalls ||
        (userLoggedIn &&
         (hasInsufficientBalls || isLoadingStats || isUpdatingStats))) &&
        styles.disabledButton,
@@ -342,6 +374,22 @@ const styles = StyleSheet.create({
   fontFamily: FONT_FAMILY,
   fontSize: 16,
   color: '#FFA500',
+  textAlign: 'center',
+ },
+ totalBallsContainer: {
+  marginTop: 8,
+  marginBottom: 8,
+  padding: 6,
+  backgroundColor: 'rgba(0, 255, 0, 0.1)',
+  borderWidth: 1,
+  borderColor: '#0F0',
+  borderRadius: 4,
+  width: '100%',
+ },
+ totalBallsText: {
+  fontFamily: FONT_FAMILY,
+  fontSize: 16,
+  color: '#0F0',
   textAlign: 'center',
  },
 })

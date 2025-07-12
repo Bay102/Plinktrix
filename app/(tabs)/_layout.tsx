@@ -30,7 +30,7 @@ export default function TabLayout() {
    }}
   >
    <Tabs.Screen
-    name="index"
+    name="plinko"
     options={{
      title: '',
      headerShown: false,
@@ -38,6 +38,34 @@ export default function TabLayout() {
       <IconSymbol
        size={35}
        name="gamecontroller.fill"
+       color={color}
+       style={{ marginTop: 15 }}
+      />
+     ),
+    }}
+   />
+   <Tabs.Screen
+    name="index"
+    options={{
+     title: '',
+     headerShown: true,
+     headerRight: ({ tintColor }) => (
+      <Button mode="text" onPress={() => {}}>
+       <IconSymbol
+        size={35}
+        name="bell"
+        color={tintColor ?? 'black'}
+        style={{ marginTop: 15 }}
+       />
+      </Button>
+     ),
+     headerStyle: {
+      backgroundColor: Colors.dark.background,
+     },
+     tabBarIcon: ({ color }) => (
+      <IconSymbol
+       size={35}
+       name="house.fill"
        color={color}
        style={{ marginTop: 15 }}
       />
