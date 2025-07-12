@@ -28,6 +28,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
  useEffect(() => {
   if (!supabase) {
+   console.log('No supabase')
    setIsLoading(false)
    return
   }
@@ -44,6 +45,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     console.error('Error initializing auth:', error)
    } finally {
     setIsLoading(false)
+    console.log('Initialized auth')
    }
   }
 
@@ -58,6 +60,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
    setUser(session?.user || null)
   })
 
+  console.log('Auth Changed')
   return () => {
    subscription.unsubscribe()
   }

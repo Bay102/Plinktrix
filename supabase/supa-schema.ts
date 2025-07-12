@@ -24,7 +24,7 @@ export type Database = {
         Insert: {
           account_level?: string | null
           created_at?: string
-          id: string
+          id?: string
           username: string
         }
         Update: {
