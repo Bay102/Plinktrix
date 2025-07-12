@@ -17,29 +17,29 @@ export type Database = {
       user_data: {
         Row: {
           account_level: string | null
-          bonus_balls: number
+          bonus_packets: number
+          bytes_downloaded: number
           created_at: string
-          current_score: number
           id: string
-          regular_balls: number
+          regular_packets: number
           username: string
         }
         Insert: {
           account_level?: string | null
-          bonus_balls?: number
+          bonus_packets?: number
+          bytes_downloaded?: number
           created_at?: string
-          current_score?: number
           id?: string
-          regular_balls?: number
+          regular_packets?: number
           username: string
         }
         Update: {
           account_level?: string | null
-          bonus_balls?: number
+          bonus_packets?: number
+          bytes_downloaded?: number
           created_at?: string
-          current_score?: number
           id?: string
-          regular_balls?: number
+          regular_packets?: number
           username?: string
         }
         Relationships: []

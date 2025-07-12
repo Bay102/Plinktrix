@@ -218,8 +218,8 @@ const Plinko: React.FC = () => {
  }, [user?.id, fetchUserStats])
 
  // --- Game Validation ---
- const maxRegularBalls = userStats?.regular_balls || 0
- const maxGoldBalls = userStats?.bonus_balls || 0
+ const maxRegularBalls = userStats?.regular_packets || 0
+ const maxGoldBalls = userStats?.bonus_packets || 0
  const hasInsufficientBalls =
   regularBallCount > maxRegularBalls || goldBallCount > maxGoldBalls
  const hasTooManyBalls = regularBallCount + goldBallCount > MAX_TOTAL_BALLS
@@ -234,11 +234,11 @@ const Plinko: React.FC = () => {
  useEffect(() => {
   if (userStats) {
    // Reset ball counts if they exceed user's available balls
-   if (regularBallCount > userStats.regular_balls) {
-    setRegularBallCount(Math.max(1, userStats.regular_balls))
+   if (regularBallCount > userStats.regular_packets) {
+    setRegularBallCount(Math.max(1, userStats.regular_packets))
    }
-   if (goldBallCount > userStats.bonus_balls) {
-    setGoldBallCount(Math.min(goldBallCount, userStats.bonus_balls))
+   if (goldBallCount > userStats.bonus_packets) {
+    setGoldBallCount(Math.min(goldBallCount, userStats.bonus_packets))
    }
   }
  }, [userStats, regularBallCount, goldBallCount])

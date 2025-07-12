@@ -13,10 +13,10 @@ export const UserStats = () => {
  const [isRefreshing, setIsRefreshing] = useState(false)
 
  const username = userData?.username
- const score = userData?.current_score
+ const score = userData?.bytes_downloaded
  const accountLevel = userData?.account_level
- const bonusBalls = userData?.bonus_balls
- const regularBalls = userData?.regular_balls
+ const bonusPackets = userData?.bonus_packets
+ const regularPackets = userData?.regular_packets
  const createdAt = userData?.created_at
 
  const refreshUserData = async () => {
@@ -129,11 +129,19 @@ export const UserStats = () => {
    <View style={styles.section}>
     <Text style={styles.sectionTitle}>RESOURCE ALLOCATION</Text>
     <View style={styles.sectionContent}>
-     <StatItem label="REGULAR_PACKETS" value={regularBalls || 0} color="#0AF" />
-     <StatItem label="BONUS_PACKETS" value={bonusBalls || 0} color="#FFD700" />
+     <StatItem
+      label="REGULAR_PACKETS"
+      value={regularPackets || 0}
+      color="#0AF"
+     />
+     <StatItem
+      label="BONUS_PACKETS"
+      value={bonusPackets || 0}
+      color="#FFD700"
+     />
      <StatItem
       label="TOTAL_PACKETS"
-      value={(regularBalls || 0) + (bonusBalls || 0)}
+      value={(regularPackets || 0) + (bonusPackets || 0)}
       color="#0F0"
      />
     </View>
