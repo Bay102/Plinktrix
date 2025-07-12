@@ -6,7 +6,7 @@ import {
  Animated,
  Dimensions,
  Platform,
- SafeAreaView,
+ ScrollView,
  StatusBar,
  StyleSheet,
  Text,
@@ -25,6 +25,9 @@ interface BallType extends Position {
  vx: number
  vy: number
  isGold: boolean
+ stuckCounter: number
+ lastX: number
+ lastY: number
 }
 
 interface PegType extends Position {}
@@ -117,7 +120,7 @@ const Ball: React.FC<BallProps> = ({ position, isGold }) => {
 // --- Main App Component ---
 const App: React.FC = () => {
  const [fontsLoaded] = useFonts({
-  VT323: require('./assets/fonts/VT323-Regular.ttf'), // Make sure this path is correct
+  VT323: require('../../assets/fonts/VT323-Regular.ttf'), // Correct path to VT323 font
  })
 
  // --- State Management ---
@@ -131,19 +134,19 @@ const App: React.FC = () => {
  const [aiAnalysis, setAiAnalysis] = useState<string>('')
  const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false)
  const [animatingSlots, setAnimatingSlots] = useState<AnimatingSlots>({})
- const [currentGravity, setCurrentGravity] = useState<number>(0.25)
+ const [currentGravity, setCurrentGravity] = useState<number>(0.11)
 
  // --- Refs ---
  const animationFrameRef = useRef<number | null>(null)
 
  // --- Game Configuration & Constants ---
- const ROWS = 14
- const PEG_HORIZONTAL_SPACING = 50
- const PEG_VERTICAL_SPACING = 35
+ const ROWS = 10
+ const PEG_HORIZONTAL_SPACING = 35
+ const PEG_VERTICAL_SPACING = 40
  const prizeValues = useMemo(() => [1, 5, 10, 0, 100, 0, 10, 5, 1], [])
- const LOW_GRAVITY = 0.25
- const HIGH_GRAVITY = 0.4
- const DAMPENING = 0.6
+ const LOW_GRAVITY = 0.05
+ const HIGH_GRAVITY = 0.09
+ const DAMPENING = 0.7
  const PEG_RADIUS = 4
  const BALL_RADIUS = 10
 
@@ -230,47 +233,68 @@ const App: React.FC = () => {
    let newBalls = prevBalls.map((ball) => ({ ...ball }))
 
    newBalls.forEach((ball) => {
-    ball.vy += currentGravity
-    ball.vx *= 0.99
+    // Stuck detection - check if ball hasn't moved much
+    const movement = Math.sqrt(
+     Math.pow(ball.x - ball.lastX, 2) + Math.pow(ball.y - ball.lastY, 2)
+    )
 
+    if (movement < 0.5) {
+     ball.stuckCounter++
+     // If stuck for too long, give it a random kick
+     if (ball.stuckCounter > 30) {
+      ball.vx += (Math.random() - 0.5) * 4
+      ball.vy += Math.random() * 2 + 1
+      ball.stuckCounter = 0
+     }
+    } else {
+     ball.stuckCounter = 0
+    }
+
+    // Update last position
+    ball.lastX = ball.x
+    ball.lastY = ball.y
+
+    // Apply gravity and air resistance
+    ball.vy += currentGravity
+    ball.vx *= 0.995 // Slightly less air resistance
+
+    // Minimum velocity to prevent complete stops
+    if (Math.abs(ball.vx) < 0.1 && Math.abs(ball.vy) < 0.1 && ball.y > 50) {
+     ball.vx += (Math.random() - 0.5) * 0.5
+     ball.vy += 0.2
+    }
+
+    // Natural physics - let the peg layout control distribution
+
+    // Update position
     ball.x += ball.vx
     ball.y += ball.vy
 
-    const secondRowY = PEG_VERTICAL_SPACING * 3
-
-    if (ball.y < secondRowY) {
-     const funnelWidth = PEG_HORIZONTAL_SPACING * 2 + BALL_RADIUS
-     const boardCenter = boardWidth / 2
-     const funnelLeft = boardCenter - funnelWidth / 2
-     const funnelRight = boardCenter + funnelWidth / 2
-
-     if (ball.x < funnelLeft) {
-      ball.x = funnelLeft
-      ball.vx *= -DAMPENING
-     } else if (ball.x > funnelRight) {
-      ball.x = funnelRight
-      ball.vx *= -DAMPENING
-     }
-    } else {
-     if (ball.x < BALL_RADIUS || ball.x > boardWidth - BALL_RADIUS) {
-      ball.vx *= -DAMPENING
-      ball.x = ball.x < BALL_RADIUS ? BALL_RADIUS : boardWidth - BALL_RADIUS
-     }
+    // Natural boundary constraints
+    if (ball.x < BALL_RADIUS) {
+     ball.x = BALL_RADIUS
+     ball.vx = Math.abs(ball.vx) * DAMPENING
+    } else if (ball.x > boardWidth - BALL_RADIUS) {
+     ball.x = boardWidth - BALL_RADIUS
+     ball.vx = -Math.abs(ball.vx) * DAMPENING
     }
 
+    // Peg collisions with improved physics
     for (const row of pegs) {
      for (const peg of row) {
       const dx = ball.x - peg.x
       const dy = ball.y - peg.y
       const distance = Math.sqrt(dx * dx + dy * dy)
 
-      if (distance < BALL_RADIUS + PEG_RADIUS) {
+      if (distance < BALL_RADIUS + PEG_RADIUS && distance > 0) {
        const angle = Math.atan2(dy, dx)
-       const overlap = BALL_RADIUS + PEG_RADIUS - distance
+       const overlap = BALL_RADIUS + PEG_RADIUS - distance + 1
 
+       // Separate ball from peg
        ball.x += Math.cos(angle) * overlap
        ball.y += Math.sin(angle) * overlap
 
+       // Collision response
        const normalX = dx / distance
        const normalY = dy / distance
        const dotProduct = ball.vx * normalX + ball.vy * normalY
@@ -278,15 +302,20 @@ const App: React.FC = () => {
        ball.vx -= 2 * dotProduct * normalX * DAMPENING
        ball.vy -= 2 * dotProduct * normalY * DAMPENING
 
-       if (dy < 0 && Math.abs(ball.vy) < 0.5) {
-        ball.vx += (Math.random() - 0.5) * 1.5
-        ball.vy += 0.2
+       // Add natural randomness for realistic Plinko physics
+       ball.vx += (Math.random() - 0.5) * 1.5
+       ball.vy += Math.random() * 0.3
+
+       // Ensure minimum downward velocity
+       if (ball.vy < 0.5) {
+        ball.vy = 0.5
        }
       }
      }
     }
    })
 
+   // Improved ball-to-ball collision handling
    for (let i = 0; i < newBalls.length; i++) {
     for (let j = i + 1; j < newBalls.length; j++) {
      const ball1 = newBalls[i]
@@ -295,30 +324,40 @@ const App: React.FC = () => {
      const dy = ball2.y - ball1.y
      const distance = Math.sqrt(dx * dx + dy * dy)
 
-     if (distance < BALL_RADIUS * 2) {
+     if (distance < BALL_RADIUS * 2 && distance > 0) {
       const angle = Math.atan2(dy, dx)
-      const overlap = (BALL_RADIUS * 2 - distance) / 2
+      const overlap = (BALL_RADIUS * 2 - distance) / 2 + 1
+
+      // Separate balls more aggressively
       ball1.x -= Math.cos(angle) * overlap
       ball1.y -= Math.sin(angle) * overlap
       ball2.x += Math.cos(angle) * overlap
       ball2.y += Math.sin(angle) * overlap
+
+      // Collision response with conservation of momentum
       const normalX = dx / distance
       const normalY = dy / distance
       const v1n = ball1.vx * normalX + ball1.vy * normalY
       const v2n = ball2.vx * normalX + ball2.vy * normalY
       const v1t = -ball1.vx * normalY + ball1.vy * normalX
       const v2t = -ball2.vx * normalY + ball2.vy * normalX
-      const v1n_final = v2n
-      const v2n_final = v1n
-      ball1.vx = (v1n_final * normalX - v1t * normalY) * DAMPENING
-      ball1.vy = (v1n_final * normalY + v1t * normalX) * DAMPENING
-      ball2.vx = (v2n_final * normalX - v2t * normalY) * DAMPENING
-      ball2.vy = (v2n_final * normalY + v2t * normalX) * DAMPENING
+
+      // Exchange normal velocities
+      ball1.vx = (v2n * normalX - v1t * normalY) * DAMPENING
+      ball1.vy = (v2n * normalY + v1t * normalX) * DAMPENING
+      ball2.vx = (v1n * normalX - v2t * normalY) * DAMPENING
+      ball2.vy = (v1n * normalY + v2t * normalX) * DAMPENING
+
+      // Add natural random forces to prevent clustering
+      ball1.vx += (Math.random() - 0.5) * 0.5
+      ball1.vy += Math.random() * 0.3
+      ball2.vx += (Math.random() - 0.5) * 0.5
+      ball2.vy += Math.random() * 0.3
      }
     }
    }
 
-   const boardHeight = (ROWS + 4) * PEG_VERTICAL_SPACING
+   const boardHeight = (ROWS + 5) * PEG_VERTICAL_SPACING
    const landedBalls = newBalls.filter((ball) => ball.y > boardHeight)
    const activeBalls = newBalls.filter((ball) => ball.y <= boardHeight)
 
@@ -410,7 +449,7 @@ const App: React.FC = () => {
   if (isDropping) return
 
   const totalBalls = regularBallCount + goldBallCount
-  setCurrentGravity(totalBalls <= 5 ? LOW_GRAVITY : HIGH_GRAVITY)
+  setCurrentGravity(totalBalls <= 10 ? LOW_GRAVITY : HIGH_GRAVITY)
 
   setBalls([])
   setPrizeCounts({})
@@ -433,14 +472,27 @@ const App: React.FC = () => {
 
   ballsToDrop.forEach((ballType, i) => {
    setTimeout(() => {
-    const startOffset = (Math.random() - 0.5) * 10
+    // Force balls to start in the gap between first two pegs
+    const firstRowPegs = pegs[0] // First row has 2 pegs
+    const leftPeg = firstRowPegs[0]
+    const rightPeg = firstRowPegs[1]
+    const gapCenter = (leftPeg.x + rightPeg.x) / 2
+
+    // Small random offset within the gap to add variety
+    const gapWidth = rightPeg.x - leftPeg.x
+    const startOffset = (Math.random() - 0.5) * (gapWidth * 0.3)
+    const startY = PEG_VERTICAL_SPACING * 0.5 // All balls start from same height above first row
+
     const newBall: BallType = {
      id: Date.now() + i,
-     x: boardWidth / 2 + startOffset,
-     y: 20 - i * (BALL_RADIUS * 2.5),
-     vx: (Math.random() - 0.5) * 2,
+     x: gapCenter + startOffset,
+     y: startY,
+     vx: (Math.random() - 0.5) * 2, // Reduced initial velocity since we're starting controlled
      vy: 0,
      isGold: ballType.isGold,
+     stuckCounter: 0,
+     lastX: gapCenter + startOffset,
+     lastY: startY,
     }
     setBalls((prev) => [...prev, newBall])
    }, i * 50)
@@ -457,12 +509,15 @@ const App: React.FC = () => {
 
  // --- Render ---
  return (
-  <SafeAreaView style={styles.screen}>
+  <ScrollView
+   style={styles.screen}
+   contentContainerStyle={styles.scrollContent}
+  >
    <StatusBar barStyle="light-content" />
    <DigitalRain />
    <View style={styles.container}>
     <View style={styles.header}>
-     <Text style={styles.title}>PL1NK0</Text>
+     <Text style={styles.title}>Balls Daily</Text>
      <Text style={styles.subtitle}>
       Risk calculation subroutine initiated...
      </Text>
@@ -499,118 +554,123 @@ const App: React.FC = () => {
        <PrizeSlot key={i} value={value} animationType={animatingSlots[i]} />
       ))}
      </View>
-    </View>
 
-    <View style={styles.controls}>
-     <View style={styles.sliderContainer}>
-      <Text style={styles.labelText}>
-       Regular Data Packets:{' '}
-       <Text style={{ color: '#FFF' }}>{regularBallCount}</Text>
-      </Text>
-      <Slider
-       style={{ width: '100%', height: 40 }}
-       minimumValue={1}
-       maximumValue={40}
-       step={1}
-       value={regularBallCount}
-       onValueChange={setRegularBallCount}
-       disabled={isDropping}
-       minimumTrackTintColor="#0F0"
-       maximumTrackTintColor="#050"
-       thumbTintColor={Platform.OS === 'ios' ? undefined : '#0F0'}
-      />
-     </View>
-
-     <View style={styles.sliderContainer}>
-      <Text style={styles.labelText}>
-       Gold Data Packets:{' '}
-       <Text style={{ color: '#FFD700' }}>{goldBallCount}</Text>
-      </Text>
-      <Slider
-       style={{ width: '100%', height: 40 }}
-       minimumValue={0}
-       maximumValue={10}
-       step={1}
-       value={goldBallCount}
-       onValueChange={setGoldBallCount}
-       disabled={isDropping}
-       minimumTrackTintColor="#FFD700"
-       maximumTrackTintColor="#554200"
-       thumbTintColor={Platform.OS === 'ios' ? undefined : '#FFD700'}
-      />
-     </View>
-
-     <TouchableOpacity
-      onPress={handleDropBall}
-      disabled={isDropping}
-      style={[styles.button, isDropping && styles.disabledButton]}
-     >
-      <Text style={styles.buttonText}>
-       {isDropping
-        ? `Executing... [${balls.length}]`
-        : `[ Initiate Drop ${regularBallCount + goldBallCount} ]`}
-      </Text>
-     </TouchableOpacity>
-
-     {(totalPrize > 0 || Object.keys(prizeCounts).length > 0) &&
-      !isDropping && (
-       <View style={styles.resultsContainer}>
-        <Text style={styles.payoutText}>
-         Payout: ${totalPrize.toLocaleString()}
-        </Text>
-
-        <View style={styles.analysisSection}>
-         <Text style={styles.analysisTitle}>
-          {' '}
-          &quot;// Drop Analysis //&quot;
+     {/* Controls and Results Overlay - Only shown when not dropping */}
+     {!isDropping && (
+      <View style={styles.gameOverlay}>
+       <View style={styles.overlayControls}>
+        <View style={styles.sliderContainer}>
+         <Text style={styles.labelText}>
+          Regular Data Packets:{' '}
+          <Text style={{ color: '#FFF' }}>{regularBallCount}</Text>
          </Text>
-         {Object.entries(prizeCounts)
-          .sort(([valA], [valB]) => Number(valB) - Number(valA))
-          .map(([value, { regular, gold }]) => (
-           <React.Fragment key={value}>
-            {regular > 0 && (
-             <View style={styles.resultRow}>
-              <Text style={styles.resultText}>
-               Prize:{' '}
-               <Text style={{ color: '#FFF' }}>
-                ${Number(value).toLocaleString()}
-               </Text>
-              </Text>
-              <Text style={styles.resultText}>x {regular}</Text>
-             </View>
-            )}
-            {gold > 0 && (
-             <View style={styles.resultRow}>
-              <Text style={styles.resultText}>
-               Prize:{' '}
-               <Text style={{ color: '#FFD700' }}>
-                ${Number(value).toLocaleString()} (x2)
-               </Text>
-              </Text>
-              <Text style={styles.resultText}>x {gold}</Text>
-             </View>
-            )}
-           </React.Fragment>
-          ))}
+         <Slider
+          style={{ width: '100%', height: 40 }}
+          minimumValue={1}
+          maximumValue={40}
+          step={1}
+          value={regularBallCount}
+          onValueChange={setRegularBallCount}
+          disabled={isDropping}
+          minimumTrackTintColor="#0F0"
+          maximumTrackTintColor="#050"
+          thumbTintColor={Platform.OS === 'ios' ? undefined : '#0F0'}
+         />
         </View>
 
-        <View style={styles.analysisSection}>
-         <Text style={styles.analysisTitle}>✨ // System Commentary //</Text>
-         {isAnalyzing && (
-          <Text style={styles.aiText}> Analyzing data stream...</Text>
-         )}
-         {aiAnalysis && (
-          <Text style={[styles.aiText, { fontStyle: 'italic' }]}>
-           &quot;{aiAnalysis}&quot;
-          </Text>
-         )}
+        <View style={styles.sliderContainer}>
+         <Text style={styles.labelText}>
+          Gold Data Packets:{' '}
+          <Text style={{ color: '#FFD700' }}>{goldBallCount}</Text>
+         </Text>
+         <Slider
+          style={{ width: '100%', height: 40 }}
+          minimumValue={0}
+          maximumValue={10}
+          step={1}
+          value={goldBallCount}
+          onValueChange={setGoldBallCount}
+          disabled={isDropping}
+          minimumTrackTintColor="#FFD700"
+          maximumTrackTintColor="#554200"
+          thumbTintColor={Platform.OS === 'ios' ? undefined : '#FFD700'}
+         />
         </View>
+
+        <TouchableOpacity
+         onPress={handleDropBall}
+         disabled={isDropping}
+         style={[styles.button, isDropping && styles.disabledButton]}
+        >
+         <Text style={styles.buttonText}>
+          {isDropping
+           ? `Executing... [${balls.length}]`
+           : `[ Initiate Drop ${regularBallCount + goldBallCount} ]`}
+         </Text>
+        </TouchableOpacity>
+
+        {/* Results Section */}
+        {(totalPrize > 0 || Object.keys(prizeCounts).length > 0) && (
+         <View style={styles.resultsContainer}>
+          <Text style={styles.payoutText}>
+           Payout: ${totalPrize.toLocaleString()}
+          </Text>
+
+          <View style={styles.analysisSection}>
+           <Text style={styles.analysisTitle}>
+            {' '}
+            &quot;// Drop Analysis //&quot;
+           </Text>
+           {Object.entries(prizeCounts)
+            .sort(([valA], [valB]) => Number(valB) - Number(valA))
+            .map(([value, { regular, gold }]) => (
+             <React.Fragment key={value}>
+              {regular > 0 && (
+               <View style={styles.resultRow}>
+                <Text style={styles.resultText}>
+                 Prize:{' '}
+                 <Text style={{ color: '#FFF' }}>
+                  ${Number(value).toLocaleString()}
+                 </Text>
+                </Text>
+                <Text style={styles.resultText}>x {regular}</Text>
+               </View>
+              )}
+              {gold > 0 && (
+               <View style={styles.resultRow}>
+                <Text style={styles.resultText}>
+                 Prize:{' '}
+                 <Text style={{ color: '#FFD700' }}>
+                  ${Number(value).toLocaleString()} (x2)
+                 </Text>
+                </Text>
+                <Text style={styles.resultText}>x {gold}</Text>
+               </View>
+              )}
+             </React.Fragment>
+            ))}
+          </View>
+
+          <View style={styles.analysisSection}>
+           <Text style={styles.analysisTitle}>✨ // System Commentary //</Text>
+           {isAnalyzing && (
+            <Text style={styles.aiText}> Analyzing data stream...</Text>
+           )}
+           {aiAnalysis && (
+            <Text style={[styles.aiText, { fontStyle: 'italic' }]}>
+             &quot;{aiAnalysis}&quot;
+            </Text>
+           )}
+          </View>
+         </View>
+        )}
        </View>
-      )}
+      </View>
+     )}
     </View>
     <Text style={styles.footer}> Plinko_v2.5.sys - &copy; 2025</Text>
    </View>
-  </SafeAreaView>
+  </ScrollView>
  )
 }
 
@@ -619,6 +679,11 @@ const FONT_FAMILY = Platform.OS === 'ios' ? 'VT323' : 'VT323'
 
 const styles = StyleSheet.create({
  screen: { flex: 1, backgroundColor: '#000' },
+ scrollContent: {
+  flexGrow: 1,
+  paddingTop: 40,
+  paddingBottom: 100, // Add bottom padding to account for tab bar
+ },
  container: {
   flex: 1,
   alignItems: 'center',
@@ -684,6 +749,27 @@ const styles = StyleSheet.create({
  ball: { position: 'absolute', width: 20, height: 20, borderRadius: 10 },
  regularBall: { backgroundColor: '#0AF', borderColor: '#0CF', borderWidth: 2 },
  goldBall: { backgroundColor: '#FFD700', borderColor: '#FFF', borderWidth: 2 },
+ gameOverlay: {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: 'rgba(0, 0, 0, 0.85)',
+  justifyContent: 'center',
+  alignItems: 'center',
+  zIndex: 10,
+ },
+ overlayControls: {
+  width: '90%',
+  maxWidth: 350,
+  alignItems: 'center',
+  padding: 20,
+  backgroundColor: 'rgba(0, 0, 0, 0.9)',
+  borderWidth: 2,
+  borderColor: '#0F0',
+  borderRadius: 8,
+ },
  controls: { width: '90%', maxWidth: 400, alignItems: 'center', marginTop: 10 },
  sliderContainer: { width: '100%', marginBottom: 10 },
  labelText: {
