@@ -17,20 +17,29 @@ export type Database = {
       user_data: {
         Row: {
           account_level: string | null
+          bonus_balls: number
           created_at: string
+          current_score: number
           id: string
+          regular_balls: number
           username: string
         }
         Insert: {
           account_level?: string | null
+          bonus_balls?: number
           created_at?: string
+          current_score?: number
           id?: string
+          regular_balls?: number
           username: string
         }
         Update: {
           account_level?: string | null
+          bonus_balls?: number
           created_at?: string
+          current_score?: number
           id?: string
+          regular_balls?: number
           username?: string
         }
         Relationships: []

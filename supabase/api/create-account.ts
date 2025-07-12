@@ -6,6 +6,7 @@ export const createAccount = async (
  username: string
 ) => {
  try {
+  //! TODO: refactor this to work with RLS policies
   // First, check if username already exists
   const { data: existingUser, error: checkError } = await supabase
    .from('user_data')
@@ -22,7 +23,7 @@ export const createAccount = async (
    return { data: null, error: new Error('Username already exists') }
   }
 
-  // Now create the auth user
+  // Create the auth user
   const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
    email,
    password,

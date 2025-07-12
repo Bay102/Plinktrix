@@ -91,8 +91,20 @@ export default function AccountScreen() {
     <>
      {formMode === 'none' && (
       <>
-       <Button onPress={() => setFormMode('login')}>Login</Button>
-       <Button onPress={() => setFormMode('signup')}>Signup</Button>
+       <Button
+        mode="outlined"
+        style={styles.button}
+        onPress={() => setFormMode('login')}
+       >
+        Login
+       </Button>
+       <Button
+        mode="outlined"
+        style={styles.button}
+        onPress={() => setFormMode('signup')}
+       >
+        Signup
+       </Button>
       </>
      )}
 
