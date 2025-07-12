@@ -146,7 +146,7 @@ const App: React.FC = () => {
  const prizeValues = useMemo(() => [1, 5, 10, 0, 100, 0, 10, 5, 1], [])
  const LOW_GRAVITY = 0.05
  const HIGH_GRAVITY = 0.09
- const DAMPENING = 0.7
+ const DAMPENING = 0.6
  const PEG_RADIUS = 4
  const BALL_RADIUS = 10
 
@@ -264,7 +264,12 @@ const App: React.FC = () => {
      ball.vy += 0.2
     }
 
-    // Natural physics - let the peg layout control distribution
+    // Anti-center bias - subtly push balls away from center to reduce center hits
+    const distanceFromCenter = Math.abs(ball.x - boardWidth / 2)
+    if (distanceFromCenter < 40 && ball.y > PEG_VERTICAL_SPACING * 2) {
+     const pushDirection = ball.x > boardWidth / 2 ? 1 : -1
+     ball.vx += pushDirection * 0.4
+    }
 
     // Update position
     ball.x += ball.vx
@@ -302,9 +307,9 @@ const App: React.FC = () => {
        ball.vx -= 2 * dotProduct * normalX * DAMPENING
        ball.vy -= 2 * dotProduct * normalY * DAMPENING
 
-       // Add natural randomness for realistic Plinko physics
-       ball.vx += (Math.random() - 0.5) * 1.5
-       ball.vy += Math.random() * 0.3
+       // Add increased randomness to spread distribution away from center
+       ball.vx += (Math.random() - 0.5) * 2.5
+       ball.vy += Math.random() * 0.5
 
        // Ensure minimum downward velocity
        if (ball.vy < 0.5) {
@@ -315,44 +320,49 @@ const App: React.FC = () => {
     }
    })
 
-   // Improved ball-to-ball collision handling
+   // Ball-to-ball collision handling - only after balls pass first peg row
+   const firstPegRowY = PEG_VERTICAL_SPACING * 2 // Y position of first peg row
    for (let i = 0; i < newBalls.length; i++) {
     for (let j = i + 1; j < newBalls.length; j++) {
      const ball1 = newBalls[i]
      const ball2 = newBalls[j]
-     const dx = ball2.x - ball1.x
-     const dy = ball2.y - ball1.y
-     const distance = Math.sqrt(dx * dx + dy * dy)
 
-     if (distance < BALL_RADIUS * 2 && distance > 0) {
-      const angle = Math.atan2(dy, dx)
-      const overlap = (BALL_RADIUS * 2 - distance) / 2 + 1
+     // Only allow collisions if both balls have passed the first peg row
+     if (ball1.y > firstPegRowY && ball2.y > firstPegRowY) {
+      const dx = ball2.x - ball1.x
+      const dy = ball2.y - ball1.y
+      const distance = Math.sqrt(dx * dx + dy * dy)
 
-      // Separate balls more aggressively
-      ball1.x -= Math.cos(angle) * overlap
-      ball1.y -= Math.sin(angle) * overlap
-      ball2.x += Math.cos(angle) * overlap
-      ball2.y += Math.sin(angle) * overlap
+      if (distance < BALL_RADIUS * 2 && distance > 0) {
+       const angle = Math.atan2(dy, dx)
+       const overlap = (BALL_RADIUS * 2 - distance) / 2 + 1
 
-      // Collision response with conservation of momentum
-      const normalX = dx / distance
-      const normalY = dy / distance
-      const v1n = ball1.vx * normalX + ball1.vy * normalY
-      const v2n = ball2.vx * normalX + ball2.vy * normalY
-      const v1t = -ball1.vx * normalY + ball1.vy * normalX
-      const v2t = -ball2.vx * normalY + ball2.vy * normalX
+       // Separate balls more aggressively
+       ball1.x -= Math.cos(angle) * overlap
+       ball1.y -= Math.sin(angle) * overlap
+       ball2.x += Math.cos(angle) * overlap
+       ball2.y += Math.sin(angle) * overlap
 
-      // Exchange normal velocities
-      ball1.vx = (v2n * normalX - v1t * normalY) * DAMPENING
-      ball1.vy = (v2n * normalY + v1t * normalX) * DAMPENING
-      ball2.vx = (v1n * normalX - v2t * normalY) * DAMPENING
-      ball2.vy = (v1n * normalY + v2t * normalX) * DAMPENING
+       // Collision response with conservation of momentum
+       const normalX = dx / distance
+       const normalY = dy / distance
+       const v1n = ball1.vx * normalX + ball1.vy * normalY
+       const v2n = ball2.vx * normalX + ball2.vy * normalY
+       const v1t = -ball1.vx * normalY + ball1.vy * normalX
+       const v2t = -ball2.vx * normalY + ball2.vy * normalX
 
-      // Add natural random forces to prevent clustering
-      ball1.vx += (Math.random() - 0.5) * 0.5
-      ball1.vy += Math.random() * 0.3
-      ball2.vx += (Math.random() - 0.5) * 0.5
-      ball2.vy += Math.random() * 0.3
+       // Exchange normal velocities
+       ball1.vx = (v2n * normalX - v1t * normalY) * DAMPENING
+       ball1.vy = (v2n * normalY + v1t * normalX) * DAMPENING
+       ball2.vx = (v1n * normalX - v2t * normalY) * DAMPENING
+       ball2.vy = (v1n * normalY + v2t * normalX) * DAMPENING
+
+       // Add stronger random forces to prevent clustering and spread distribution
+       ball1.vx += (Math.random() - 0.5) * 0.8
+       ball1.vy += Math.random() * 0.4
+       ball2.vx += (Math.random() - 0.5) * 0.8
+       ball2.vy += Math.random() * 0.4
+      }
      }
     }
    }
@@ -472,30 +482,27 @@ const App: React.FC = () => {
 
   ballsToDrop.forEach((ballType, i) => {
    setTimeout(() => {
-    // Force balls to start in the gap between first two pegs
+    // Force balls to start perfectly centered in the gap between first two pegs
     const firstRowPegs = pegs[0] // First row has 2 pegs
     const leftPeg = firstRowPegs[0]
     const rightPeg = firstRowPegs[1]
     const gapCenter = (leftPeg.x + rightPeg.x) / 2
 
-    // Small random offset within the gap to add variety
-    const gapWidth = rightPeg.x - leftPeg.x
-    const startOffset = (Math.random() - 0.5) * (gapWidth * 0.3)
     const startY = PEG_VERTICAL_SPACING * 0.5 // All balls start from same height above first row
 
     const newBall: BallType = {
      id: Date.now() + i,
-     x: gapCenter + startOffset,
+     x: gapCenter, // Perfectly centered, no offset
      y: startY,
-     vx: (Math.random() - 0.5) * 2, // Reduced initial velocity since we're starting controlled
+     vx: (Math.random() - 0.5) * 0.1, // Tiny random variation to break collision bias
      vy: 0,
      isGold: ballType.isGold,
      stuckCounter: 0,
-     lastX: gapCenter + startOffset,
+     lastX: gapCenter,
      lastY: startY,
     }
     setBalls((prev) => [...prev, newBall])
-   }, i * 50)
+   }, i * 250)
   })
  }
 
