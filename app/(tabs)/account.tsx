@@ -1,14 +1,15 @@
-import { Controller, useForm } from 'react-hook-form'
-import { StyleSheet } from 'react-native'
-import { Button, TextInput } from 'react-native-paper'
-
+import { UserStats } from '@/components/pages/Account/UserStats'
 import DigitalRain from '@/components/pages/Plinko/DigitalRain'
 import ParallaxScrollView from '@/components/ParallaxScrollView'
-import { useAuthProvider } from '@/providers'
+import { useAuthProvider, useUserProvider } from '@/providers'
 import { createAccount } from '@/supabase/api/create-account'
+import { getUserData } from '@/supabase/api/get-user-data'
 import { login } from '@/supabase/api/login'
 import { router } from 'expo-router'
 import { useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import { ScrollView, StyleSheet } from 'react-native'
+import { Button, TextInput } from 'react-native-paper'
 
 interface LoginFormData {
  email: string
@@ -24,7 +25,8 @@ interface SignupFormData {
 type FormMode = 'none' | 'login' | 'signup'
 
 export default function AccountScreen() {
- const { user, logOut } = useAuthProvider()
+ const { user } = useAuthProvider()
+ const { setUserData } = useUserProvider()
  const [formMode, setFormMode] = useState<FormMode>('none')
 
  const loginForm = useForm<LoginFormData>({
@@ -44,7 +46,16 @@ export default function AccountScreen() {
 
  const onLoginSubmit = async (data: LoginFormData) => {
   try {
-   await login(data.email, data.password)
+   const response = await login(data.email, data.password)
+
+   if (response instanceof Error) {
+    console.log(response)
+    throw new Error(response.message)
+   }
+
+   const userData = await getUserData(response.data?.user?.id)
+   setUserData(userData)
+
    console.log('Login:', data)
   } catch (error) {
    console.error(error)
@@ -75,21 +86,18 @@ export default function AccountScreen() {
  }
 
  return (
-  <ParallaxScrollView
-   headerBackgroundColor={{ light: '#D0D0D0', dark: '#000' }}
-   headerImage={<DigitalRain />}
-  >
+  <ScrollView style={{ flex: 1 }}>
    {user ? (
     // User is logged in
-    <>
-     <Button onPress={() => logOut()}>Logout</Button>
-     {/* Add user account management UI here */}
-    </>
+    <UserStats />
    ) : (
     // User is not logged in
     <>
      {formMode === 'none' && (
-      <>
+      <ParallaxScrollView
+       headerBackgroundColor={{ light: '#D0D0D0', dark: '#000' }}
+       headerImage={<DigitalRain />}
+      >
        <Button
         mode="outlined"
         style={styles.button}
@@ -116,11 +124,14 @@ export default function AccountScreen() {
        >
         Dev Login
        </Button>
-      </>
+      </ParallaxScrollView>
      )}
 
      {formMode === 'login' && (
-      <>
+      <ParallaxScrollView
+       headerBackgroundColor={{ light: '#D0D0D0', dark: '#000' }}
+       headerImage={<DigitalRain />}
+      >
        <Controller
         control={loginForm.control}
         name="email"
@@ -177,7 +188,7 @@ export default function AccountScreen() {
        </Button>
 
        <Button onPress={resetForm}>Cancel</Button>
-      </>
+      </ParallaxScrollView>
      )}
 
      {formMode === 'signup' && (
@@ -270,7 +281,7 @@ export default function AccountScreen() {
      )}
     </>
    )}
-  </ParallaxScrollView>
+  </ScrollView>
  )
 }
 

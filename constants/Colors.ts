@@ -33,7 +33,7 @@ const lightColors = {
 const darkColors = {
  text: '#ECEDEE',
  background: '#151718',
- surface: '#1e1e1e',
+ surface: '#000',
  surfaceVariant: '#2c2c2c',
  icon: '#9BA1A6',
  tabIconDefault: '#9BA1A6',
