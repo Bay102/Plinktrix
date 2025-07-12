@@ -1,9 +1,8 @@
 import { UserStats } from '@/components/pages/Account/UserStats'
 import DigitalRain from '@/components/pages/Plinko/DigitalRain'
 import ParallaxScrollView from '@/components/ParallaxScrollView'
-import { useAuthProvider, useUserProvider } from '@/providers'
+import { useAuthProvider } from '@/providers'
 import { createAccount } from '@/supabase/api/create-account'
-import { getUserData } from '@/supabase/api/get-user-data'
 import { login } from '@/supabase/api/login'
 import { router } from 'expo-router'
 import { useState } from 'react'
@@ -26,7 +25,6 @@ type FormMode = 'none' | 'login' | 'signup'
 
 export default function AccountScreen() {
  const { user } = useAuthProvider()
- const { setUserData } = useUserProvider()
  const [formMode, setFormMode] = useState<FormMode>('none')
 
  const loginForm = useForm<LoginFormData>({
@@ -53,10 +51,8 @@ export default function AccountScreen() {
     throw new Error(response.message)
    }
 
-   const userData = await getUserData(response.data?.user?.id)
-   setUserData(userData)
-
-   console.log('Login:', data)
+   console.log('Login successful:', data)
+   // AuthProvider will automatically fetch user data
   } catch (error) {
    console.error(error)
   }

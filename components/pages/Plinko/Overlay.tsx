@@ -30,6 +30,12 @@ interface OverlayProps {
  prizeCounts: PrizeCounts
  isAnalyzing: boolean
  aiAnalysis: string
+ maxRegularBalls: number
+ maxGoldBalls: number
+ hasInsufficientBalls: boolean
+ isLoadingStats: boolean
+ isUpdatingStats: boolean
+ userLoggedIn: boolean
 }
 
 const Overlay: React.FC<OverlayProps> = ({
@@ -44,6 +50,12 @@ const Overlay: React.FC<OverlayProps> = ({
  prizeCounts,
  isAnalyzing,
  aiAnalysis,
+ maxRegularBalls,
+ maxGoldBalls,
+ hasInsufficientBalls,
+ isLoadingStats,
+ isUpdatingStats,
+ userLoggedIn,
 }) => {
  // Don't render overlay when dropping
  if (isDropping) return null
@@ -55,15 +67,21 @@ const Overlay: React.FC<OverlayProps> = ({
      <Text style={styles.labelText}>
       Regular Data Packets:{' '}
       <Text style={{ color: '#FFF' }}>{regularBallCount}</Text>
+      {userLoggedIn && (
+       <Text style={{ color: '#AAA', fontSize: 14 }}>
+        {' '}
+        (Available: {maxRegularBalls})
+       </Text>
+      )}
      </Text>
      <Slider
       style={{ width: '100%', height: 40 }}
       minimumValue={1}
-      maximumValue={40}
+      maximumValue={userLoggedIn ? Math.max(1, maxRegularBalls) : 40}
       step={1}
       value={regularBallCount}
       onValueChange={setRegularBallCount}
-      disabled={isDropping}
+      disabled={isDropping || isLoadingStats || !userLoggedIn}
       minimumTrackTintColor="#0F0"
       maximumTrackTintColor="#050"
       thumbTintColor={Platform.OS === 'ios' ? undefined : '#0F0'}
@@ -74,29 +92,67 @@ const Overlay: React.FC<OverlayProps> = ({
      <Text style={styles.labelText}>
       Gold Data Packets:{' '}
       <Text style={{ color: '#FFD700' }}>{goldBallCount}</Text>
+      {userLoggedIn && (
+       <Text style={{ color: '#AAA', fontSize: 14 }}>
+        {' '}
+        (Available: {maxGoldBalls})
+       </Text>
+      )}
      </Text>
      <Slider
       style={{ width: '100%', height: 40 }}
       minimumValue={0}
-      maximumValue={10}
+      maximumValue={userLoggedIn ? maxGoldBalls : 10}
       step={1}
       value={goldBallCount}
       onValueChange={setGoldBallCount}
-      disabled={isDropping}
+      disabled={isDropping || isLoadingStats || !userLoggedIn}
       minimumTrackTintColor="#FFD700"
       maximumTrackTintColor="#554200"
       thumbTintColor={Platform.OS === 'ios' ? undefined : '#FFD700'}
      />
     </View>
 
+    {!userLoggedIn && (
+     <View style={styles.warningContainer}>
+      <Text style={styles.warningText}>⚠️ Login required to save progress</Text>
+     </View>
+    )}
+
+    {userLoggedIn && hasInsufficientBalls && (
+     <View style={styles.warningContainer}>
+      <Text style={styles.warningText}>⚠️ Insufficient balls available</Text>
+     </View>
+    )}
+
+    {userLoggedIn && isLoadingStats && (
+     <View style={styles.warningContainer}>
+      <Text style={styles.warningText}>Loading user data...</Text>
+     </View>
+    )}
+
     <TouchableOpacity
      onPress={handleDropBall}
-     disabled={isDropping}
-     style={[styles.button, isDropping && styles.disabledButton]}
+     disabled={
+      isDropping ||
+      (userLoggedIn &&
+       (hasInsufficientBalls || isLoadingStats || isUpdatingStats))
+     }
+     style={[
+      styles.button,
+      (isDropping ||
+       (userLoggedIn &&
+        (hasInsufficientBalls || isLoadingStats || isUpdatingStats))) &&
+       styles.disabledButton,
+     ]}
     >
      <Text style={styles.buttonText}>
       {isDropping
        ? `Executing... [${ballsCount}]`
+       : isUpdatingStats
+       ? 'Updating Stats...'
+       : isLoadingStats
+       ? 'Loading...'
        : `[ Initiate Drop ${regularBallCount + goldBallCount} ]`}
      </Text>
     </TouchableOpacity>
@@ -271,5 +327,21 @@ const styles = StyleSheet.create({
   fontFamily: FONT_FAMILY,
   fontSize: 16,
   color: '#FFF',
+ },
+ warningContainer: {
+  marginTop: 8,
+  marginBottom: 8,
+  padding: 8,
+  backgroundColor: 'rgba(255, 165, 0, 0.1)',
+  borderWidth: 1,
+  borderColor: '#FFA500',
+  borderRadius: 4,
+  width: '100%',
+ },
+ warningText: {
+  fontFamily: FONT_FAMILY,
+  fontSize: 16,
+  color: '#FFA500',
+  textAlign: 'center',
  },
 })

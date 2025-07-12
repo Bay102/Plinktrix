@@ -1,13 +1,21 @@
 import { Colors } from '@/constants/Colors'
-import { useThemeColor } from '@/hooks/useThemeColor'
-import { useUserProvider } from '@/providers'
-import React from 'react'
-import { Platform, StyleSheet, Text, View } from 'react-native'
+import { useAuthProvider } from '@/providers'
+import { getUserStats } from '@/supabase/api/update-user-stats'
+import React, { useState } from 'react'
+import {
+ Platform,
+ StyleSheet,
+ Text,
+ TouchableOpacity,
+ View,
+} from 'react-native'
 
 const FONT_FAMILY = Platform.OS === 'ios' ? 'VT323' : 'VT323'
 
 export const UserStats = () => {
- const { userData } = useUserProvider()
+ const { userData, user, setUserData } = useAuthProvider()
+ const [isRefreshing, setIsRefreshing] = useState(false)
+
  const username = userData?.username
  const score = userData?.current_score
  const accountLevel = userData?.account_level
@@ -17,8 +25,21 @@ export const UserStats = () => {
 
  console.log('userData', userData)
 
- const textColor = useThemeColor({}, 'text')
- const surfaceColor = useThemeColor({}, 'surface')
+ const refreshUserData = async () => {
+  if (!user?.id || isRefreshing) return
+
+  try {
+   setIsRefreshing(true)
+   const freshUserData = await getUserStats(user.id)
+   if (freshUserData) {
+    setUserData(freshUserData)
+   }
+  } catch (error) {
+   console.error('Error refreshing user data:', error)
+  } finally {
+   setIsRefreshing(false)
+  }
+ }
 
  // Format creation date
  const formatDate = (dateString: string) => {
@@ -66,6 +87,17 @@ export const UserStats = () => {
    <View style={styles.header}>
     <Text style={styles.headerTitle}>USER PROFILE</Text>
     <Text style={styles.headerSubtitle}>System data retrieval complete...</Text>
+
+    {/* Refresh Button */}
+    <TouchableOpacity
+     style={styles.refreshButton}
+     onPress={refreshUserData}
+     disabled={isRefreshing}
+    >
+     <Text style={[styles.refreshText, isRefreshing && styles.refreshingText]}>
+      {isRefreshing ? '[ REFRESHING... ]' : '[ REFRESH DATA ]'}
+     </Text>
+    </TouchableOpacity>
    </View>
 
    {/* User Identity Section */}
@@ -218,5 +250,22 @@ const styles = StyleSheet.create({
   fontSize: 12,
   color: '#666',
   textAlign: 'center',
+ },
+ refreshButton: {
+  marginTop: 10,
+  padding: 8,
+  borderWidth: 1,
+  borderColor: '#0F0',
+  borderRadius: 4,
+  backgroundColor: 'rgba(0, 255, 0, 0.1)',
+ },
+ refreshText: {
+  fontFamily: FONT_FAMILY,
+  fontSize: 12,
+  color: '#0F0',
+  textAlign: 'center',
+ },
+ refreshingText: {
+  color: '#AAA',
  },
 })

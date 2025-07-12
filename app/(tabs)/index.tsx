@@ -1,5 +1,12 @@
 import DigitalRain from '@/components/pages/Plinko/DigitalRain' // Assuming this component exists
 import Overlay from '@/components/pages/Plinko/Overlay'
+import { useAuthProvider } from '@/providers'
+import {
+ GameResultData,
+ getUserStats,
+ updateUserStats,
+} from '@/supabase/api/update-user-stats'
+import { UserData } from '@/supabase/types'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
  Animated,
@@ -117,6 +124,9 @@ const Ball: React.FC<BallProps> = ({ position, isGold }) => {
 
 // --- Main Plinko Component ---
 const App: React.FC = () => {
+ // --- Providers ---
+ const { user, setUserData } = useAuthProvider()
+
  // --- State Management ---
  const [balls, setBalls] = useState<BallType[]>([])
  const [isDropping, setIsDropping] = useState<boolean>(false)
@@ -129,6 +139,12 @@ const App: React.FC = () => {
  const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false)
  const [animatingSlots, setAnimatingSlots] = useState<AnimatingSlots>({})
  const [currentGravity, setCurrentGravity] = useState<number>(0.11)
+ const [userStats, setUserStats] = useState<UserData | null>(null)
+ const [isLoadingStats, setIsLoadingStats] = useState<boolean>(false)
+ const [isUpdatingStats, setIsUpdatingStats] = useState<boolean>(false)
+ const [gameEndedWithPrize, setGameEndedWithPrize] = useState<number | null>(
+  null
+ )
 
  // --- Refs ---
  const animationFrameRef = useRef<number | null>(null)
@@ -143,6 +159,94 @@ const App: React.FC = () => {
  const DAMPENING = 0.6
  const PEG_RADIUS = 4
  const BALL_RADIUS = 10
+
+ // --- User Data Management ---
+ const fetchUserStats = useCallback(async () => {
+  if (!user?.id) return
+
+  try {
+   setIsLoadingStats(true)
+   const stats = await getUserStats(user.id)
+   setUserStats(stats)
+
+   // Update auth provider with latest user data
+   if (stats) {
+    setUserData(stats)
+   }
+  } catch (error) {
+   console.error('Error fetching user stats:', error)
+  } finally {
+   setIsLoadingStats(false)
+  }
+ }, [user?.id, setUserData])
+
+ const updateUserStatsAfterGame = useCallback(
+  async (scoreEarned: number) => {
+   if (!user?.id || isUpdatingStats) return
+
+   try {
+    setIsUpdatingStats(true)
+
+    const gameResult: GameResultData = {
+     ballsUsed: {
+      regular: regularBallCount,
+      gold: goldBallCount,
+     },
+     scoreEarned,
+    }
+
+    const updatedStats = await updateUserStats(user.id, gameResult)
+    if (updatedStats) {
+     setUserStats(updatedStats)
+     setUserData(updatedStats)
+    }
+   } catch (error) {
+    console.error('Error updating user stats:', error)
+   } finally {
+    setIsUpdatingStats(false)
+   }
+  },
+  [user?.id, isUpdatingStats, regularBallCount, goldBallCount, setUserData]
+ )
+
+ // Fetch user stats when user changes
+ useEffect(() => {
+  if (user?.id) {
+   fetchUserStats()
+  }
+ }, [user?.id, fetchUserStats])
+
+ // --- Game Validation ---
+ const maxRegularBalls = userStats?.regular_balls || 0
+ const maxGoldBalls = userStats?.bonus_balls || 0
+ const hasInsufficientBalls =
+  regularBallCount > maxRegularBalls || goldBallCount > maxGoldBalls
+ const canStartGame =
+  !isDropping &&
+  !hasInsufficientBalls &&
+  (regularBallCount > 0 || goldBallCount > 0) &&
+  user?.id
+
+ // Update ball counts when user stats change
+ useEffect(() => {
+  if (userStats) {
+   // Reset ball counts if they exceed user's available balls
+   if (regularBallCount > userStats.regular_balls) {
+    setRegularBallCount(Math.max(1, userStats.regular_balls))
+   }
+   if (goldBallCount > userStats.bonus_balls) {
+    setGoldBallCount(Math.min(goldBallCount, userStats.bonus_balls))
+   }
+  }
+ }, [userStats, regularBallCount, goldBallCount])
+
+ // Handle game end and stats update
+ useEffect(() => {
+  if (gameEndedWithPrize !== null && user?.id) {
+   updateUserStatsAfterGame(gameEndedWithPrize)
+   setGameEndedWithPrize(null)
+  }
+ }, [gameEndedWithPrize, user?.id, updateUserStatsAfterGame])
 
  // --- Peg Generation ---
  const pegs = useMemo<PegType[][]>(() => {
@@ -417,6 +521,10 @@ const App: React.FC = () => {
 
    if (activeBalls.length === 0 && prevBalls.length > 0) {
     setIsDropping(false)
+    // Trigger stats update with current total prize
+    setTimeout(() => {
+     setGameEndedWithPrize(totalPrize)
+    }, 100)
     // setTimeout(() => getAiAnalysis(prizeCounts, totalPrize), 100)
    }
 
@@ -450,7 +558,7 @@ const App: React.FC = () => {
  }, [isDropping, gameLoop])
 
  const handleDropBall = () => {
-  if (isDropping) return
+  if (isDropping || !canStartGame) return
 
   const totalBalls = regularBallCount + goldBallCount
   setCurrentGravity(totalBalls <= 10 ? LOW_GRAVITY : HIGH_GRAVITY)
@@ -560,6 +668,12 @@ const App: React.FC = () => {
       prizeCounts={prizeCounts}
       isAnalyzing={isAnalyzing}
       aiAnalysis={aiAnalysis}
+      maxRegularBalls={maxRegularBalls}
+      maxGoldBalls={maxGoldBalls}
+      hasInsufficientBalls={hasInsufficientBalls}
+      isLoadingStats={isLoadingStats}
+      isUpdatingStats={isUpdatingStats}
+      userLoggedIn={!!user?.id}
      />
     </View>
     <Text style={styles.footer}> Plinko_v2.5.sys - &copy; 2025</Text>

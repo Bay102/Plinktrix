@@ -1,3 +1,4 @@
+import { getUserData } from '@/supabase/api/get-user-data'
 import { supabase } from '@/supabase/supabase'
 import { UserData } from '@/supabase/types'
 import { Session, User } from '@supabase/supabase-js'
@@ -23,6 +24,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
  const [isLoading, setIsLoading] = useState(true)
  const [userData, setUserData] = useState<UserData | undefined>(undefined)
  const [session, setSession] = useState<Session | null>(null)
+
+ // Fetch user data when user changes
+ useEffect(() => {
+  const fetchUserData = async () => {
+   if (user?.id) {
+    try {
+     const data = await getUserData(user.id)
+     setUserData(data)
+    } catch (error) {
+     console.error('Error fetching user data:', error)
+    }
+   } else {
+    setUserData(undefined)
+   }
+  }
+
+  fetchUserData()
+ }, [user?.id])
 
  useEffect(() => {
   if (!supabase) {
