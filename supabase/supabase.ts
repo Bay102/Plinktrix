@@ -1,4 +1,4 @@
-import { MMKVStorageAdapter } from '@/services/storage.utils'
+import { AsyncStorageAdapter } from '@/services/storage.utils'
 import { Database } from '@/supabase/supa-schema'
 import { createClient } from '@supabase/supabase-js'
 
@@ -8,7 +8,7 @@ export const supabase = createClient<Database>(
  process.env.EXPO_PUBLIC_SUPABASE_KEY!,
  {
   auth: {
-   storage: MMKVStorageAdapter,
+   storage: AsyncStorageAdapter,
    autoRefreshToken: true,
    persistSession: true,
    detectSessionInUrl: false,

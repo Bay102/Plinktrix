@@ -2,6 +2,10 @@
  * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
  * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
  */
+import {
+ DarkTheme as NavigationDarkTheme,
+ DefaultTheme as NavigationDefaultTheme,
+} from '@react-navigation/native'
 import { MD3DarkTheme, MD3LightTheme } from 'react-native-paper'
 
 // Base colors that are shared between light and dark themes
@@ -33,8 +37,8 @@ const darkColors = {
  surfaceVariant: '#2c2c2c',
  icon: '#9BA1A6',
  tabIconDefault: '#9BA1A6',
- tabIconSelected: '#ffffff',
- tint: '#ffffff',
+ tabIconSelected: baseColors.primary,
+ tint: baseColors.primary,
 }
 
 // Export legacy Colors object for backward compatibility
@@ -100,6 +104,33 @@ export const DarkTheme = {
  animation: {
   ...MD3DarkTheme.animation,
   scale: 1.0,
+ },
+}
+
+// React Navigation theme configurations
+export const CustomNavigationLightTheme = {
+ ...NavigationDefaultTheme,
+ colors: {
+  ...NavigationDefaultTheme.colors,
+  primary: baseColors.primary,
+  background: lightColors.background,
+  card: lightColors.surface,
+  text: lightColors.text,
+  border: lightColors.surfaceVariant,
+  notification: baseColors.error,
+ },
+}
+
+export const CustomNavigationDarkTheme = {
+ ...NavigationDarkTheme,
+ colors: {
+  ...NavigationDarkTheme.colors,
+  primary: baseColors.primary,
+  background: darkColors.background,
+  card: darkColors.surface,
+  text: darkColors.text,
+  border: darkColors.surfaceVariant,
+  notification: baseColors.error,
  },
 }
 

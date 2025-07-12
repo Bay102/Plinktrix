@@ -1,13 +1,11 @@
 import {
  DarkTheme as CustomDarkTheme,
  LightTheme as CustomLightTheme,
+ CustomNavigationDarkTheme,
+ CustomNavigationLightTheme,
 } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme'
-import {
- DarkTheme as NavigationDarkTheme,
- DefaultTheme as NavigationDefaultTheme,
- ThemeProvider,
-} from '@react-navigation/native'
+import { ThemeProvider } from '@react-navigation/native'
 import { useFonts } from 'expo-font'
 import { Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
@@ -31,7 +29,9 @@ export default function RootLayout() {
   >
    <ThemeProvider
     value={
-     colorScheme === 'dark' ? NavigationDarkTheme : NavigationDefaultTheme
+     colorScheme === 'dark'
+      ? CustomNavigationDarkTheme
+      : CustomNavigationLightTheme
     }
    >
     <Stack>
