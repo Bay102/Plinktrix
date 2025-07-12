@@ -1,7 +1,8 @@
+import { UserSettingsModal } from '@/components/pages/Account/UserSettingsModal'
 import { UserStats } from '@/components/pages/Account/UserStats'
 import DigitalRain from '@/components/pages/Plinko/DigitalRain'
 import ParallaxScrollView from '@/components/ParallaxScrollView'
-import { useAuthProvider } from '@/providers'
+import { useAuthProvider, useUserProvider } from '@/providers'
 import { createAccount } from '@/supabase/api/create-account'
 import { login } from '@/supabase/api/login'
 import { router } from 'expo-router'
@@ -26,7 +27,7 @@ type FormMode = 'none' | 'login' | 'signup'
 export default function AccountScreen() {
  const { user } = useAuthProvider()
  const [formMode, setFormMode] = useState<FormMode>('none')
-
+ const { settingsModalVisible, setSettingsModalVisible } = useUserProvider()
  const loginForm = useForm<LoginFormData>({
   defaultValues: {
    email: '',
@@ -85,7 +86,13 @@ export default function AccountScreen() {
   <ScrollView style={{ flex: 1 }}>
    {user ? (
     // User is logged in
-    <UserStats />
+    <>
+     <UserStats />
+     <UserSettingsModal
+      isVisible={settingsModalVisible}
+      onClose={() => setSettingsModalVisible(false)}
+     />
+    </>
    ) : (
     // User is not logged in
     <>

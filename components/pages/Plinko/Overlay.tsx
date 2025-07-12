@@ -1,12 +1,7 @@
 import Slider from '@react-native-community/slider'
 import React from 'react'
-import {
- Platform,
- StyleSheet,
- Text,
- TouchableOpacity,
- View,
-} from 'react-native'
+import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { Text } from 'react-native-paper'
 
 // --- Type Definitions ---
 interface PrizeCount {
@@ -101,30 +96,32 @@ const Overlay: React.FC<OverlayProps> = ({
      />
     </View>
 
-    <View style={styles.sliderContainer}>
-     <Text style={styles.labelText}>
-      Gold Data Packets:{' '}
-      <Text style={{ color: '#FFD700' }}>{goldBallCount}</Text>
-      {userLoggedIn && (
-       <Text style={{ color: '#AAA', fontSize: 14 }}>
-        {' '}
-        (Available: {maxGoldBalls})
-       </Text>
-      )}
-     </Text>
-     <Slider
-      style={{ width: '100%', height: 40 }}
-      minimumValue={0}
-      maximumValue={Math.max(0, maxGoldForSlider)}
-      step={1}
-      value={goldBallCount}
-      onValueChange={setGoldBallCount}
-      disabled={isDropping || isLoadingStats || !userLoggedIn}
-      minimumTrackTintColor="#FFD700"
-      maximumTrackTintColor="#554200"
-      thumbTintColor={Platform.OS === 'ios' ? undefined : '#FFD700'}
-     />
-    </View>
+    {goldBallCount !== 0 && (
+     <View style={styles.sliderContainer}>
+      <Text style={styles.labelText}>
+       Gold Data Packets:{' '}
+       <Text style={{ color: '#FFD700' }}>{goldBallCount}</Text>
+       {userLoggedIn && (
+        <Text style={{ color: '#AAA', fontSize: 14 }}>
+         {' '}
+         (Available: {maxGoldBalls})
+        </Text>
+       )}
+      </Text>
+      <Slider
+       style={{ width: '100%', height: 40 }}
+       minimumValue={0}
+       maximumValue={Math.max(0, maxGoldForSlider)}
+       step={1}
+       value={goldBallCount}
+       onValueChange={setGoldBallCount}
+       disabled={isDropping || isLoadingStats || !userLoggedIn}
+       minimumTrackTintColor="#FFD700"
+       maximumTrackTintColor="#554200"
+       thumbTintColor={Platform.OS === 'ios' ? undefined : '#FFD700'}
+      />
+     </View>
+    )}
 
     {/* Total balls counter */}
     <View style={styles.totalBallsContainer}>

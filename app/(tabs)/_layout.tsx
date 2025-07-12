@@ -3,15 +3,16 @@ import { IconSymbol } from '@/components/ui/IconSymbol'
 import TabBarBackground from '@/components/ui/TabBarBackground'
 import { Colors } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme'
-import { useAuthProvider } from '@/providers'
+import { useAuthProvider, useUserProvider } from '@/providers'
 import { Tabs } from 'expo-router'
 import React from 'react'
-import { Platform } from 'react-native'
+import { Platform, TouchableOpacity } from 'react-native'
 import { Button } from 'react-native-paper'
 
 export default function TabLayout() {
  const colorScheme = useColorScheme()
- const { logOut } = useAuthProvider()
+ const { logOut, user } = useAuthProvider()
+ const { settingsModalVisible, setSettingsModalVisible } = useUserProvider()
 
  return (
   <Tabs
@@ -77,17 +78,31 @@ export default function TabLayout() {
     options={{
      title: '',
      headerShown: true,
-     headerRight: () => (
-      <Button mode="text" onPress={() => logOut()}>
-       Logout
-      </Button>
-     ),
+     headerRight: ({ tintColor }) =>
+      user && (
+       <TouchableOpacity onPress={() => logOut()}>
+        <IconSymbol
+         size={22}
+         name="person.badge.minus"
+         color={tintColor ?? 'black'}
+        />
+       </TouchableOpacity>
+      ),
+     headerLeft: ({ tintColor }) =>
+      user && (
+       <TouchableOpacity
+        style={{}}
+        onPress={() => setSettingsModalVisible(true)}
+       >
+        <IconSymbol size={22} name="gear.circle" color={tintColor ?? 'black'} />
+       </TouchableOpacity>
+      ),
      headerStyle: {
       backgroundColor: Colors.dark.background,
      },
      tabBarIcon: ({ color }) => (
       <IconSymbol
-       size={35}
+       size={30}
        name="person.circle"
        color={color}
        style={{ marginTop: 15 }}

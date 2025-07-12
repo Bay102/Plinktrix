@@ -27,6 +27,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
  // Fetch user data when user changes
  useEffect(() => {
+  if (!user) {
+   setUserData(undefined)
+   return
+  }
+
   const fetchUserData = async () => {
    if (user?.id) {
     try {

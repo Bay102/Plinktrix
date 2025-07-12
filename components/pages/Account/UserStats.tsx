@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
  },
  statLabel: {
   fontFamily: FONT_FAMILY,
-  fontSize: 14,
+  fontSize: 18,
   color: '#AAA',
   flex: 1,
  },

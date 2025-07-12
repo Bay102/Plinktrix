@@ -1,3 +1,4 @@
+import { Colors, Theme } from '@/constants/Colors'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import Modal from 'react-native-modal'
@@ -26,7 +27,7 @@ export const BaseModal = ({
    <View style={styles.modalContent}>
     <View style={styles.modalHeader}>
      <Button mode="text" onPress={onClose}>
-      <IconSymbol size={35} name="xmark" color="black" />
+      <IconSymbol size={25} name="xmark.circle" color={Theme.colors.error} />
      </Button>
     </View>
     {children}
@@ -40,17 +41,14 @@ const styles = StyleSheet.create({
   margin: 0,
  },
  modalHeader: {
-  backgroundColor: 'white',
-  padding: 20,
-  borderRadius: 10,
-  // zIndex: 1,
+  padding: 0,
+  alignItems: 'flex-end',
  },
  modalHeaderText: {
   textAlign: 'center',
   color: 'black',
  },
  modalContentHeader: {
-  backgroundColor: 'white',
   position: 'absolute',
   top: 0,
   padding: 20,
@@ -59,13 +57,12 @@ const styles = StyleSheet.create({
   width: '100%',
  },
  modalContent: {
-  backgroundColor: 'white',
+  backgroundColor: Colors.dark.background,
   position: 'absolute',
   bottom: 0,
   padding: 20,
   borderRadius: 10,
   height: '60%',
   width: '100%',
-  zIndex: 0,
  },
 })
