@@ -10,12 +10,18 @@ export const UserSettingsModal = ({
  isVisible?: boolean
  onClose: () => void
 }) => {
- const { logOut } = useAuthProvider()
+ const { logOut, refreshUserData, isRefreshing } = useAuthProvider()
  const { setSettingsModalVisible } = useUserProvider()
+
  return (
   <BaseModal isVisible={isVisible} onClose={onClose}>
    {/* <DigitalRain /> */}
    <View style={styles.container}>
+    <MatrixButton
+     title=" [ REFRESH DATA ]"
+     onPress={refreshUserData}
+     loading={isRefreshing}
+    />
     <MatrixButton
      title=" [ LOGOUT ]"
      onPress={() => {

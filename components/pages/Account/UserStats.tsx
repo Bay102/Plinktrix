@@ -1,10 +1,9 @@
-import MatrixButton from '@/components/ui/MatrixButton'
 import { Colors } from '@/constants/Colors'
 import { useAuthProvider } from '@/providers'
-import { getUserStats } from '@/supabase/api/update-user-stats'
 import React, { useState } from 'react'
 import { Platform, StyleSheet, View } from 'react-native'
 import { Text } from 'react-native-paper'
+import DigitalRain from '../Plinko/DigitalRain'
 
 const FONT_FAMILY = Platform.OS === 'ios' ? 'VT323' : 'VT323'
 
@@ -19,21 +18,21 @@ export const UserStats = () => {
  const regularPackets = userData?.regular_packets
  const createdAt = userData?.created_at
 
- const refreshUserData = async () => {
-  if (!user?.id || isRefreshing) return
+ //  const refreshUserData = async () => {
+ //   if (!user?.id || isRefreshing) return
 
-  try {
-   setIsRefreshing(true)
-   const freshUserData = await getUserStats(user.id)
-   if (freshUserData) {
-    setUserData(freshUserData)
-   }
-  } catch (error) {
-   console.error('Error refreshing user data:', error)
-  } finally {
-   setIsRefreshing(false)
-  }
- }
+ //   try {
+ //    setIsRefreshing(true)
+ //    const freshUserData = await getUserStats(user.id)
+ //    if (freshUserData) {
+ //     setUserData(freshUserData)
+ //    }
+ //   } catch (error) {
+ //    console.error('Error refreshing user data:', error)
+ //   } finally {
+ //    setIsRefreshing(false)
+ //   }
+ //  }
 
  // Format creation date
  const formatDate = (dateString: string) => {
@@ -77,18 +76,12 @@ export const UserStats = () => {
 
  return (
   <View style={[styles.container, { backgroundColor: Colors.dark.surface }]}>
+   <DigitalRain />
    {/* Header */}
    <View style={styles.header}>
-    <Text style={styles.headerTitle}>USER PROFILE</Text>
+    <Text style={styles.headerTitle}>PLAYER DATA</Text>
     <Text style={styles.headerSubtitle}>System data retrieval complete...</Text>
-
-    <MatrixButton
-     title=" [ REFRESH DATA ]"
-     onPress={refreshUserData}
-     loading={isRefreshing}
-    />
    </View>
-
    {/* User Identity Section */}
    <View style={styles.section}>
     <Text style={styles.sectionTitle}>USER IDENTITY</Text>
@@ -111,20 +104,18 @@ export const UserStats = () => {
      />
     </View>
    </View>
-
    {/* Performance Metrics Section */}
    <View style={styles.section}>
     <Text style={styles.sectionTitle}>PERFORMANCE METRICS</Text>
     <View style={styles.sectionContent}>
      <StatItem
-      label="CURRENT_SCORE"
+      label="AWAITING_UPLOAD"
       value={score?.toLocaleString() || '0'}
       color="#0F0"
       isHighlight={true}
      />
     </View>
    </View>
-
    {/* Resource Allocation Section */}
    <View style={styles.section}>
     <Text style={styles.sectionTitle}>RESOURCE ALLOCATION</Text>
@@ -146,7 +137,6 @@ export const UserStats = () => {
      />
     </View>
    </View>
-
    {/* Footer */}
    <View style={styles.footer}>
     <Text style={styles.footerText}>
@@ -226,7 +216,7 @@ const styles = StyleSheet.create({
  },
  statValue: {
   fontFamily: FONT_FAMILY,
-  fontSize: 16,
+  fontSize: 18,
   fontWeight: 'bold',
   textAlign: 'right',
  },

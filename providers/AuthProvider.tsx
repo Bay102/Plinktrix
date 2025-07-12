@@ -1,4 +1,5 @@
 import { getUserData } from '@/supabase/api/get-user-data'
+import { getUserStats } from '@/supabase/api/update-user-stats'
 import { supabase } from '@/supabase/supabase'
 import { UserData } from '@/supabase/types'
 import { Session, User } from '@supabase/supabase-js'
@@ -11,6 +12,8 @@ export interface AuthContextType {
  setUserData: (userData?: UserData) => void
  logOut: () => Promise<void>
  session: Session | null
+ refreshUserData: () => Promise<void>
+ isRefreshing: boolean
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -24,7 +27,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
  const [isLoading, setIsLoading] = useState(true)
  const [userData, setUserData] = useState<UserData | undefined>(undefined)
  const [session, setSession] = useState<Session | null>(null)
-
+ const [isRefreshing, setIsRefreshing] = useState(false)
  // Fetch user data when user changes
  useEffect(() => {
   if (!user) {
@@ -47,6 +50,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   fetchUserData()
  }, [user?.id])
+
+ const refreshUserData = async () => {
+  if (!user?.id || isRefreshing) return
+
+  try {
+   setIsRefreshing(true)
+   const freshUserData = await getUserStats(user.id)
+   if (freshUserData) {
+    setUserData(freshUserData)
+   }
+  } catch (error) {
+   console.error('Error refreshing user data:', error)
+  } finally {
+   setIsRefreshing(false)
+  }
+ }
 
  useEffect(() => {
   if (!supabase) {
@@ -107,6 +126,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   userData,
   setUserData,
   session,
+  refreshUserData,
+  isRefreshing,
  }
 
  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

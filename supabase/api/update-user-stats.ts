@@ -31,21 +31,21 @@ export const updateUserStats = async (
  // Calculate new values
  const newRegularBalls = Math.max(
   0,
-  currentUser.regular_balls - gameResult.ballsUsed.regular
+  currentUser.regular_packets - gameResult.ballsUsed.regular
  )
  const newBonusBalls = Math.max(
   0,
-  currentUser.bonus_balls - gameResult.ballsUsed.gold
+  currentUser.bonus_packets - gameResult.ballsUsed.gold
  )
- const newScore = currentUser.current_score + gameResult.scoreEarned
+ const newScore = currentUser.bytes_downloaded + gameResult.scoreEarned
 
  // Update user stats in a single transaction
  const { data: updatedUser, error: updateError } = await supabase
   .from('user_data')
   .update({
-   regular_balls: newRegularBalls,
-   bonus_balls: newBonusBalls,
-   current_score: newScore,
+   regular_packets: newRegularBalls,
+   bonus_packets: newBonusBalls,
+   bytes_downloaded: newScore,
   })
   .eq('id', userId)
   .select()
