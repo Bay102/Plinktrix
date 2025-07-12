@@ -12,8 +12,8 @@
    "supportsTablet": true,
    "bundleIdentifier": "com.codebay.ballsdaily",
    "icon": {
-    "light": "./assets/app-icon/ios-light.png",
-    "dark": "./assets/app-icon/ios-dark.png"
+    "light": "./assets/app-icons/ios-light.png",
+    "dark": "./assets/app-icons/ios-dark.png"
    },
    "infoPlist": {
     "ITSAppUsesNonExemptEncryption": false
@@ -21,7 +21,7 @@
   },
   "android": {
    "adaptiveIcon": {
-    "foregroundImage": "./assets/app-icon/android-light.png",
+    "foregroundImage": "./assets/app-icons/android-light.png",
     "backgroundColor": "#000"
    },
    "edgeToEdgeEnabled": true
@@ -36,7 +36,7 @@
    [
     "expo-splash-screen",
     {
-     "image": "./assets/images/splash-icon.png",
+     "image": "./assets/app-icons/splash-icon-dark.png",
      "imageWidth": 200,
      "resizeMode": "contain",
      "backgroundColor": "#000"
