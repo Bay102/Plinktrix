@@ -140,7 +140,7 @@ const App: React.FC = () => {
  const animationFrameRef = useRef<number | null>(null)
 
  // --- Game Configuration & Constants ---
- const ROWS = 10
+ const ROWS = 11
  const PEG_HORIZONTAL_SPACING = 35
  const PEG_VERTICAL_SPACING = 40
  const prizeValues = useMemo(() => [1, 5, 10, 0, 100, 0, 10, 5, 1], [])
@@ -266,9 +266,9 @@ const App: React.FC = () => {
 
     // Anti-center bias - subtly push balls away from center to reduce center hits
     const distanceFromCenter = Math.abs(ball.x - boardWidth / 2)
-    if (distanceFromCenter < 40 && ball.y > PEG_VERTICAL_SPACING * 2) {
+    if (distanceFromCenter < 30 && ball.y > PEG_VERTICAL_SPACING * 2) {
      const pushDirection = ball.x > boardWidth / 2 ? 1 : -1
-     ball.vx += pushDirection * 0.4
+     ball.vx += pushDirection * 0.175
     }
 
     // Update position
@@ -502,7 +502,7 @@ const App: React.FC = () => {
      lastY: startY,
     }
     setBalls((prev) => [...prev, newBall])
-   }, i * 250)
+   }, i * 150)
   })
  }
 
