@@ -6,6 +6,7 @@ import DigitalRain from '@/components/pages/Plinko/DigitalRain'
 import ParallaxScrollView from '@/components/ParallaxScrollView'
 import { useAuthProvider } from '@/providers'
 import { createAccount } from '@/supabase/api/create-account'
+import { login } from '@/supabase/api/login'
 import { router } from 'expo-router'
 import { useState } from 'react'
 
@@ -43,7 +44,7 @@ export default function AccountScreen() {
 
  const onLoginSubmit = async (data: LoginFormData) => {
   try {
-   // TODO: Implement login logic
+   await login(data.email, data.password)
    console.log('Login:', data)
   } catch (error) {
    console.error(error)
@@ -73,11 +74,9 @@ export default function AccountScreen() {
   signupForm.reset()
  }
 
- console.log(user)
-
  return (
   <ParallaxScrollView
-   headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
+   headerBackgroundColor={{ light: '#D0D0D0', dark: '#000' }}
    headerImage={<DigitalRain />}
   >
    {user ? (
@@ -104,6 +103,18 @@ export default function AccountScreen() {
         onPress={() => setFormMode('signup')}
        >
         Signup
+       </Button>
+       {/* Dev Login */}
+       <Button
+        mode="text"
+        style={styles.button}
+        onPress={() => {
+         setFormMode('login')
+         loginForm.setValue('email', 'test@dev.com')
+         loginForm.setValue('password', 'testing123')
+        }}
+       >
+        Dev Login
        </Button>
       </>
      )}

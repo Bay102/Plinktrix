@@ -66,11 +66,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
  const logOut = async (): Promise<void> => {
   try {
+   router.replace('/')
    await supabase.auth.signOut()
    setUser(null)
    setUserData(undefined)
    setSession(null)
-   router.replace('/')
   } catch (error) {
    console.error('Error signing out:', error)
   }
