@@ -1,8 +1,9 @@
+import MatrixButton from '@/components/ui/MatrixButton'
 import { Colors } from '@/constants/Colors'
 import { useAuthProvider } from '@/providers'
 import { getUserStats } from '@/supabase/api/update-user-stats'
 import React, { useState } from 'react'
-import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { Platform, StyleSheet, View } from 'react-native'
 import { Text } from 'react-native-paper'
 
 const FONT_FAMILY = Platform.OS === 'ios' ? 'VT323' : 'VT323'
@@ -81,16 +82,11 @@ export const UserStats = () => {
     <Text style={styles.headerTitle}>USER PROFILE</Text>
     <Text style={styles.headerSubtitle}>System data retrieval complete...</Text>
 
-    {/* Refresh Button */}
-    <TouchableOpacity
-     style={styles.refreshButton}
+    <MatrixButton
+     title=" [ REFRESH DATA ]"
      onPress={refreshUserData}
-     disabled={isRefreshing}
-    >
-     <Text style={[styles.refreshText, isRefreshing && styles.refreshingText]}>
-      {isRefreshing ? '[ REFRESHING... ]' : '[ REFRESH DATA ]'}
-     </Text>
-    </TouchableOpacity>
+     loading={isRefreshing}
+    />
    </View>
 
    {/* User Identity Section */}

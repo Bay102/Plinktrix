@@ -2,6 +2,8 @@ import { UserSettingsModal } from '@/components/pages/Account/UserSettingsModal'
 import { UserStats } from '@/components/pages/Account/UserStats'
 import DigitalRain from '@/components/pages/Plinko/DigitalRain'
 import ParallaxScrollView from '@/components/ParallaxScrollView'
+import MatrixButton from '@/components/ui/MatrixButton'
+import { Theme } from '@/constants/Colors'
 import { useAuthProvider, useUserProvider } from '@/providers'
 import { createAccount } from '@/supabase/api/create-account'
 import { login } from '@/supabase/api/login'
@@ -9,7 +11,7 @@ import { router } from 'expo-router'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { ScrollView, StyleSheet } from 'react-native'
-import { Button, TextInput } from 'react-native-paper'
+import { Button, Text, TextInput } from 'react-native-paper'
 
 interface LoginFormData {
  email: string
@@ -48,12 +50,8 @@ export default function AccountScreen() {
    const response = await login(data.email, data.password)
 
    if (response instanceof Error) {
-    console.log(response)
     throw new Error(response.message)
    }
-
-   console.log('Login successful:', data)
-   // AuthProvider will automatically fetch user data
   } catch (error) {
    console.error(error)
   }
@@ -88,6 +86,7 @@ export default function AccountScreen() {
     // User is logged in
     <>
      <UserStats />
+
      <UserSettingsModal
       isVisible={settingsModalVisible}
       onClose={() => setSettingsModalVisible(false)}
@@ -101,23 +100,15 @@ export default function AccountScreen() {
        headerBackgroundColor={{ light: '#D0D0D0', dark: '#000' }}
        headerImage={<DigitalRain />}
       >
-       <Button
-        mode="outlined"
-        style={styles.button}
-        onPress={() => setFormMode('login')}
-       >
-        Login
-       </Button>
-       <Button
-        mode="outlined"
-        style={styles.button}
+       <MatrixButton title=" [ LOGIN ]" onPress={() => setFormMode('login')} />
+       <MatrixButton
+        title=" [ SIGN UP ]"
         onPress={() => setFormMode('signup')}
-       >
-        Signup
-       </Button>
+       />
+
        {/* Dev Login */}
        <Button
-        mode="text"
+        mode="elevated"
         style={styles.button}
         onPress={() => {
          setFormMode('login')
@@ -125,7 +116,7 @@ export default function AccountScreen() {
          loginForm.setValue('password', 'testing123')
         }}
        >
-        Dev Login
+        <Text>[ DEV LOGIN ]</Text>
        </Button>
       </ParallaxScrollView>
      )}
@@ -155,6 +146,9 @@ export default function AccountScreen() {
           error={!!loginForm.formState.errors.email}
           // @ts-ignore - React Native Paper doesn't have proper types for helperText
           helperText={loginForm.formState.errors.email?.message}
+          contentStyle={{
+           color: Theme.colors.primary,
+          }}
          />
         )}
        />
@@ -176,26 +170,29 @@ export default function AccountScreen() {
           error={!!loginForm.formState.errors.password}
           // @ts-ignore - React Native Paper doesn't have proper types for helperText
           helperText={loginForm.formState.errors.password?.message}
+          contentStyle={{
+           color: Theme.colors.primary,
+          }}
          />
         )}
        />
 
-       <Button
-        mode="contained"
-        style={styles.button}
+       <MatrixButton
+        title="[ LOGIN ]"
         onPress={loginForm.handleSubmit(onLoginSubmit)}
         loading={loginForm.formState.isSubmitting}
-        disabled={loginForm.formState.isSubmitting}
-       >
-        Login
-       </Button>
+        // disabled={loginForm.formState.isSubmitting}
+       />
 
        <Button onPress={resetForm}>Cancel</Button>
       </ParallaxScrollView>
      )}
 
      {formMode === 'signup' && (
-      <>
+      <ParallaxScrollView
+       headerBackgroundColor={{ light: '#D0D0D0', dark: '#000' }}
+       headerImage={<DigitalRain />}
+      >
        <Controller
         control={signupForm.control}
         name="email"
@@ -216,6 +213,9 @@ export default function AccountScreen() {
           error={!!signupForm.formState.errors.email}
           // @ts-ignore - React Native Paper doesn't have proper types for helperText
           helperText={signupForm.formState.errors.email?.message}
+          contentStyle={{
+           color: Theme.colors.primary,
+          }}
          />
         )}
        />
@@ -240,6 +240,9 @@ export default function AccountScreen() {
           error={!!signupForm.formState.errors.username}
           // @ts-ignore - React Native Paper doesn't have proper types for helperText
           helperText={signupForm.formState.errors.username?.message}
+          contentStyle={{
+           color: Theme.colors.primary,
+          }}
          />
         )}
        />
@@ -265,22 +268,22 @@ export default function AccountScreen() {
           error={!!signupForm.formState.errors.password}
           // @ts-ignore - React Native Paper doesn't have proper types for helperText
           helperText={signupForm.formState.errors.password?.message}
+          contentStyle={{
+           color: Theme.colors.primary,
+          }}
          />
         )}
        />
 
-       <Button
-        mode="contained"
-        style={styles.button}
+       <MatrixButton
+        title=" [ SIGN UP ]"
         onPress={signupForm.handleSubmit(onSignupSubmit)}
         loading={signupForm.formState.isSubmitting}
-        disabled={signupForm.formState.isSubmitting}
-       >
-        Sign Up
-       </Button>
+        // disabled={signupForm.formState.isSubmitting}
+       />
 
        <Button onPress={resetForm}>Cancel</Button>
-      </>
+      </ParallaxScrollView>
      )}
     </>
    )}

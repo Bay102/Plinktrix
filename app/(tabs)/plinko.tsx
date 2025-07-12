@@ -15,9 +15,9 @@ import {
  ScrollView,
  StatusBar,
  StyleSheet,
- Text,
  View,
 } from 'react-native'
+import { Text } from 'react-native-paper'
 
 // --- Type Definitions ---
 interface Position {
@@ -99,7 +99,7 @@ const PrizeSlot: React.FC<PrizeSlotProps> = ({ value, animationType }) => {
   <Animated.View
    style={[styles.prizeSlot, { backgroundColor: animatedBackgroundColor }]}
   >
-   <Text style={styles.prizeSlotText}>${value.toLocaleString()}</Text>
+   <Text style={styles.prizeSlotText}>{value.toLocaleString()}</Text>
   </Animated.View>
  )
 }
@@ -621,7 +621,7 @@ const Plinko: React.FC = () => {
    <DigitalRain />
    <View style={styles.container}>
     <View style={styles.header}>
-     <Text style={styles.title}>Balls Daily</Text>
+     <Text style={styles.title}>Plinktrix</Text>
      <Text style={styles.subtitle}>
       Risk calculation subroutine initiated...
      </Text>

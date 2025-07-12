@@ -1,7 +1,13 @@
 import Slider from '@react-native-community/slider'
 import React from 'react'
-import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native'
-import { Text } from 'react-native-paper'
+import {
+ Platform,
+ StyleSheet,
+ Text,
+ TouchableOpacity,
+ View,
+} from 'react-native'
+// import { Text } from 'react-native-paper'
 
 // --- Type Definitions ---
 interface PrizeCount {
@@ -73,8 +79,7 @@ const Overlay: React.FC<OverlayProps> = ({
    <View style={styles.overlayControls}>
     <View style={styles.sliderContainer}>
      <Text style={styles.labelText}>
-      Regular Data Packets:{' '}
-      <Text style={{ color: '#FFF' }}>{regularBallCount}</Text>
+      Data Packets: <Text style={{ color: '#FFF' }}>{regularBallCount}</Text>
       {userLoggedIn && (
        <Text style={{ color: '#AAA', fontSize: 14 }}>
         {' '}
@@ -96,11 +101,10 @@ const Overlay: React.FC<OverlayProps> = ({
      />
     </View>
 
-    {goldBallCount !== 0 && (
+    {maxGoldBalls !== 0 && (
      <View style={styles.sliderContainer}>
       <Text style={styles.labelText}>
-       Gold Data Packets:{' '}
-       <Text style={{ color: '#FFD700' }}>{goldBallCount}</Text>
+       Bonus Packets: <Text style={{ color: '#FFD700' }}>{goldBallCount}</Text>
        {userLoggedIn && (
         <Text style={{ color: '#AAA', fontSize: 14 }}>
          {' '}
@@ -190,14 +194,11 @@ const Overlay: React.FC<OverlayProps> = ({
     {(totalPrize > 0 || Object.keys(prizeCounts).length > 0) && (
      <View style={styles.resultsContainer}>
       <Text style={styles.payoutText}>
-       Payout: ${totalPrize.toLocaleString()}
+       Bytes: {totalPrize.toLocaleString()}
       </Text>
 
       <View style={styles.analysisSection}>
-       <Text style={styles.analysisTitle}>
-        {' '}
-        &quot;// Drop Analysis //&quot;
-       </Text>
+       <Text style={styles.analysisTitle}>Drop Analysis:</Text>
        {Object.entries(prizeCounts)
         .sort(([valA], [valB]) => Number(valB) - Number(valA))
         .map(([value, { regular, gold }]) => (
@@ -205,9 +206,8 @@ const Overlay: React.FC<OverlayProps> = ({
           {regular > 0 && (
            <View style={styles.resultRow}>
             <Text style={styles.resultText}>
-             Prize:{' '}
              <Text style={{ color: '#FFF' }}>
-              ${Number(value).toLocaleString()}
+              {Number(value).toLocaleString()}
              </Text>
             </Text>
             <Text style={styles.resultText}>x {regular}</Text>
@@ -216,9 +216,8 @@ const Overlay: React.FC<OverlayProps> = ({
           {gold > 0 && (
            <View style={styles.resultRow}>
             <Text style={styles.resultText}>
-             Prize:{' '}
              <Text style={{ color: '#FFD700' }}>
-              ${Number(value).toLocaleString()} (x2)
+              {Number(value).toLocaleString()} (x2)
              </Text>
             </Text>
             <Text style={styles.resultText}>x {gold}</Text>
@@ -229,7 +228,7 @@ const Overlay: React.FC<OverlayProps> = ({
       </View>
 
       <View style={styles.analysisSection}>
-       <Text style={styles.analysisTitle}>✨ // System Commentary //</Text>
+       <Text style={styles.analysisTitle}>✨ System Commentary:</Text>
        {isAnalyzing && (
         <Text style={styles.aiText}> Analyzing data stream...</Text>
        )}
@@ -346,10 +345,11 @@ const styles = StyleSheet.create({
   flexDirection: 'row',
   justifyContent: 'space-between',
   paddingHorizontal: 4,
+  fontSize: 18,
  },
  resultText: {
   fontFamily: FONT_FAMILY,
-  fontSize: 16,
+  fontSize: 18,
   color: '#CCC',
  },
  aiText: {

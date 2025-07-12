@@ -1,28 +1,28 @@
 import { BaseModal } from '@/components/ui/BaseModal'
-import { useAuthProvider } from '@/providers'
+import MatrixButton from '@/components/ui/MatrixButton'
+import { useAuthProvider, useUserProvider } from '@/providers'
 import { StyleSheet, View } from 'react-native'
-import { Button } from 'react-native-paper'
 
 export const UserSettingsModal = ({
- isVisible,
+ isVisible = false,
  onClose,
 }: {
- isVisible: boolean
+ isVisible?: boolean
  onClose: () => void
 }) => {
  const { logOut } = useAuthProvider()
+ const { setSettingsModalVisible } = useUserProvider()
  return (
   <BaseModal isVisible={isVisible} onClose={onClose}>
    {/* <DigitalRain /> */}
    <View style={styles.container}>
-    <Button
-     mode="contained"
+    <MatrixButton
+     title=" [ LOGOUT ]"
      onPress={() => {
       logOut()
+      setSettingsModalVisible(false)
      }}
-    >
-     Logout
-    </Button>
+    />
    </View>
   </BaseModal>
  )

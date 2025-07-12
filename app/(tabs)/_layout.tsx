@@ -11,8 +11,8 @@ import { Button } from 'react-native-paper'
 
 export default function TabLayout() {
  const colorScheme = useColorScheme()
- const { logOut, user } = useAuthProvider()
- const { settingsModalVisible, setSettingsModalVisible } = useUserProvider()
+ const { user } = useAuthProvider()
+ const { setSettingsModalVisible } = useUserProvider()
 
  return (
   <Tabs
@@ -80,23 +80,14 @@ export default function TabLayout() {
      headerShown: true,
      headerRight: ({ tintColor }) =>
       user && (
-       <TouchableOpacity onPress={() => logOut()}>
-        <IconSymbol
-         size={22}
-         name="person.badge.minus"
-         color={tintColor ?? 'black'}
-        />
-       </TouchableOpacity>
-      ),
-     headerLeft: ({ tintColor }) =>
-      user && (
        <TouchableOpacity
-        style={{}}
+        style={{ marginRight: 10 }}
         onPress={() => setSettingsModalVisible(true)}
        >
-        <IconSymbol size={22} name="gear.circle" color={tintColor ?? 'black'} />
+        <IconSymbol size={25} name="gear" color={tintColor ?? 'black'} />
        </TouchableOpacity>
       ),
+
      headerStyle: {
       backgroundColor: Colors.dark.background,
      },

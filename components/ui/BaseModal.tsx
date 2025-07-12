@@ -6,7 +6,7 @@ import { Button } from 'react-native-paper'
 import { IconSymbol } from './IconSymbol'
 
 export const BaseModal = ({
- isVisible,
+ isVisible = false,
  onClose,
  children,
 }: {
