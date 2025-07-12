@@ -30,19 +30,29 @@ export default function TabLayout() {
    <Tabs.Screen
     name="index"
     options={{
-     title: 'Plinko',
+     title: '',
      headerShown: false,
      tabBarIcon: ({ color }) => (
-      <IconSymbol size={28} name="house.fill" color={color} />
+      <IconSymbol
+       size={35}
+       name="gamecontroller.fill"
+       color={color}
+       style={{ marginTop: 15 }}
+      />
      ),
     }}
    />
    <Tabs.Screen
-    name="explore"
+    name="account"
     options={{
-     title: 'Account',
+     title: '',
      tabBarIcon: ({ color }) => (
-      <IconSymbol size={28} name="person.fill" color={color} />
+      <IconSymbol
+       size={35}
+       name="person.circle"
+       color={color}
+       style={{ marginTop: 15 }}
+      />
      ),
     }}
    />

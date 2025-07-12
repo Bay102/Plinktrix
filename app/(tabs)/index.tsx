@@ -1,6 +1,5 @@
 import DigitalRain from '@/components/pages/Plinko/DigitalRain' // Assuming this component exists
 import Slider from '@react-native-community/slider'
-import { useFonts } from 'expo-font'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
  Animated,
@@ -119,9 +118,9 @@ const Ball: React.FC<BallProps> = ({ position, isGold }) => {
 
 // --- Main App Component ---
 const App: React.FC = () => {
- const [fontsLoaded] = useFonts({
-  VT323: require('../../assets/fonts/VT323-Regular.ttf'), // Correct path to VT323 font
- })
+ //  const [fontsLoaded] = useFonts({
+ //   VT323: require('../../assets/fonts/VT323-Regular.ttf'), // Correct path to VT323 font
+ //  })
 
  // --- State Management ---
  const [balls, setBalls] = useState<BallType[]>([])
@@ -268,7 +267,7 @@ const App: React.FC = () => {
     const distanceFromCenter = Math.abs(ball.x - boardWidth / 2)
     if (distanceFromCenter < 30 && ball.y > PEG_VERTICAL_SPACING * 2) {
      const pushDirection = ball.x > boardWidth / 2 ? 1 : -1
-     ball.vx += pushDirection * 0.175
+     ball.vx += pushDirection * 0.15
     }
 
     // Update position
@@ -504,14 +503,6 @@ const App: React.FC = () => {
     setBalls((prev) => [...prev, newBall])
    }, i * 150)
   })
- }
-
- if (!fontsLoaded) {
-  return (
-   <View style={styles.container}>
-    <Text style={styles.loadingText}>Loading Assets...</Text>
-   </View>
-  )
  }
 
  // --- Render ---
