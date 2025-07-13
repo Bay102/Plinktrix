@@ -1,12 +1,11 @@
 import { HapticTab } from '@/components/HapticTab'
 import { IconSymbol } from '@/components/ui/IconSymbol'
-import TabBarBackground from '@/components/ui/TabBarBackground'
-import { Colors } from '@/constants/Colors'
+import { Colors, DynamicBGColor } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { useAuthProvider, useUserProvider } from '@/providers'
 import { Tabs } from 'expo-router'
 import React from 'react'
-import { Platform, TouchableOpacity } from 'react-native'
+import { Platform, TouchableOpacity, View } from 'react-native'
 import { Button } from 'react-native-paper'
 
 export default function TabLayout() {
@@ -20,13 +19,16 @@ export default function TabLayout() {
     tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
     headerShown: false,
     tabBarButton: HapticTab,
-    tabBarBackground: TabBarBackground,
+    tabBarBackground: () => (
+     <View
+      style={{ backgroundColor: Colors[colorScheme ?? 'light'].background }}
+     />
+    ),
     tabBarStyle: Platform.select({
      ios: {
       // Use a transparent background on iOS to show the blur effect
       position: 'absolute',
      },
-     default: {},
     }),
    }}
   >
@@ -61,7 +63,7 @@ export default function TabLayout() {
       </Button>
      ),
      headerStyle: {
-      backgroundColor: Colors.dark.background,
+      backgroundColor: DynamicBGColor(colorScheme),
      },
      tabBarIcon: ({ color }) => (
       <IconSymbol
@@ -89,7 +91,7 @@ export default function TabLayout() {
       ),
 
      headerStyle: {
-      backgroundColor: Colors.dark.background,
+      backgroundColor: DynamicBGColor(colorScheme),
      },
      tabBarIcon: ({ color }) => (
       <IconSymbol

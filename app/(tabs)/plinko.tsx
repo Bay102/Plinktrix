@@ -691,7 +691,7 @@ const Plinko: React.FC = () => {
 const FONT_FAMILY = Platform.OS === 'ios' ? 'VT323' : 'VT323'
 
 const styles = StyleSheet.create({
- screen: { flex: 1, backgroundColor: '#000' },
+ screen: { flex: 1 },
  scrollContent: {
   flexGrow: 1,
   paddingTop: 40,

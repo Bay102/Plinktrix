@@ -6,6 +6,7 @@ import {
  DarkTheme as NavigationDarkTheme,
  DefaultTheme as NavigationDefaultTheme,
 } from '@react-navigation/native'
+import { ColorSchemeName } from 'react-native'
 import { MD3DarkTheme, MD3LightTheme } from 'react-native-paper'
 
 // Base colors that are shared between light and dark themes
@@ -132,6 +133,10 @@ export const CustomNavigationDarkTheme = {
   border: darkColors.surfaceVariant,
   notification: baseColors.error,
  },
+}
+
+export const DynamicBGColor = (colorScheme: ColorSchemeName) => {
+ return colorScheme === 'dark' ? darkColors.background : lightColors.background
 }
 
 // Default theme export for backward compatibility
