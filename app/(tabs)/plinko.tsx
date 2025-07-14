@@ -52,6 +52,26 @@ type AnimatingSlots = {
  [key: number]: AnimationType
 }
 
+// --- New State Management Types ---
+interface GameState {
+ isDropping: boolean
+ totalPrize: number
+ currentGravity: number
+ isAnalyzing: boolean
+ aiAnalysis: string
+ gameEndedWithPrize: number | null
+}
+
+interface BallCounts {
+ regular: number
+ gold: number
+}
+
+interface LoadingState {
+ isLoadingStats: boolean
+ isUpdatingStats: boolean
+}
+
 // --- Helper Component Props ---
 interface PrizeSlotProps {
  value: number
@@ -63,10 +83,24 @@ interface BallProps {
  isGold: boolean
 }
 
-// --- Helper Components ---
-const Peg: React.FC = () => <View style={styles.peg} />
+interface PegGridProps {
+ pegs: PegType[][]
+}
 
-const PrizeSlot: React.FC<PrizeSlotProps> = ({ value, animationType }) => {
+interface BallLayerProps {
+ balls: BallType[]
+}
+
+interface PrizeSlotLayerProps {
+ prizeValues: number[]
+ animatingSlots: AnimatingSlots
+}
+
+// --- Memoized Helper Components ---
+const Peg = React.memo(() => <View style={styles.peg} />)
+Peg.displayName = 'Peg'
+
+const PrizeSlot = React.memo<PrizeSlotProps>(({ value, animationType }) => {
  const animatedValue = useRef(new Animated.Value(0)).current
 
  useEffect(() => {
@@ -78,20 +112,23 @@ const PrizeSlot: React.FC<PrizeSlotProps> = ({ value, animationType }) => {
     useNativeDriver: false, // backgroundColor cannot be animated with native driver
    }).start()
   }
- }, [animationType])
+ }, [animationType, animatedValue])
 
- const winColor = 'rgba(0, 255, 0, 0.5)'
- const loseColor = 'rgba(255, 0, 0, 0.5)'
- const goldColor = 'rgba(255, 215, 0, 0.5)'
- const baseColor = 'rgba(0, 0, 0, 0.5)'
+ const animationColors = useMemo(
+  () => ({
+   win: 'rgba(0, 255, 0, 0.5)',
+   lose: 'rgba(255, 0, 0, 0.5)',
+   gold: 'rgba(255, 215, 0, 0.5)',
+   base: 'rgba(0, 0, 0, 0.5)',
+  }),
+  []
+ )
 
  const animatedBackgroundColor = animatedValue.interpolate({
   inputRange: [0, 1],
   outputRange: [
-   baseColor,
-   (animationType &&
-    { win: winColor, lose: loseColor, gold: goldColor }[animationType]) ||
-    baseColor,
+   animationColors.base,
+   (animationType && animationColors[animationType]) || animationColors.base,
   ],
  })
 
@@ -102,71 +139,160 @@ const PrizeSlot: React.FC<PrizeSlotProps> = ({ value, animationType }) => {
    <Text style={styles.prizeSlotText}>{value.toLocaleString()}</Text>
   </Animated.View>
  )
-}
+})
+PrizeSlot.displayName = 'PrizeSlot'
 
-const Ball: React.FC<BallProps> = ({ position, isGold }) => {
+const Ball = React.memo<BallProps>(({ position, isGold }) => {
  const ballStyle = isGold ? styles.goldBall : styles.regularBall
- return (
-  <View
-   style={[
-    styles.ball,
-    ballStyle,
-    {
-     transform: [
-      { translateX: position.x - 12 },
-      { translateY: position.y - 12 },
-     ],
-    },
-   ]}
-  />
+ const transform = useMemo(
+  () => [{ translateX: position.x - 12 }, { translateY: position.y - 12 }],
+  [position.x, position.y]
  )
-}
+
+ return <View style={[styles.ball, ballStyle, { transform }]} />
+})
+Ball.displayName = 'Ball'
+
+const PegGrid = React.memo<PegGridProps>(({ pegs }) => {
+ const PEG_RADIUS = 4
+ return (
+  <>
+   {pegs.flat().map((peg, i) => (
+    <View
+     key={i}
+     style={{
+      position: 'absolute',
+      top: peg.y,
+      left: peg.x,
+      transform: [{ translateX: -PEG_RADIUS }],
+     }}
+    >
+     <Peg />
+    </View>
+   ))}
+  </>
+ )
+})
+PegGrid.displayName = 'PegGrid'
+
+const BallLayer = React.memo<BallLayerProps>(({ balls }) => (
+ <>
+  {balls.map((ball) => (
+   <Ball
+    key={ball.id}
+    position={{ x: ball.x, y: ball.y }}
+    isGold={ball.isGold}
+   />
+  ))}
+ </>
+))
+BallLayer.displayName = 'BallLayer'
+
+const PrizeSlotLayer = React.memo<PrizeSlotLayerProps>(
+ ({ prizeValues, animatingSlots }) => (
+  <View style={styles.prizeContainer}>
+   {prizeValues.map((value, i) => (
+    <PrizeSlot key={i} value={value} animationType={animatingSlots[i]} />
+   ))}
+  </View>
+ )
+)
+PrizeSlotLayer.displayName = 'PrizeSlotLayer'
 
 // --- Main Plinko Component ---
 const Plinko: React.FC = () => {
  // --- Providers ---
  const { user, setUserData } = useAuthProvider()
 
- // --- State Management ---
+ // --- Consolidated State Management ---
  const [balls, setBalls] = useState<BallType[]>([])
- const [isDropping, setIsDropping] = useState<boolean>(false)
+ const [gameState, setGameState] = useState<GameState>({
+  isDropping: false,
+  totalPrize: 0,
+  currentGravity: 0.11,
+  isAnalyzing: false,
+  aiAnalysis: '',
+  gameEndedWithPrize: null,
+ })
+ const [ballCounts, setBallCounts] = useState<BallCounts>({
+  regular: 1,
+  gold: 0,
+ })
+ const [loadingState, setLoadingState] = useState<LoadingState>({
+  isLoadingStats: false,
+  isUpdatingStats: false,
+ })
  const [prizeCounts, setPrizeCounts] = useState<PrizeCounts>({})
- const [totalPrize, setTotalPrize] = useState<number>(0)
  const [boardWidth] = useState<number>(Dimensions.get('window').width)
- const [regularBallCount, setRegularBallCount] = useState<number>(1)
- const [goldBallCount, setGoldBallCount] = useState<number>(0)
  const [animatingSlots, setAnimatingSlots] = useState<AnimatingSlots>({})
- const [currentGravity, setCurrentGravity] = useState<number>(0.11)
  const [userStats, setUserStats] = useState<UserData | null>(null)
- const [isLoadingStats, setIsLoadingStats] = useState<boolean>(false)
- const [isUpdatingStats, setIsUpdatingStats] = useState<boolean>(false)
- const [gameEndedWithPrize, setGameEndedWithPrize] = useState<number | null>(
-  null
- )
- const [aiAnalysis, setAiAnalysis] = useState<string>('')
- const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false)
 
  // --- Refs ---
  const animationFrameRef = useRef<number | null>(null)
+ const timeoutRefs = useRef<Map<number, number>>(new Map())
 
  // --- Game Configuration & Constants ---
- const ROWS = 11
- const PEG_HORIZONTAL_SPACING = 35
- const PEG_VERTICAL_SPACING = 40
+ const gameConstants = useMemo(
+  () => ({
+   ROWS: 11,
+   PEG_HORIZONTAL_SPACING: 35,
+   PEG_VERTICAL_SPACING: 40,
+   LOW_GRAVITY: 0.05,
+   HIGH_GRAVITY: 0.09,
+   DAMPENING: 0.6,
+   PEG_RADIUS: 4,
+   BALL_RADIUS: 10,
+   MAX_TOTAL_BALLS: 100,
+  }),
+  []
+ )
+
  const prizeValues = useMemo(() => [1, 5, 10, 0, 100, 0, 10, 5, 1], [])
- const LOW_GRAVITY = 0.05
- const HIGH_GRAVITY = 0.09
- const DAMPENING = 0.6
- const PEG_RADIUS = 4
- const BALL_RADIUS = 10
- const MAX_TOTAL_BALLS = 100
+
+ // --- Memoized Calculations ---
+ const boardDimensions = useMemo(
+  () => ({
+   width: boardWidth,
+   height: (gameConstants.ROWS + 5) * gameConstants.PEG_VERTICAL_SPACING,
+  }),
+  [boardWidth, gameConstants.ROWS, gameConstants.PEG_VERTICAL_SPACING]
+ )
+
+ const maxRegularBalls = userStats?.regular_packets || 0
+ const maxGoldBalls = userStats?.bonus_packets || 0
+
+ const gameValidation = useMemo(() => {
+  const hasInsufficientBalls =
+   ballCounts.regular > maxRegularBalls || ballCounts.gold > maxGoldBalls
+  const hasTooManyBalls =
+   ballCounts.regular + ballCounts.gold > gameConstants.MAX_TOTAL_BALLS
+  const canStartGame =
+   !gameState.isDropping &&
+   !hasInsufficientBalls &&
+   !hasTooManyBalls &&
+   (ballCounts.regular > 0 || ballCounts.gold > 0) &&
+   !!user?.id
+
+  return {
+   hasInsufficientBalls,
+   hasTooManyBalls,
+   canStartGame,
+  }
+ }, [
+  ballCounts,
+  maxRegularBalls,
+  maxGoldBalls,
+  gameState.isDropping,
+  user?.id,
+  gameConstants.MAX_TOTAL_BALLS,
+ ])
 
  // --- User Data Management ---
  const fetchUserStats = useCallback(async () => {
   if (!user?.id) return
 
   try {
-   setIsLoadingStats(true)
+   setLoadingState((prev) => ({ ...prev, isLoadingStats: true }))
    const stats = await getUserStats(user.id)
    setUserStats(stats)
 
@@ -177,21 +303,21 @@ const Plinko: React.FC = () => {
   } catch (error) {
    console.error('Error fetching user stats:', error)
   } finally {
-   setIsLoadingStats(false)
+   setLoadingState((prev) => ({ ...prev, isLoadingStats: false }))
   }
  }, [user?.id, setUserData])
 
  const updateUserStatsAfterGame = useCallback(
   async (scoreEarned: number) => {
-   if (!user?.id || isUpdatingStats) return
+   if (!user?.id || loadingState.isUpdatingStats) return
 
    try {
-    setIsUpdatingStats(true)
+    setLoadingState((prev) => ({ ...prev, isUpdatingStats: true }))
 
     const gameResult: GameResultData = {
      ballsUsed: {
-      regular: regularBallCount,
-      gold: goldBallCount,
+      regular: ballCounts.regular,
+      gold: ballCounts.gold,
      },
      scoreEarned,
     }
@@ -204,10 +330,10 @@ const Plinko: React.FC = () => {
    } catch (error) {
     console.error('Error updating user stats:', error)
    } finally {
-    setIsUpdatingStats(false)
+    setLoadingState((prev) => ({ ...prev, isUpdatingStats: false }))
    }
   },
-  [user?.id, isUpdatingStats, regularBallCount, goldBallCount, setUserData]
+  [user?.id, loadingState.isUpdatingStats, ballCounts, setUserData]
  )
 
  // Fetch user stats when user changes
@@ -217,122 +343,74 @@ const Plinko: React.FC = () => {
   }
  }, [user?.id, fetchUserStats])
 
- // --- Game Validation ---
- const maxRegularBalls = userStats?.regular_packets || 0
- const maxGoldBalls = userStats?.bonus_packets || 0
- const hasInsufficientBalls =
-  regularBallCount > maxRegularBalls || goldBallCount > maxGoldBalls
- const hasTooManyBalls = regularBallCount + goldBallCount > MAX_TOTAL_BALLS
- const canStartGame =
-  !isDropping &&
-  !hasInsufficientBalls &&
-  !hasTooManyBalls &&
-  (regularBallCount > 0 || goldBallCount > 0) &&
-  user?.id
-
  // Update ball counts when user stats change
  useEffect(() => {
   if (userStats) {
-   // Reset ball counts if they exceed user's available balls
-   if (regularBallCount > userStats.regular_packets) {
-    setRegularBallCount(Math.max(1, userStats.regular_packets))
-   }
-   if (goldBallCount > userStats.bonus_packets) {
-    setGoldBallCount(Math.min(goldBallCount, userStats.bonus_packets))
-   }
+   setBallCounts((prev) => ({
+    regular:
+     prev.regular > userStats.regular_packets
+      ? Math.max(1, userStats.regular_packets)
+      : prev.regular,
+    gold:
+     prev.gold > userStats.bonus_packets
+      ? Math.min(prev.gold, userStats.bonus_packets)
+      : prev.gold,
+   }))
   }
- }, [userStats, regularBallCount, goldBallCount])
+ }, [userStats])
 
  // Handle game end and stats update
  useEffect(() => {
-  if (gameEndedWithPrize !== null && user?.id) {
-   updateUserStatsAfterGame(gameEndedWithPrize)
-   setGameEndedWithPrize(null)
+  if (gameState.gameEndedWithPrize !== null && user?.id) {
+   updateUserStatsAfterGame(gameState.gameEndedWithPrize)
+   setGameState((prev) => ({ ...prev, gameEndedWithPrize: null }))
   }
- }, [gameEndedWithPrize, user?.id, updateUserStatsAfterGame])
+ }, [gameState.gameEndedWithPrize, user?.id, updateUserStatsAfterGame])
 
  // --- Peg Generation ---
  const pegs = useMemo<PegType[][]>(() => {
   const pegLayout: PegType[][] = []
-  for (let row = 0; row < ROWS; row++) {
+  for (let row = 0; row < gameConstants.ROWS; row++) {
    const numPegs = row + 2
    const rowPegs: PegType[] = []
-   const rowWidth = (numPegs - 1) * PEG_HORIZONTAL_SPACING
+   const rowWidth = (numPegs - 1) * gameConstants.PEG_HORIZONTAL_SPACING
    const startX = (boardWidth - rowWidth) / 2
    for (let col = 0; col < numPegs; col++) {
     rowPegs.push({
-     x: startX + col * PEG_HORIZONTAL_SPACING,
-     y: PEG_VERTICAL_SPACING * (row + 2),
+     x: startX + col * gameConstants.PEG_HORIZONTAL_SPACING,
+     y: gameConstants.PEG_VERTICAL_SPACING * (row + 2),
     })
    }
    pegLayout.push(rowPegs)
   }
   return pegLayout
- }, [boardWidth])
+ }, [boardWidth, gameConstants])
 
- // --- Gemini API Call ---
- //  const getAiAnalysis = useCallback(
- //   async (counts: PrizeCounts, total: number) => {
- //    setIsAnalyzing(true)
- //    setAiAnalysis('')
+ // --- Optimized Animation Slot Management ---
+ const updateAnimatingSlots = useCallback(
+  (slotIndex: number, animationType: AnimationType) => {
+   setAnimatingSlots((prev) => ({ ...prev, [slotIndex]: animationType }))
 
- //    const prizeDistribution = Object.entries(counts)
- //     .map(([prize, { regular = 0, gold = 0 }]) => {
- //      let parts = []
- //      if (regular > 0) parts.push(`${regular}x regular for ${prize} credits`)
- //      if (gold > 0) parts.push(`${gold}x GOLD for ${prize} credits (doubled)`)
- //      return parts.join(', ')
- //     })
- //     .join('; ')
+   // Clear existing timeout for this slot
+   const existingTimeout = timeoutRefs.current.get(slotIndex)
+   if (existingTimeout) {
+    clearTimeout(existingTimeout)
+   }
 
- //    const prompt = `You are the system AI for a cyberpunk game called PL1NK0. The user just completed a data drop. The total payout was ${total} credits. The prize distribution was: ${prizeDistribution}. Provide a short, pithy, and thematic analysis of this drop (1-2 sentences). Be creative and stick to the cyberpunk/Matrix theme. Examples: "A clean extraction. Minimal resistance encountered." or "Volatile data stream. High risk, high reward. Watch your back, operator." or "Firewall breached. You've extracted a significant data payload."`
+   // Set new timeout
+   const newTimeout = setTimeout(() => {
+    setAnimatingSlots((prev) => ({ ...prev, [slotIndex]: null }))
+    timeoutRefs.current.delete(slotIndex)
+   }, 500) as number
 
- //    try {
- //     let chatHistory = []
- //     chatHistory.push({ role: 'user', parts: [{ text: prompt }] })
- //     const payload = { contents: chatHistory }
- //     const apiKey = '' // IMPORTANT: Use a secure way to manage API keys
- //     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`
+   timeoutRefs.current.set(slotIndex, newTimeout)
+  },
+  []
+ )
 
- //     const response = await fetch(apiUrl, {
- //      method: 'POST',
- //      headers: { 'Content-Type': 'application/json' },
- //      body: JSON.stringify(payload),
- //     })
-
- //     if (!response.ok) {
- //      throw new Error(`API request failed with status ${response.status}`)
- //     }
-
- //     const result = await response.json()
-
- //     if (
- //      result.candidates &&
- //      result.candidates.length > 0 &&
- //      result.candidates[0].content &&
- //      result.candidates[0].content.parts &&
- //      result.candidates[0].content.parts.length > 0
- //     ) {
- //      const text = result.candidates[0].content.parts[0].text
- //      setAiAnalysis(text)
- //     } else {
- //      throw new Error('Invalid response structure from API.')
- //     }
- //    } catch (error) {
- //     console.error('Gemini API error:', error)
- //     setAiAnalysis('// System Error: Analysis protocol failed. Recalibrating...')
- //    } finally {
- //     setIsAnalyzing(false)
- //    }
- //   },
- //   []
- //  )
-
- // --- Main Physics & Animation Loop ---
- const gameLoop = useCallback(() => {
-  setBalls((prevBalls) => {
-   let newBalls = prevBalls.map((ball) => ({ ...ball }))
-
+ // --- Physics Helper Functions ---
+ const updateBallPhysics = useCallback(
+  (newBalls: BallType[]) => {
    newBalls.forEach((ball) => {
     // Stuck detection - check if ball hasn't moved much
     const movement = Math.sqrt(
@@ -356,7 +434,7 @@ const Plinko: React.FC = () => {
     ball.lastY = ball.y
 
     // Apply gravity and air resistance
-    ball.vy += currentGravity
+    ball.vy += gameState.currentGravity
     ball.vx *= 0.995 // Slightly less air resistance
 
     // Minimum velocity to prevent complete stops
@@ -367,7 +445,10 @@ const Plinko: React.FC = () => {
 
     // Anti-center bias - subtly push balls away from center to reduce center hits
     const distanceFromCenter = Math.abs(ball.x - boardWidth / 2)
-    if (distanceFromCenter < 30 && ball.y > PEG_VERTICAL_SPACING * 2) {
+    if (
+     distanceFromCenter < 25 &&
+     ball.y > gameConstants.PEG_VERTICAL_SPACING * 2
+    ) {
      const pushDirection = ball.x > boardWidth / 2 ? 1 : -1
      ball.vx += pushDirection * 0.15
     }
@@ -377,14 +458,21 @@ const Plinko: React.FC = () => {
     ball.y += ball.vy
 
     // Natural boundary constraints
-    if (ball.x < BALL_RADIUS) {
-     ball.x = BALL_RADIUS
-     ball.vx = Math.abs(ball.vx) * DAMPENING
-    } else if (ball.x > boardWidth - BALL_RADIUS) {
-     ball.x = boardWidth - BALL_RADIUS
-     ball.vx = -Math.abs(ball.vx) * DAMPENING
+    if (ball.x < gameConstants.BALL_RADIUS) {
+     ball.x = gameConstants.BALL_RADIUS
+     ball.vx = Math.abs(ball.vx) * gameConstants.DAMPENING
+    } else if (ball.x > boardWidth - gameConstants.BALL_RADIUS) {
+     ball.x = boardWidth - gameConstants.BALL_RADIUS
+     ball.vx = -Math.abs(ball.vx) * gameConstants.DAMPENING
     }
+   })
+  },
+  [gameState.currentGravity, boardWidth, gameConstants]
+ )
 
+ const handlePegCollisions = useCallback(
+  (newBalls: BallType[]) => {
+   newBalls.forEach((ball) => {
     // Peg collisions with improved physics
     for (const row of pegs) {
      for (const peg of row) {
@@ -392,9 +480,13 @@ const Plinko: React.FC = () => {
       const dy = ball.y - peg.y
       const distance = Math.sqrt(dx * dx + dy * dy)
 
-      if (distance < BALL_RADIUS + PEG_RADIUS && distance > 0) {
+      if (
+       distance < gameConstants.BALL_RADIUS + gameConstants.PEG_RADIUS &&
+       distance > 0
+      ) {
        const angle = Math.atan2(dy, dx)
-       const overlap = BALL_RADIUS + PEG_RADIUS - distance + 1
+       const overlap =
+        gameConstants.BALL_RADIUS + gameConstants.PEG_RADIUS - distance + 1
 
        // Separate ball from peg
        ball.x += Math.cos(angle) * overlap
@@ -405,8 +497,8 @@ const Plinko: React.FC = () => {
        const normalY = dy / distance
        const dotProduct = ball.vx * normalX + ball.vy * normalY
 
-       ball.vx -= 2 * dotProduct * normalX * DAMPENING
-       ball.vy -= 2 * dotProduct * normalY * DAMPENING
+       ball.vx -= 2 * dotProduct * normalX * gameConstants.DAMPENING
+       ball.vy -= 2 * dotProduct * normalY * gameConstants.DAMPENING
 
        // Add increased randomness to spread distribution away from center
        ball.vx += (Math.random() - 0.5) * 2.5
@@ -420,9 +512,14 @@ const Plinko: React.FC = () => {
      }
     }
    })
+  },
+  [pegs, gameConstants]
+ )
 
+ const handleBallCollisions = useCallback(
+  (newBalls: BallType[]) => {
    // Ball-to-ball collision handling - only after balls pass first peg row
-   const firstPegRowY = PEG_VERTICAL_SPACING * 2 // Y position of first peg row
+   const firstPegRowY = gameConstants.PEG_VERTICAL_SPACING * 2 // Y position of first peg row
    for (let i = 0; i < newBalls.length; i++) {
     for (let j = i + 1; j < newBalls.length; j++) {
      const ball1 = newBalls[i]
@@ -434,9 +531,9 @@ const Plinko: React.FC = () => {
       const dy = ball2.y - ball1.y
       const distance = Math.sqrt(dx * dx + dy * dy)
 
-      if (distance < BALL_RADIUS * 2 && distance > 0) {
+      if (distance < gameConstants.BALL_RADIUS * 2 && distance > 0) {
        const angle = Math.atan2(dy, dx)
-       const overlap = (BALL_RADIUS * 2 - distance) / 2 + 1
+       const overlap = (gameConstants.BALL_RADIUS * 2 - distance) / 2 + 1
 
        // Separate balls more aggressively
        ball1.x -= Math.cos(angle) * overlap
@@ -453,10 +550,10 @@ const Plinko: React.FC = () => {
        const v2t = -ball2.vx * normalY + ball2.vy * normalX
 
        // Exchange normal velocities
-       ball1.vx = (v2n * normalX - v1t * normalY) * DAMPENING
-       ball1.vy = (v2n * normalY + v1t * normalX) * DAMPENING
-       ball2.vx = (v1n * normalX - v2t * normalY) * DAMPENING
-       ball2.vy = (v1n * normalY + v2t * normalX) * DAMPENING
+       ball1.vx = (v2n * normalX - v1t * normalY) * gameConstants.DAMPENING
+       ball1.vy = (v2n * normalY + v1t * normalX) * gameConstants.DAMPENING
+       ball2.vx = (v1n * normalX - v2t * normalY) * gameConstants.DAMPENING
+       ball2.vy = (v1n * normalY + v2t * normalX) * gameConstants.DAMPENING
 
        // Add stronger random forces to prevent clustering and spread distribution
        ball1.vx += (Math.random() - 0.5) * 0.8
@@ -467,86 +564,123 @@ const Plinko: React.FC = () => {
      }
     }
    }
+  },
+  [gameConstants]
+ )
 
-   const boardHeight = (ROWS + 5) * PEG_VERTICAL_SPACING
-   const landedBalls = newBalls.filter((ball) => ball.y > boardHeight)
-   const activeBalls = newBalls.filter((ball) => ball.y <= boardHeight)
+ const processBallPositions = useCallback(
+  (newBalls: BallType[]) => {
+   const boardHeight =
+    (gameConstants.ROWS + 5) * gameConstants.PEG_VERTICAL_SPACING
+   return {
+    landedBalls: newBalls.filter((ball) => ball.y > boardHeight),
+    activeBalls: newBalls.filter((ball) => ball.y <= boardHeight),
+   }
+  },
+  [gameConstants]
+ )
+
+ const handleLandedBalls = useCallback(
+  (landedBalls: BallType[]) => {
+   const newCounts: PrizeCounts = {}
+   let newPrize = 0
+
+   landedBalls.forEach((ball) => {
+    const slotIndex = Math.floor((ball.x / boardWidth) * prizeValues.length)
+    const prize =
+     prizeValues[Math.max(0, Math.min(slotIndex, prizeValues.length - 1))]
+
+    const finalPrize = ball.isGold && prize !== 0 ? prize * 2 : prize
+    newPrize += finalPrize
+
+    let animationType: AnimationType = 'win'
+    if (prize === 0) {
+     animationType = 'lose'
+    } else if (ball.isGold) {
+     animationType = 'gold'
+    }
+
+    updateAnimatingSlots(slotIndex, animationType)
+
+    const prizeKey = String(prize)
+    if (!newCounts[prizeKey]) {
+     newCounts[prizeKey] = { regular: 0, gold: 0 }
+    }
+    if (ball.isGold) {
+     newCounts[prizeKey].gold++
+    } else {
+     newCounts[prizeKey].regular++
+    }
+   })
+
+   // Batch state updates
+   setTimeout(() => {
+    setGameState((prev) => ({
+     ...prev,
+     totalPrize: prev.totalPrize + newPrize,
+    }))
+    setPrizeCounts((prev) => {
+     const updatedCounts = { ...prev }
+     for (const prize in newCounts) {
+      if (!updatedCounts[prize]) {
+       updatedCounts[prize] = { regular: 0, gold: 0 }
+      }
+      updatedCounts[prize].regular += newCounts[prize].regular
+      updatedCounts[prize].gold += newCounts[prize].gold
+     }
+     return updatedCounts
+    })
+   }, 0)
+  },
+  [boardWidth, prizeValues, updateAnimatingSlots]
+ )
+
+ const handleGameEnd = useCallback(() => {
+  setGameState((prev) => ({
+   ...prev,
+   isDropping: false,
+   gameEndedWithPrize: prev.totalPrize,
+  }))
+ }, [])
+
+ // --- Optimized Main Physics & Animation Loop ---
+ const gameLoop = useCallback(() => {
+  setBalls((prevBalls) => {
+   const newBalls = prevBalls.map((ball) => ({ ...ball }))
+
+   // Apply physics in sequence
+   updateBallPhysics(newBalls)
+   handlePegCollisions(newBalls)
+   handleBallCollisions(newBalls)
+
+   const { landedBalls, activeBalls } = processBallPositions(newBalls)
 
    if (landedBalls.length > 0) {
-    const newCounts: PrizeCounts = {}
-    let newPrize = 0
-    landedBalls.forEach((ball) => {
-     const slotIndex = Math.floor((ball.x / boardWidth) * prizeValues.length)
-     const prize =
-      prizeValues[Math.max(0, Math.min(slotIndex, prizeValues.length - 1))]
-
-     const finalPrize = ball.isGold && prize !== 0 ? prize * 2 : prize
-     newPrize += finalPrize
-
-     let animationType: AnimationType = 'win'
-     if (prize === 0) {
-      animationType = 'lose'
-     } else if (ball.isGold) {
-      animationType = 'gold'
-     }
-
-     setAnimatingSlots((prev) => ({ ...prev, [slotIndex]: animationType }))
-     setTimeout(() => {
-      setAnimatingSlots((prev) => ({ ...prev, [slotIndex]: null }))
-     }, 500)
-
-     const prizeKey = String(prize)
-     if (!newCounts[prizeKey]) {
-      newCounts[prizeKey] = { regular: 0, gold: 0 }
-     }
-     if (ball.isGold) {
-      newCounts[prizeKey].gold++
-     } else {
-      newCounts[prizeKey].regular++
-     }
-    })
-
-    setTimeout(() => {
-     setTotalPrize((prev) => prev + newPrize)
-     setPrizeCounts((prev) => {
-      const updatedCounts = { ...prev }
-      for (const prize in newCounts) {
-       if (!updatedCounts[prize]) {
-        updatedCounts[prize] = { regular: 0, gold: 0 }
-       }
-       updatedCounts[prize].regular += newCounts[prize].regular
-       updatedCounts[prize].gold += newCounts[prize].gold
-      }
-      return updatedCounts
-     })
-    }, 0)
+    handleLandedBalls(landedBalls)
    }
 
    if (activeBalls.length === 0 && prevBalls.length > 0) {
-    setIsDropping(false)
-    // Trigger stats update with current total prize
-    setTimeout(() => {
-     setGameEndedWithPrize(totalPrize)
-    }, 100)
-    // setTimeout(() => getAiAnalysis(prizeCounts, totalPrize), 100)
+    handleGameEnd()
    }
 
    return activeBalls
   })
 
-  animationFrameRef.current = requestAnimationFrame(gameLoop)
+  if (gameState.isDropping) {
+   animationFrameRef.current = requestAnimationFrame(gameLoop)
+  }
  }, [
-  pegs,
-  boardWidth,
-  prizeValues,
-  prizeCounts,
-  totalPrize,
-  currentGravity,
-  // getAiAnalysis,
+  gameState.isDropping,
+  updateBallPhysics,
+  handlePegCollisions,
+  handleBallCollisions,
+  processBallPositions,
+  handleLandedBalls,
+  handleGameEnd,
  ])
 
  useEffect(() => {
-  if (isDropping) {
+  if (gameState.isDropping) {
    animationFrameRef.current = requestAnimationFrame(gameLoop)
   } else {
    if (animationFrameRef.current) {
@@ -558,28 +692,43 @@ const Plinko: React.FC = () => {
     cancelAnimationFrame(animationFrameRef.current)
    }
   }
- }, [isDropping, gameLoop])
+ }, [gameState.isDropping, gameLoop])
 
- const handleDropBall = () => {
-  if (isDropping || !canStartGame) return
+ // Cleanup timeouts on unmount
+ useEffect(() => {
+  return () => {
+   timeoutRefs.current.forEach((timeout) => clearTimeout(timeout))
+   timeoutRefs.current.clear()
+  }
+ }, [])
 
-  const totalBalls = regularBallCount + goldBallCount
-  setCurrentGravity(totalBalls <= 10 ? LOW_GRAVITY : HIGH_GRAVITY)
+ const handleDropBall = useCallback(() => {
+  if (!gameValidation.canStartGame) return
 
+  const totalBalls = ballCounts.regular + ballCounts.gold
+  const newGravity =
+   totalBalls <= 10 ? gameConstants.LOW_GRAVITY : gameConstants.HIGH_GRAVITY
+
+  // Reset game state
   setBalls([])
   setPrizeCounts({})
-  setTotalPrize(0)
-  setAiAnalysis('')
-  setIsDropping(true)
+  setGameState((prev) => ({
+   ...prev,
+   isDropping: true,
+   totalPrize: 0,
+   aiAnalysis: '',
+   currentGravity: newGravity,
+  }))
 
   const ballsToDrop: { isGold: boolean }[] = []
-  for (let i = 0; i < goldBallCount; i++) {
+  for (let i = 0; i < ballCounts.gold; i++) {
    ballsToDrop.push({ isGold: true })
   }
-  for (let i = 0; i < regularBallCount; i++) {
+  for (let i = 0; i < ballCounts.regular; i++) {
    ballsToDrop.push({ isGold: false })
   }
 
+  // Shuffle balls
   for (let i = ballsToDrop.length - 1; i > 0; i--) {
    const j = Math.floor(Math.random() * (i + 1))
    ;[ballsToDrop[i], ballsToDrop[j]] = [ballsToDrop[j], ballsToDrop[i]]
@@ -593,7 +742,7 @@ const Plinko: React.FC = () => {
     const rightPeg = firstRowPegs[1]
     const gapCenter = (leftPeg.x + rightPeg.x) / 2
 
-    const startY = PEG_VERTICAL_SPACING * 0.5 // All balls start from same height above first row
+    const startY = gameConstants.PEG_VERTICAL_SPACING * 0.5 // All balls start from same height above first row
 
     const newBall: BallType = {
      id: Date.now() + i,
@@ -609,7 +758,16 @@ const Plinko: React.FC = () => {
     setBalls((prev) => [...prev, newBall])
    }, i * 150)
   })
- }
+ }, [gameValidation.canStartGame, ballCounts, gameConstants, pegs])
+
+ // Memoized ball count handlers
+ const handleRegularBallCountChange = useCallback((count: number) => {
+  setBallCounts((prev) => ({ ...prev, regular: count }))
+ }, [])
+
+ const handleGoldBallCountChange = useCallback((count: number) => {
+  setBallCounts((prev) => ({ ...prev, gold: count }))
+ }, [])
 
  // --- Render ---
  return (
@@ -627,57 +785,33 @@ const Plinko: React.FC = () => {
      </Text>
     </View>
 
-    <View
-     style={[
-      styles.board,
-      { width: boardWidth, height: (ROWS + 5) * PEG_VERTICAL_SPACING },
-     ]}
-    >
-     {pegs.flat().map((peg, i) => (
-      <View
-       key={i}
-       style={{
-        position: 'absolute',
-        top: peg.y,
-        left: peg.x,
-        transform: [{ translateX: -PEG_RADIUS }],
-       }}
-      >
-       <Peg />
-      </View>
-     ))}
-     {balls.map((ball) => (
-      <Ball
-       key={ball.id}
-       position={{ x: ball.x, y: ball.y }}
-       isGold={ball.isGold}
-      />
-     ))}
-     <View style={styles.prizeContainer}>
-      {prizeValues.map((value, i) => (
-       <PrizeSlot key={i} value={value} animationType={animatingSlots[i]} />
-      ))}
-     </View>
+    <View style={[styles.board, boardDimensions]}>
+     <PegGrid pegs={pegs} />
+     <BallLayer balls={balls} />
+     <PrizeSlotLayer
+      prizeValues={prizeValues}
+      animatingSlots={animatingSlots}
+     />
 
      <Overlay
-      isDropping={isDropping}
-      regularBallCount={regularBallCount}
-      setRegularBallCount={setRegularBallCount}
-      goldBallCount={goldBallCount}
-      setGoldBallCount={setGoldBallCount}
+      isDropping={gameState.isDropping}
+      regularBallCount={ballCounts.regular}
+      setRegularBallCount={handleRegularBallCountChange}
+      goldBallCount={ballCounts.gold}
+      setGoldBallCount={handleGoldBallCountChange}
       handleDropBall={handleDropBall}
       ballsCount={balls.length}
-      totalPrize={totalPrize}
+      totalPrize={gameState.totalPrize}
       prizeCounts={prizeCounts}
-      isAnalyzing={isAnalyzing}
-      aiAnalysis={aiAnalysis}
+      isAnalyzing={gameState.isAnalyzing}
+      aiAnalysis={gameState.aiAnalysis}
       maxRegularBalls={maxRegularBalls}
       maxGoldBalls={maxGoldBalls}
-      hasInsufficientBalls={hasInsufficientBalls}
-      hasTooManyBalls={hasTooManyBalls}
-      maxTotalBalls={MAX_TOTAL_BALLS}
-      isLoadingStats={isLoadingStats}
-      isUpdatingStats={isUpdatingStats}
+      hasInsufficientBalls={gameValidation.hasInsufficientBalls}
+      hasTooManyBalls={gameValidation.hasTooManyBalls}
+      maxTotalBalls={gameConstants.MAX_TOTAL_BALLS}
+      isLoadingStats={loadingState.isLoadingStats}
+      isUpdatingStats={loadingState.isUpdatingStats}
       userLoggedIn={!!user?.id}
      />
     </View>
