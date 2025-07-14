@@ -62,7 +62,6 @@ const Overlay: React.FC<OverlayProps> = ({
  isUpdatingStats,
  userLoggedIn,
 }) => {
- // Don't render overlay when dropping
  if (isDropping) return null
 
  // Calculate dynamic maximum values for sliders based on 100-ball limit
@@ -144,14 +143,14 @@ const Overlay: React.FC<OverlayProps> = ({
 
     {userLoggedIn && hasInsufficientBalls && (
      <View style={styles.warningContainer}>
-      <Text style={styles.warningText}>⚠️ Insufficient balls available</Text>
+      <Text style={styles.warningText}>⚠️ Insufficient data packets</Text>
      </View>
     )}
 
     {hasTooManyBalls && (
      <View style={styles.warningContainer}>
       <Text style={styles.warningText}>
-       ⚠️ Maximum {maxTotalBalls} balls allowed per drop
+       ⚠️ Maximum {maxTotalBalls} data packets allowed per drop
       </Text>
      </View>
     )}

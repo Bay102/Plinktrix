@@ -7,7 +7,6 @@ import { Theme } from '@/constants/Colors'
 import { useAuthProvider, useUserProvider } from '@/providers'
 import { createAccount } from '@/supabase/api/create-account'
 import { login } from '@/supabase/api/login'
-import { router } from 'expo-router'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { ScrollView, StyleSheet } from 'react-native'
@@ -65,9 +64,9 @@ export default function AccountScreen() {
     data.username
    )
    if (error) {
-    console.error(error)
+    throw new Error(error.message)
    } else {
-    router.replace('/')
+    // router.push('/')
    }
   } catch (error) {
    console.error(error)
@@ -102,7 +101,7 @@ export default function AccountScreen() {
       >
        <MatrixButton title=" [ LOGIN ]" onPress={() => setFormMode('login')} />
        <MatrixButton
-        title=" [ SIGN UP ]"
+        title="[ SIGN UP ]"
         onPress={() => setFormMode('signup')}
        />
 
@@ -112,8 +111,8 @@ export default function AccountScreen() {
         style={styles.button}
         onPress={() => {
          setFormMode('login')
-         loginForm.setValue('email', 'test@dev.com')
-         loginForm.setValue('password', 'testing123')
+         loginForm.setValue('email', 'dev@dev.com')
+         loginForm.setValue('password', '00000000')
         }}
        >
         <Text>[ DEV LOGIN ]</Text>
