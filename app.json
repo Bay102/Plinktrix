@@ -1,16 +1,16 @@
 {
  "expo": {
-  "name": "balls-daily",
-  "slug": "balls-daily",
+  "name": "Plinktrix",
+  "slug": "plinktrix",
   "version": "1.0.0",
   "orientation": "portrait",
   "icon": "./assets/images/icon.png",
-  "scheme": "ballsdaily",
+  "scheme": "plinktrix",
   "userInterfaceStyle": "automatic",
   "newArchEnabled": true,
   "ios": {
    "supportsTablet": true,
-   "bundleIdentifier": "com.codebay.ballsdaily",
+   "bundleIdentifier": "com.codebay.plinktrix",
    "icon": {
     "light": "./assets/app-icons/ios-light.png",
     "dark": "./assets/app-icons/ios-dark.png"
