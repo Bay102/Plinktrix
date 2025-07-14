@@ -5,7 +5,7 @@ import { useColorScheme } from '@/hooks/useColorScheme'
 import { useAuthProvider, useUserProvider } from '@/providers'
 import { Tabs } from 'expo-router'
 import React from 'react'
-import { Platform, TouchableOpacity, View } from 'react-native'
+import { Platform, TouchableOpacity } from 'react-native'
 import { Button } from 'react-native-paper'
 
 export default function TabLayout() {
@@ -19,11 +19,6 @@ export default function TabLayout() {
     tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
     headerShown: false,
     tabBarButton: HapticTab,
-    tabBarBackground: () => (
-     <View
-      style={{ backgroundColor: Colors[colorScheme ?? 'light'].background }}
-     />
-    ),
     tabBarStyle: Platform.select({
      ios: {
       // Use a transparent background on iOS to show the blur effect

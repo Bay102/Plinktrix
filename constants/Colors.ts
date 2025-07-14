@@ -16,6 +16,18 @@ const baseColors = {
  error: '#B00020',
  success: '#28a745',
  warning: '#ffc107',
+ // Matrix theme colors
+ matrixCyan: '#0CF',
+ matrixBlue: '#0AF',
+ matrixGold: '#FFD700',
+ matrixGreen: '#0F0',
+ matrixDarkGreen: '#070',
+ matrixGray: '#AAA',
+ matrixDarkGray: '#666',
+ // Matrix backgrounds and effects
+ matrixDarkBG: 'rgba(0, 0, 0, 0.9)',
+ matrixGreenShadow: 'rgba(0, 255, 0, 0.7)',
+ matrixGreenBG: 'rgba(0, 255, 0, 0.1)',
 }
 
 // Light theme colors
@@ -138,6 +150,9 @@ export const CustomNavigationDarkTheme = {
 export const DynamicBGColor = (colorScheme: ColorSchemeName) => {
  return colorScheme === 'dark' ? darkColors.background : lightColors.background
 }
+
+// Export baseColors for direct access to matrix colors
+export { baseColors as MatrixColors }
 
 // Default theme export for backward compatibility
 export const Theme = LightTheme

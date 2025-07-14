@@ -135,8 +135,6 @@ const Plinko: React.FC = () => {
  const [boardWidth] = useState<number>(Dimensions.get('window').width)
  const [regularBallCount, setRegularBallCount] = useState<number>(1)
  const [goldBallCount, setGoldBallCount] = useState<number>(0)
- const [aiAnalysis, setAiAnalysis] = useState<string>('')
- const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false)
  const [animatingSlots, setAnimatingSlots] = useState<AnimatingSlots>({})
  const [currentGravity, setCurrentGravity] = useState<number>(0.11)
  const [userStats, setUserStats] = useState<UserData | null>(null)
@@ -145,6 +143,8 @@ const Plinko: React.FC = () => {
  const [gameEndedWithPrize, setGameEndedWithPrize] = useState<number | null>(
   null
  )
+ const [aiAnalysis, setAiAnalysis] = useState<string>('')
+ const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false)
 
  // --- Refs ---
  const animationFrameRef = useRef<number | null>(null)

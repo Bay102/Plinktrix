@@ -186,7 +186,7 @@ const Overlay: React.FC<OverlayProps> = ({
        ? 'Updating Stats...'
        : isLoadingStats
        ? 'Loading...'
-       : `[ Initiate Drop ${regularBallCount + goldBallCount} ]`}
+       : `[ Initiate Hack ]`}
      </Text>
     </TouchableOpacity>
 
@@ -198,7 +198,7 @@ const Overlay: React.FC<OverlayProps> = ({
       </Text>
 
       <View style={styles.analysisSection}>
-       <Text style={styles.analysisTitle}>Drop Analysis:</Text>
+       <Text style={styles.analysisTitle}>Data Stream:</Text>
        {Object.entries(prizeCounts)
         .sort(([valA], [valB]) => Number(valB) - Number(valA))
         .map(([value, { regular, gold }]) => (

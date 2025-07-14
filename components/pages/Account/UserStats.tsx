@@ -1,13 +1,20 @@
+import MatrixButton from '@/components/ui/MatrixButton'
 import {
  formatAccountLevel,
  formatDate,
  MatrixContainer,
  StatItem,
 } from '@/components/ui/MatrixContainer'
-import { DynamicBGColor } from '@/constants/Colors'
+import { DynamicBGColor, MatrixColors } from '@/constants/Colors'
 import { useAuthProvider } from '@/providers'
 import React from 'react'
-import { Platform, StyleSheet, useColorScheme, View } from 'react-native'
+import {
+ Platform,
+ ScrollView,
+ StyleSheet,
+ useColorScheme,
+ View,
+} from 'react-native'
 import { Text } from 'react-native-paper'
 import DigitalRain from '../Plinko/DigitalRain'
 
@@ -26,7 +33,7 @@ export const UserStats = () => {
  const colorScheme = useColorScheme()
 
  return (
-  <View
+  <ScrollView
    style={[styles.container, { backgroundColor: DynamicBGColor(colorScheme) }]}
   >
    <DigitalRain />
@@ -40,18 +47,18 @@ export const UserStats = () => {
     <StatItem
      label="USERNAME"
      value={username || 'UNKNOWN'}
-     color="#0CF"
+     color={MatrixColors.matrixCyan}
      isHighlight={true}
     />
     <StatItem
      label="ACCOUNT_LEVEL"
      value={formatAccountLevel(accountLevel)}
-     color="#0F0"
+     color={MatrixColors.matrixGreen}
     />
     <StatItem
      label="CREATED_AT"
      value={createdAt ? formatDate(createdAt) : 'N/A'}
-     color="#0F0"
+     color={MatrixColors.matrixGreen}
     />
    </MatrixContainer>
    {/* Performance Metrics Section */}
@@ -59,22 +66,27 @@ export const UserStats = () => {
     <StatItem
      label="AWAITING_UPLOAD"
      value={score?.toLocaleString() || '0'}
-     color="#0F0"
+     color={MatrixColors.matrixGreen}
      isHighlight={true}
     />
+    <MatrixButton title="[ Upload Hack ]" onPress={() => {}} />
    </MatrixContainer>
    {/* Resource Allocation Section */}
    <MatrixContainer title="RESOURCE ALLOCATION">
     <StatItem
      label="REGULAR_PACKETS"
      value={regularPackets || 0}
-     color="#0AF"
+     color={MatrixColors.matrixBlue}
     />
-    <StatItem label="BONUS_PACKETS" value={bonusPackets || 0} color="#FFD700" />
+    <StatItem
+     label="BONUS_PACKETS"
+     value={bonusPackets || 0}
+     color={MatrixColors.matrixGold}
+    />
     <StatItem
      label="TOTAL_PACKETS"
      value={(regularPackets || 0) + (bonusPackets || 0)}
-     color="#0F0"
+     color={MatrixColors.matrixGreen}
     />
    </MatrixContainer>
    {/* Footer */}
@@ -83,7 +95,7 @@ export const UserStats = () => {
      Data integrity verified • System status: OPERATIONAL
     </Text>
    </View>
-  </View>
+  </ScrollView>
  )
 }
 
@@ -91,20 +103,20 @@ const styles = StyleSheet.create({
  container: {
   flex: 1,
   padding: 20,
-  backgroundColor: 'rgba(0, 0, 0, 0.9)',
+  backgroundColor: MatrixColors.matrixDarkBG,
  },
  header: {
   alignItems: 'center',
   marginBottom: 30,
   paddingBottom: 20,
   borderBottomWidth: 2,
-  borderBottomColor: '#0F0',
+  borderBottomColor: MatrixColors.matrixGreen,
  },
  headerTitle: {
   fontFamily: FONT_FAMILY,
   fontSize: 32,
-  color: '#0F0',
-  textShadowColor: 'rgba(0, 255, 0, 0.7)',
+  color: MatrixColors.matrixGreen,
+  textShadowColor: MatrixColors.matrixGreenShadow,
   textShadowOffset: { width: 0, height: 0 },
   textShadowRadius: 10,
   marginBottom: 8,
@@ -112,36 +124,36 @@ const styles = StyleSheet.create({
  headerSubtitle: {
   fontFamily: FONT_FAMILY,
   fontSize: 14,
-  color: '#AAA',
+  color: MatrixColors.matrixGray,
  },
  footer: {
   marginTop: 20,
   paddingTop: 20,
   borderTopWidth: 1,
-  borderTopColor: '#070',
+  borderTopColor: MatrixColors.matrixDarkGreen,
   alignItems: 'center',
  },
  footerText: {
   fontFamily: FONT_FAMILY,
   fontSize: 12,
-  color: '#666',
+  color: MatrixColors.matrixDarkGray,
   textAlign: 'center',
  },
  refreshButton: {
   marginTop: 10,
   padding: 8,
   borderWidth: 1,
-  borderColor: '#0F0',
+  borderColor: MatrixColors.matrixGreen,
   borderRadius: 4,
-  backgroundColor: 'rgba(0, 255, 0, 0.1)',
+  backgroundColor: MatrixColors.matrixGreenBG,
  },
  refreshText: {
   fontFamily: FONT_FAMILY,
   fontSize: 12,
-  color: '#0F0',
+  color: MatrixColors.matrixGreen,
   textAlign: 'center',
  },
  refreshingText: {
-  color: '#AAA',
+  color: MatrixColors.matrixGray,
  },
 })
