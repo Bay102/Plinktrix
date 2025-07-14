@@ -1,5 +1,6 @@
 import DigitalRain from '@/components/pages/Plinko/DigitalRain' // Assuming this component exists
 import Overlay from '@/components/pages/Plinko/Overlay'
+import { MatrixColors } from '@/constants/Colors'
 import { useAuthProvider } from '@/providers'
 import {
  GameResultData,
@@ -450,7 +451,7 @@ const Plinko: React.FC = () => {
      ball.y > gameConstants.PEG_VERTICAL_SPACING * 2
     ) {
      const pushDirection = ball.x > boardWidth / 2 ? 1 : -1
-     ball.vx += pushDirection * 0.15
+     ball.vx += pushDirection * 0.2
     }
 
     // Update position
@@ -837,13 +838,17 @@ const styles = StyleSheet.create({
   justifyContent: 'space-between',
   paddingVertical: 16,
  },
- loadingText: { fontFamily: FONT_FAMILY, color: '#0F0', fontSize: 24 },
+ loadingText: {
+  fontFamily: FONT_FAMILY,
+  color: MatrixColors.matrixGreen,
+  fontSize: 24,
+ },
  header: { alignItems: 'center', marginTop: 10 },
  title: {
   fontFamily: FONT_FAMILY,
   fontSize: 64,
-  color: '#0F0',
-  textShadowColor: 'rgba(0, 255, 0, 0.7)',
+  color: MatrixColors.matrixGreen,
+  textShadowColor: MatrixColors.matrixGreenShadow,
   textShadowOffset: { width: 0, height: 0 },
   textShadowRadius: 10,
  },
@@ -855,17 +860,17 @@ const styles = StyleSheet.create({
  },
  board: {
   position: 'relative',
-  backgroundColor: 'rgba(0, 0, 0, 0.6)',
+  backgroundColor: MatrixColors.matrixDarkBG,
   borderWidth: 2,
-  borderColor: '#0F0',
+  borderColor: MatrixColors.matrixGreen,
   borderRadius: 8,
  },
  peg: {
   width: 8,
   height: 8,
-  backgroundColor: '#0F0',
+  backgroundColor: MatrixColors.matrixGreen,
   borderRadius: 4,
-  shadowColor: '#0F0',
+  shadowColor: MatrixColors.matrixGreen,
   shadowOffset: { width: 0, height: 0 },
   shadowOpacity: 1,
   shadowRadius: 5,
@@ -885,17 +890,25 @@ const styles = StyleSheet.create({
   alignItems: 'center',
   justifyContent: 'center',
   borderTopWidth: 2,
-  borderTopColor: '#0F0',
+  borderTopColor: MatrixColors.matrixGreen,
  },
  prizeSlotText: {
   fontFamily: FONT_FAMILY,
-  color: '#0F0',
+  color: MatrixColors.matrixGreen,
   fontSize: 14,
   fontWeight: 'bold',
  },
  ball: { position: 'absolute', width: 20, height: 20, borderRadius: 10 },
- regularBall: { backgroundColor: '#0AF', borderColor: '#0CF', borderWidth: 2 },
- goldBall: { backgroundColor: '#FFD700', borderColor: '#FFF', borderWidth: 2 },
+ regularBall: {
+  backgroundColor: MatrixColors.matrixBlue,
+  borderColor: MatrixColors.matrixCyan,
+  borderWidth: 2,
+ },
+ goldBall: {
+  backgroundColor: MatrixColors.matrixGold,
+  borderColor: MatrixColors.matrixGold,
+  borderWidth: 2,
+ },
 
  footer: {
   fontFamily: FONT_FAMILY,

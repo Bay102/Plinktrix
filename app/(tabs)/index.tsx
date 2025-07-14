@@ -1,8 +1,8 @@
 import ParallaxScrollView from '@/components/ParallaxScrollView'
+import { ThemedText } from '@/components/ThemedText'
 import DigitalRain from '@/components/pages/Plinko/DigitalRain'
 import { MatrixContainer } from '@/components/ui/MatrixContainer'
 import React from 'react'
-import { StyleSheet } from 'react-native'
 import { Text } from 'react-native-paper'
 
 const index = () => {
@@ -13,6 +13,7 @@ const index = () => {
   >
    <MatrixContainer title="WELCOME">
     <Text>Welcome to the Matrix</Text>
+    <ThemedText>Hello World</ThemedText>
    </MatrixContainer>
   </ParallaxScrollView>
  )
@@ -20,4 +21,4 @@ const index = () => {
 
 export default index
 
-const styles = StyleSheet.create({})
+// const styles = StyleSheet.create({})

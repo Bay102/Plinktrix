@@ -49,7 +49,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   fetchUserData()
- }, [user?.id])
+ }, [user])
 
  const refreshUserData = async () => {
   if (!user?.id || isRefreshing) return

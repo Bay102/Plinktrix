@@ -72,15 +72,15 @@ export const LightTheme = {
  fonts: {
   ...MD3LightTheme.fonts,
   regular: {
-   fontFamily: 'SpaceMono',
+   fontFamily: 'VT323',
    fontWeight: 'normal',
   },
   medium: {
-   fontFamily: 'SpaceMono',
+   fontFamily: 'VT323',
    fontWeight: '500',
   },
   light: {
-   fontFamily: 'SpaceMono',
+   fontFamily: 'VT323',
    fontWeight: '300',
   },
  },
@@ -102,15 +102,15 @@ export const DarkTheme = {
  fonts: {
   ...MD3DarkTheme.fonts,
   regular: {
-   fontFamily: 'SpaceMono',
+   fontFamily: 'VT323',
    fontWeight: 'normal',
   },
   medium: {
-   fontFamily: 'SpaceMono',
+   fontFamily: 'VT323',
    fontWeight: '500',
   },
   light: {
-   fontFamily: 'SpaceMono',
+   fontFamily: 'VT323',
    fontWeight: '300',
   },
  },
