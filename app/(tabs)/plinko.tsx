@@ -245,7 +245,7 @@ const Plinko: React.FC = () => {
    DAMPENING: 0.6,
    PEG_RADIUS: 4,
    BALL_RADIUS: 10,
-   MAX_TOTAL_BALLS: 100,
+   MAX_TOTAL_BALLS: 50,
   }),
   []
  )
@@ -447,13 +447,13 @@ const Plinko: React.FC = () => {
     }
 
     // Anti-center bias - subtly push balls away from center to reduce center hits
+    // Only apply after the last row of pegs
+    const lastRowY =
+     gameConstants.PEG_VERTICAL_SPACING * (gameConstants.ROWS + 1)
     const distanceFromCenter = Math.abs(ball.x - boardWidth / 2)
-    if (
-     distanceFromCenter < 10 &&
-     ball.y > gameConstants.PEG_VERTICAL_SPACING * 2
-    ) {
+    if (distanceFromCenter < 20 && ball.y > lastRowY) {
      const pushDirection = ball.x > boardWidth / 2 ? 1 : -1
-     ball.vx += pushDirection * 0.15
+     ball.vx += pushDirection * 0.2
     }
 
     // Update position
@@ -904,6 +904,8 @@ const styles = StyleSheet.create({
   justifyContent: 'center',
   borderTopWidth: 2,
   borderTopColor: MatrixColors.matrixGreen,
+  borderRightColor: MatrixColors.matrixGreen,
+  borderRightWidth: 2,
  },
  prizeSlotText: {
   fontFamily: FONT_FAMILY,
