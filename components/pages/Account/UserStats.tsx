@@ -6,19 +6,12 @@ import {
  StatItem,
 } from '@/components/ui/MatrixContainer'
 import { DynamicBGColor, MatrixColors } from '@/constants/Colors'
+import { FONT_FAMILY } from '@/constants/Fonts'
 import { useAuthProvider } from '@/providers'
 import React from 'react'
-import {
- Platform,
- ScrollView,
- StyleSheet,
- useColorScheme,
- View,
-} from 'react-native'
+import { ScrollView, StyleSheet, useColorScheme, View } from 'react-native'
 import { Text } from 'react-native-paper'
 import DigitalRain from '../Plinko/DigitalRain'
-
-const FONT_FAMILY = Platform.OS === 'ios' ? 'VT323' : 'VT323'
 
 export const UserStats = () => {
  const { userData } = useAuthProvider()

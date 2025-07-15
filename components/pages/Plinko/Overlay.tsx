@@ -1,3 +1,5 @@
+import { MatrixColors } from '@/constants/Colors'
+import { FONT_FAMILY } from '@/constants/Fonts'
 import Slider from '@react-native-community/slider'
 import React from 'react'
 import {
@@ -39,6 +41,8 @@ interface OverlayProps {
  isLoadingStats: boolean
  isUpdatingStats: boolean
  userLoggedIn: boolean
+ isDebugMode: boolean
+ setIsDebugMode: (isDebugMode: boolean) => void
 }
 
 const Overlay: React.FC<OverlayProps> = ({
@@ -61,6 +65,8 @@ const Overlay: React.FC<OverlayProps> = ({
  isLoadingStats,
  isUpdatingStats,
  userLoggedIn,
+ isDebugMode,
+ setIsDebugMode,
 }) => {
  if (isDropping) return null
 
@@ -78,9 +84,12 @@ const Overlay: React.FC<OverlayProps> = ({
    <View style={styles.overlayControls}>
     <View style={styles.sliderContainer}>
      <Text style={styles.labelText}>
-      Data Packets: <Text style={{ color: '#FFF' }}>{regularBallCount}</Text>
+      Data Packets:{' '}
+      <Text style={{ color: MatrixColors.matrixGreen }}>
+       {regularBallCount}
+      </Text>
       {userLoggedIn && (
-       <Text style={{ color: '#AAA', fontSize: 14 }}>
+       <Text style={{ color: MatrixColors.matrixGray, fontSize: 14 }}>
         {' '}
         (Available: {maxRegularBalls})
        </Text>
@@ -94,16 +103,19 @@ const Overlay: React.FC<OverlayProps> = ({
       value={regularBallCount}
       onValueChange={setRegularBallCount}
       disabled={isDropping || isLoadingStats || !userLoggedIn}
-      minimumTrackTintColor="#0F0"
-      maximumTrackTintColor="#050"
-      thumbTintColor={Platform.OS === 'ios' ? undefined : '#0F0'}
+      minimumTrackTintColor={MatrixColors.matrixGreen}
+      maximumTrackTintColor={MatrixColors.matrixDarkGreen}
+      thumbTintColor={
+       Platform.OS === 'ios' ? undefined : MatrixColors.matrixGreen
+      }
      />
     </View>
 
     {maxGoldBalls !== 0 && (
      <View style={styles.sliderContainer}>
       <Text style={styles.labelText}>
-       Bonus Packets: <Text style={{ color: '#FFD700' }}>{goldBallCount}</Text>
+       Bonus Packets:{' '}
+       <Text style={{ color: MatrixColors.matrixGold }}>{goldBallCount}</Text>
        {userLoggedIn && (
         <Text style={{ color: '#AAA', fontSize: 14 }}>
          {' '}
@@ -119,9 +131,11 @@ const Overlay: React.FC<OverlayProps> = ({
        value={goldBallCount}
        onValueChange={setGoldBallCount}
        disabled={isDropping || isLoadingStats || !userLoggedIn}
-       minimumTrackTintColor="#FFD700"
-       maximumTrackTintColor="#554200"
-       thumbTintColor={Platform.OS === 'ios' ? undefined : '#FFD700'}
+       minimumTrackTintColor={MatrixColors.matrixGold}
+       maximumTrackTintColor={MatrixColors.matrixDarkGreen}
+       thumbTintColor={
+        Platform.OS === 'ios' ? undefined : MatrixColors.matrixGold
+       }
       />
      </View>
     )}
@@ -189,6 +203,21 @@ const Overlay: React.FC<OverlayProps> = ({
      </Text>
     </TouchableOpacity>
 
+    {/* Debug Mode Toggle */}
+    <TouchableOpacity
+     onPress={() => setIsDebugMode(!isDebugMode)}
+     style={[styles.debugToggle, isDebugMode && styles.debugToggleActive]}
+    >
+     <Text
+      style={[
+       styles.debugToggleText,
+       isDebugMode && styles.debugToggleTextActive,
+      ]}
+     >
+      DEBUG: {isDebugMode ? 'ON' : 'OFF'}
+     </Text>
+    </TouchableOpacity>
+
     {/* Results Section */}
     {(totalPrize > 0 || Object.keys(prizeCounts).length > 0) && (
      <View style={styles.resultsContainer}>
@@ -246,9 +275,6 @@ const Overlay: React.FC<OverlayProps> = ({
 
 export default Overlay
 
-// --- Styles ---
-const FONT_FAMILY = Platform.OS === 'ios' ? 'VT323' : 'VT323'
-
 const styles = StyleSheet.create({
  gameOverlay: {
   position: 'absolute',
@@ -256,7 +282,7 @@ const styles = StyleSheet.create({
   left: 0,
   right: 0,
   bottom: 0,
-  backgroundColor: 'rgba(0, 0, 0, 0.85)',
+  backgroundColor: MatrixColors.matrixDarkBG,
   justifyContent: 'center',
   alignItems: 'center',
   zIndex: 10,
@@ -266,28 +292,28 @@ const styles = StyleSheet.create({
   maxWidth: 350,
   alignItems: 'center',
   padding: 20,
-  backgroundColor: 'rgba(0, 0, 0, 0.9)',
+  backgroundColor: MatrixColors.matrixDarkBG,
   borderWidth: 2,
-  borderColor: '#0F0',
+  borderColor: MatrixColors.matrixGreen,
   borderRadius: 8,
  },
  sliderContainer: { width: '100%', marginBottom: 10 },
  labelText: {
   fontFamily: FONT_FAMILY,
-  color: '#0F0',
+  color: MatrixColors.matrixGreen,
   fontSize: 18,
   marginBottom: 4,
-  textShadowColor: 'rgba(0, 255, 0, 0.5)',
+  textShadowColor: MatrixColors.matrixGreenShadow,
   textShadowOffset: { width: 0, height: 0 },
   textShadowRadius: 5,
  },
  button: {
   paddingVertical: 12,
   paddingHorizontal: 24,
-  backgroundColor: '#0F0',
+  backgroundColor: MatrixColors.matrixGreen,
   borderWidth: 2,
-  borderColor: '#0F0',
-  shadowColor: '#0F0',
+  borderColor: MatrixColors.matrixGreen,
+  shadowColor: MatrixColors.matrixGreen,
   shadowOffset: { width: 0, height: 0 },
   shadowOpacity: 0.8,
   shadowRadius: 10,
@@ -310,9 +336,9 @@ const styles = StyleSheet.create({
  resultsContainer: {
   marginTop: 16,
   padding: 12,
-  backgroundColor: 'rgba(0,0,0,0.8)',
+  backgroundColor: MatrixColors.matrixDarkBG,
   borderWidth: 1,
-  borderColor: '#0F0',
+  borderColor: MatrixColors.matrixGreen,
   borderRadius: 8,
   width: '100%',
  },
@@ -321,7 +347,7 @@ const styles = StyleSheet.create({
   fontSize: 24,
   color: '#FFF',
   textAlign: 'center',
-  textShadowColor: 'rgba(0, 255, 0, 0.7)',
+  textShadowColor: MatrixColors.matrixGreenShadow,
   textShadowOffset: { width: 0, height: 0 },
   textShadowRadius: 8,
  },
@@ -329,14 +355,14 @@ const styles = StyleSheet.create({
   marginTop: 8,
   paddingTop: 8,
   borderTopWidth: 1,
-  borderTopColor: '#070',
+  borderTopColor: MatrixColors.matrixDarkGreen,
  },
  analysisTitle: {
   fontFamily: FONT_FAMILY,
   fontSize: 18,
-  color: '#0F0',
+  color: MatrixColors.matrixGreen,
   marginBottom: 4,
-  textShadowColor: 'rgba(0, 255, 0, 0.5)',
+  textShadowColor: MatrixColors.matrixGreenShadow,
   textShadowOffset: { width: 0, height: 0 },
   textShadowRadius: 5,
  },
@@ -360,7 +386,7 @@ const styles = StyleSheet.create({
   marginTop: 8,
   marginBottom: 8,
   padding: 8,
-  backgroundColor: 'rgba(255, 165, 0, 0.1)',
+  backgroundColor: MatrixColors.matrixDarkBG,
   borderWidth: 1,
   borderColor: '#FFA500',
   borderRadius: 4,
@@ -376,16 +402,42 @@ const styles = StyleSheet.create({
   marginTop: 8,
   marginBottom: 8,
   padding: 6,
-  backgroundColor: 'rgba(0, 255, 0, 0.1)',
+  backgroundColor: MatrixColors.matrixDarkBG,
   borderWidth: 1,
-  borderColor: '#0F0',
+  borderColor: MatrixColors.matrixGreen,
   borderRadius: 4,
   width: '100%',
  },
  totalBallsText: {
   fontFamily: FONT_FAMILY,
   fontSize: 16,
-  color: '#0F0',
+  color: MatrixColors.matrixGreen,
   textAlign: 'center',
+ },
+ debugToggle: {
+  marginTop: 8,
+  marginBottom: 8,
+  padding: 8,
+  backgroundColor: MatrixColors.matrixDarkBG,
+  borderWidth: 1,
+  borderColor: MatrixColors.matrixRed,
+  borderRadius: 4,
+  width: '100%',
+ },
+ debugToggleActive: {
+  backgroundColor: MatrixColors.matrixDarkBG,
+  borderColor: MatrixColors.matrixRed,
+ },
+ debugToggleText: {
+  fontFamily: FONT_FAMILY,
+  fontSize: 16,
+  color: MatrixColors.matrixRed,
+  textAlign: 'center',
+ },
+ debugToggleTextActive: {
+  color: MatrixColors.matrixRed,
+  textShadowColor: MatrixColors.matrixRed,
+  textShadowOffset: { width: 0, height: 0 },
+  textShadowRadius: 5,
  },
 })

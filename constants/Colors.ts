@@ -19,6 +19,7 @@ const baseColors = {
  // Matrix theme colors
  matrixCyan: '#0CF',
  matrixBlue: '#0AF',
+ matrixRed: '#F00',
  matrixGold: '#FFD700',
  matrixGreen: '#0F0',
  matrixDarkGreen: '#070',

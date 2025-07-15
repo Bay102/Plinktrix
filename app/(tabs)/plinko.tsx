@@ -1,3 +1,4 @@
+import { DebugOverlay } from '@/components/development/plinko'
 import DigitalRain from '@/components/pages/Plinko/DigitalRain' // Assuming this component exists
 import Overlay from '@/components/pages/Plinko/Overlay'
 import { MatrixColors } from '@/constants/Colors'
@@ -227,6 +228,7 @@ const Plinko: React.FC = () => {
  const [boardWidth] = useState<number>(Dimensions.get('window').width)
  const [animatingSlots, setAnimatingSlots] = useState<AnimatingSlots>({})
  const [userStats, setUserStats] = useState<UserData | null>(null)
+ const [isDebugMode, setIsDebugMode] = useState<boolean>(false)
 
  // --- Refs ---
  const animationFrameRef = useRef<number | null>(null)
@@ -447,11 +449,11 @@ const Plinko: React.FC = () => {
     // Anti-center bias - subtly push balls away from center to reduce center hits
     const distanceFromCenter = Math.abs(ball.x - boardWidth / 2)
     if (
-     distanceFromCenter < 25 &&
+     distanceFromCenter < 10 &&
      ball.y > gameConstants.PEG_VERTICAL_SPACING * 2
     ) {
      const pushDirection = ball.x > boardWidth / 2 ? 1 : -1
-     ball.vx += pushDirection * 0.2
+     ball.vx += pushDirection * 0.15
     }
 
     // Update position
@@ -794,6 +796,15 @@ const Plinko: React.FC = () => {
       animatingSlots={animatingSlots}
      />
 
+     {/* Debug Overlay */}
+     {isDebugMode && (
+      <DebugOverlay
+       boardWidth={boardWidth}
+       boardHeight={boardDimensions.height}
+       gameConstants={gameConstants}
+      />
+     )}
+
      <Overlay
       isDropping={gameState.isDropping}
       regularBallCount={ballCounts.regular}
@@ -814,6 +825,8 @@ const Plinko: React.FC = () => {
       isLoadingStats={loadingState.isLoadingStats}
       isUpdatingStats={loadingState.isUpdatingStats}
       userLoggedIn={!!user?.id}
+      isDebugMode={isDebugMode}
+      setIsDebugMode={setIsDebugMode}
      />
     </View>
     <Text style={styles.footer}> Plinko_v2.5.sys - &copy; 2025</Text>
@@ -909,7 +922,6 @@ const styles = StyleSheet.create({
   borderColor: MatrixColors.matrixGold,
   borderWidth: 2,
  },
-
  footer: {
   fontFamily: FONT_FAMILY,
   color: '#666',
