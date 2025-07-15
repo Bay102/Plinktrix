@@ -1,22 +1,25 @@
 import { HapticTab } from '@/components/HapticTab'
 import { IconSymbol } from '@/components/ui/IconSymbol'
-import { Colors, DynamicBGColor } from '@/constants/Colors'
+import { createTheme } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme'
+import log from '@/logger'
 import { useAuthProvider, useUserProvider } from '@/providers'
 import { Tabs } from 'expo-router'
 import React from 'react'
-import { Platform, TouchableOpacity } from 'react-native'
-import { Button } from 'react-native-paper'
+import { Platform, Text, TouchableOpacity, View } from 'react-native'
 
 export default function TabLayout() {
  const colorScheme = useColorScheme()
  const { user } = useAuthProvider()
  const { setSettingsModalVisible } = useUserProvider()
+ const theme = createTheme(colorScheme)
+
+ log.debug('Theme', theme)
 
  return (
   <Tabs
    screenOptions={{
-    tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+    tabBarActiveTintColor: theme.colors.primary,
     headerShown: false,
     tabBarButton: HapticTab,
     tabBarStyle: Platform.select({
@@ -28,45 +31,88 @@ export default function TabLayout() {
    }}
   >
    <Tabs.Screen
-    name="plinko"
+    name="index"
     options={{
      title: '',
      headerShown: false,
-     tabBarIcon: ({ color }) => (
-      <IconSymbol
-       size={35}
-       name="gamecontroller.fill"
-       color={color}
-       style={{ marginTop: 15 }}
+     headerShadowVisible: false,
+     headerBackgroundContainerStyle: {
+      backgroundColor: 'transparent',
+     },
+     headerBackground: () => (
+      <View
+       style={{
+        flex: 1,
+        borderBottomColor: theme.colors.primary,
+        borderBottomWidth: 1,
+       }}
       />
+     ),
+     headerTitle: () => (
+      <TouchableOpacity
+       onPress={() => setSettingsModalVisible(true)}
+       style={{
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        borderRadius: 5,
+        backgroundColor: theme.colors.primary,
+       }}
+      >
+       <Text style={{ color: '#000', fontSize: 16 }}>
+        {user?.email?.split('@')[0] || 'Guest'}
+       </Text>
+      </TouchableOpacity>
+     ),
+     headerStyle: {
+      backgroundColor: theme.colors.background,
+     },
+     tabBarIcon: ({ color }) => (
+      <IconSymbol size={28} name="house.fill" color={color} />
      ),
     }}
    />
    <Tabs.Screen
-    name="index"
+    name="plinko"
     options={{
      title: '',
-     headerShown: true,
-     headerRight: ({ tintColor }) => (
-      <Button mode="text" onPress={() => {}}>
-       <IconSymbol
-        size={35}
-        name="bell"
-        color={tintColor ?? 'black'}
-        style={{ marginTop: 15 }}
-       />
-      </Button>
+     headerShown: false,
+     headerShadowVisible: false,
+     headerBackgroundContainerStyle: {
+      backgroundColor: 'transparent',
+     },
+     headerBackground: () => (
+      <View
+       style={{
+        flex: 1,
+        borderBottomColor: theme.colors.primary,
+        borderBottomWidth: 1,
+       }}
+      />
+     ),
+     headerTitle: () => (
+      <TouchableOpacity
+       onPress={() => setSettingsModalVisible(true)}
+       style={{
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        borderRadius: 5,
+        backgroundColor: theme.colors.primary,
+       }}
+      >
+       <Text style={{ color: '#000', fontSize: 16 }}>
+        {user?.email?.split('@')[0] || 'Guest'}
+       </Text>
+      </TouchableOpacity>
      ),
      headerStyle: {
-      backgroundColor: DynamicBGColor(colorScheme),
+      backgroundColor: theme.colors.background,
      },
      tabBarIcon: ({ color }) => (
-      <IconSymbol
-       size={35}
-       name="house.fill"
-       color={color}
-       style={{ marginTop: 15 }}
-      />
+      <IconSymbol size={28} name="gamecontroller.fill" color={color} />
      ),
     }}
    />
@@ -75,26 +121,17 @@ export default function TabLayout() {
     options={{
      title: '',
      headerShown: true,
-     headerRight: ({ tintColor }) =>
-      user && (
-       <TouchableOpacity
-        style={{ marginRight: 10 }}
-        onPress={() => setSettingsModalVisible(true)}
-       >
-        <IconSymbol size={25} name="gear" color={tintColor ?? 'black'} />
-       </TouchableOpacity>
-      ),
-
-     headerStyle: {
-      backgroundColor: DynamicBGColor(colorScheme),
-     },
+     headerRight: () => (
+      <TouchableOpacity onPress={() => setSettingsModalVisible(true)}>
+       <IconSymbol
+        size={28}
+        name="gearshape.fill"
+        color={theme.colors.primary}
+       />
+      </TouchableOpacity>
+     ),
      tabBarIcon: ({ color }) => (
-      <IconSymbol
-       size={30}
-       name="person.circle"
-       color={color}
-       style={{ marginTop: 15 }}
-      />
+      <IconSymbol size={28} name="person.fill" color={color} />
      ),
     }}
    />

@@ -1,16 +1,14 @@
-import MatrixButton from '@/components/ui/MatrixButton'
 import {
  formatAccountLevel,
  formatDate,
  MatrixContainer,
  StatItem,
 } from '@/components/ui/MatrixContainer'
-import { DynamicBGColor, MatrixColors } from '@/constants/Colors'
+import { createTheme, MatrixColors } from '@/constants/Colors'
 import { FONT_FAMILY } from '@/constants/Fonts'
 import { useAuthProvider } from '@/providers'
 import React from 'react'
-import { ScrollView, StyleSheet, useColorScheme, View } from 'react-native'
-import { Text } from 'react-native-paper'
+import { SafeAreaView, StyleSheet, useColorScheme } from 'react-native'
 import DigitalRain from '../Plinko/DigitalRain'
 
 export const UserStats = () => {
@@ -24,78 +22,54 @@ export const UserStats = () => {
  const createdAt = userData?.created_at
 
  const colorScheme = useColorScheme()
+ const theme = createTheme(colorScheme)
 
  return (
-  <ScrollView
-   style={[styles.container, { backgroundColor: DynamicBGColor(colorScheme) }]}
+  <SafeAreaView
+   style={[styles.container, { backgroundColor: theme.colors.background }]}
   >
    <DigitalRain />
-   {/* Header */}
-   <View style={styles.header}>
-    <Text style={styles.headerTitle}>PLAYER DATA</Text>
-    <Text style={styles.headerSubtitle}>System data retrieval complete...</Text>
-   </View>
-   {/* User Identity Section */}
-   <MatrixContainer title="USER IDENTITY">
+   <MatrixContainer title="USER STATS">
     <StatItem
-     label="USERNAME"
-     value={username || 'UNKNOWN'}
+     label="Username"
+     value={username ?? 'N/A'}
      color={MatrixColors.matrixCyan}
      isHighlight={true}
     />
     <StatItem
-     label="ACCOUNT_LEVEL"
+     label="Score"
+     value={score ? `${score} bytes` : '0 bytes'}
+     color={MatrixColors.matrixGreen}
+    />
+    <StatItem
+     label="Account Level"
      value={formatAccountLevel(accountLevel)}
      color={MatrixColors.matrixGreen}
     />
     <StatItem
-     label="CREATED_AT"
+     label="Bonus Packets"
+     value={bonusPackets ? bonusPackets.toString() : '0'}
+     color={MatrixColors.matrixGold}
+    />
+    <StatItem
+     label="Regular Packets"
+     value={regularPackets ? regularPackets.toString() : '0'}
+     color={MatrixColors.matrixBlue}
+    />
+    <StatItem
+     label="Member Since"
      value={createdAt ? formatDate(createdAt) : 'N/A'}
      color={MatrixColors.matrixGreen}
     />
    </MatrixContainer>
-   {/* Performance Metrics Section */}
-   <MatrixContainer title="PERFORMANCE METRICS">
-    <StatItem
-     label="AWAITING_UPLOAD"
-     value={score?.toLocaleString() || '0'}
-     color={MatrixColors.matrixGreen}
-     isHighlight={true}
-    />
-    <MatrixButton title="[ Upload Hack ]" onPress={() => {}} />
-   </MatrixContainer>
-   {/* Resource Allocation Section */}
-   <MatrixContainer title="RESOURCE ALLOCATION">
-    <StatItem
-     label="REGULAR_PACKETS"
-     value={regularPackets || 0}
-     color={MatrixColors.matrixBlue}
-    />
-    <StatItem
-     label="BONUS_PACKETS"
-     value={bonusPackets || 0}
-     color={MatrixColors.matrixGold}
-    />
-    <StatItem
-     label="TOTAL_PACKETS"
-     value={(regularPackets || 0) + (bonusPackets || 0)}
-     color={MatrixColors.matrixGreen}
-    />
-   </MatrixContainer>
-   {/* Footer */}
-   <View style={styles.footer}>
-    <Text style={styles.footerText}>
-     Data integrity verified • System status: OPERATIONAL
-    </Text>
-   </View>
-  </ScrollView>
+  </SafeAreaView>
  )
 }
 
 const styles = StyleSheet.create({
  container: {
   flex: 1,
-  padding: 20,
+  // padding: 20,
   backgroundColor: MatrixColors.matrixDarkBG,
  },
  header: {

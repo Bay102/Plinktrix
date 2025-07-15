@@ -1,6 +1,5 @@
 /**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
+ * Simplified theming system with dynamic color switching
  */
 import {
  DarkTheme as NavigationDarkTheme,
@@ -31,129 +30,99 @@ const baseColors = {
  matrixGreenBG: 'rgba(0, 255, 0, 0.1)',
 }
 
-// Light theme colors
-const lightColors = {
- text: '#11181C',
- background: '#ffffff',
- surface: '#f5f5f5',
- surfaceVariant: '#e1e1e1',
- icon: '#687076',
- tabIconDefault: '#687076',
- tabIconSelected: baseColors.primary,
- tint: baseColors.primary,
+// Theme-specific colors
+const themeColors = {
+ light: {
+  text: '#11181C',
+  background: '#ffffff',
+  surface: '#f5f5f5',
+  surfaceVariant: '#e1e1e1',
+  icon: '#687076',
+  tabIconDefault: '#687076',
+  tabIconSelected: baseColors.primary,
+  tint: baseColors.primary,
+ },
+ dark: {
+  text: '#ECEDEE',
+  background: '#151718',
+  surface: '#000',
+  surfaceVariant: '#2c2c2c',
+  icon: '#9BA1A6',
+  tabIconDefault: '#9BA1A6',
+  tabIconSelected: baseColors.primary,
+  tint: baseColors.primary,
+ },
 }
 
-// Dark theme colors
-const darkColors = {
- text: '#ECEDEE',
- background: '#151718',
- surface: '#000',
- surfaceVariant: '#2c2c2c',
- icon: '#9BA1A6',
- tabIconDefault: '#9BA1A6',
- tabIconSelected: baseColors.primary,
- tint: baseColors.primary,
-}
-
-// Export legacy Colors object for backward compatibility
-export const Colors = {
- light: lightColors,
- dark: darkColors,
-}
-
-// Light theme configuration
-export const LightTheme = {
- ...MD3LightTheme,
- roundness: 8,
- colors: {
-  ...MD3LightTheme.colors,
+// Main theme function that dynamically returns theme based on color scheme
+export const createTheme = (colorScheme: ColorSchemeName = 'light') => {
+ const isDark = colorScheme === 'dark'
+ const colors = {
   ...baseColors,
-  ...lightColors,
- },
- fonts: {
-  ...MD3LightTheme.fonts,
-  regular: {
-   fontFamily: 'VT323',
-   fontWeight: 'normal',
+  ...themeColors[isDark ? 'dark' : 'light'],
+ }
+
+ const baseTheme = isDark ? MD3DarkTheme : MD3LightTheme
+
+ return {
+  ...baseTheme,
+  roundness: 8,
+  colors: {
+   ...baseTheme.colors,
+   ...colors,
   },
-  medium: {
-   fontFamily: 'VT323',
-   fontWeight: '500',
+  fonts: {
+   ...baseTheme.fonts,
+   regular: {
+    fontFamily: 'VT323',
+    fontWeight: 'normal',
+   },
+   medium: {
+    fontFamily: 'VT323',
+    fontWeight: '500',
+   },
+   light: {
+    fontFamily: 'VT323',
+    fontWeight: '300',
+   },
   },
-  light: {
-   fontFamily: 'VT323',
-   fontWeight: '300',
+  animation: {
+   ...baseTheme.animation,
+   scale: 1.0,
   },
- },
- animation: {
-  ...MD3LightTheme.animation,
-  scale: 1.0,
- },
+ }
 }
 
-// Dark theme configuration
-export const DarkTheme = {
- ...MD3DarkTheme,
- roundness: 8,
- colors: {
-  ...MD3DarkTheme.colors,
-  ...baseColors,
-  ...darkColors,
- },
- fonts: {
-  ...MD3DarkTheme.fonts,
-  regular: {
-   fontFamily: 'VT323',
-   fontWeight: 'normal',
+// Navigation theme function
+export const createNavigationTheme = (
+ colorScheme: ColorSchemeName = 'light'
+) => {
+ const isDark = colorScheme === 'dark'
+ const colors = themeColors[isDark ? 'dark' : 'light']
+ const baseNavTheme = isDark ? NavigationDarkTheme : NavigationDefaultTheme
+
+ return {
+  ...baseNavTheme,
+  colors: {
+   ...baseNavTheme.colors,
+   primary: baseColors.primary,
+   background: colors.background,
+   card: colors.surface,
+   text: colors.text,
+   border: colors.surfaceVariant,
+   notification: baseColors.error,
   },
-  medium: {
-   fontFamily: 'VT323',
-   fontWeight: '500',
-  },
-  light: {
-   fontFamily: 'VT323',
-   fontWeight: '300',
-  },
- },
- animation: {
-  ...MD3DarkTheme.animation,
-  scale: 1.0,
- },
+ }
 }
 
-// React Navigation theme configurations
-export const CustomNavigationLightTheme = {
- ...NavigationDefaultTheme,
- colors: {
-  ...NavigationDefaultTheme.colors,
-  primary: baseColors.primary,
-  background: lightColors.background,
-  card: lightColors.surface,
-  text: lightColors.text,
-  border: lightColors.surfaceVariant,
-  notification: baseColors.error,
- },
-}
-
-export const CustomNavigationDarkTheme = {
- ...NavigationDarkTheme,
- colors: {
-  ...NavigationDarkTheme.colors,
-  primary: baseColors.primary,
-  background: darkColors.background,
-  card: darkColors.surface,
-  text: darkColors.text,
-  border: darkColors.surfaceVariant,
-  notification: baseColors.error,
- },
-}
-
-export const DynamicBGColor = (colorScheme: ColorSchemeName) => {
- return colorScheme === 'dark' ? darkColors.background : lightColors.background
-}
-
-// Export baseColors for direct access to matrix colors
+// // Export matrix colors for direct access
 export { baseColors as MatrixColors }
 
-// Default theme export for backward compatibility
-export const Theme = LightTheme
+// // Legacy exports for backward compatibility
+export const Colors = {
+ light: themeColors.light,
+ dark: themeColors.dark,
+}
+
+// // Default theme export
+// export const Theme = createTheme('light')

@@ -1,6 +1,6 @@
-import { Colors, Theme } from '@/constants/Colors'
+import { createTheme, MatrixColors } from '@/constants/Colors'
 import React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, useColorScheme, View } from 'react-native'
 import Modal from 'react-native-modal'
 import { Button } from 'react-native-paper'
 import { IconSymbol } from './IconSymbol'
@@ -14,6 +14,8 @@ export const BaseModal = ({
  onClose: () => void
  children: React.ReactNode
 }) => {
+ const colorScheme = useColorScheme()
+ const theme = createTheme(colorScheme)
  return (
   <Modal
    isVisible={isVisible}
@@ -27,7 +29,7 @@ export const BaseModal = ({
    <View style={styles.modalContent}>
     <View style={styles.modalHeader}>
      <Button mode="text" onPress={onClose}>
-      <IconSymbol size={25} name="xmark.circle" color={Theme.colors.error} />
+      <IconSymbol size={25} name="xmark.circle" color={theme.colors.error} />
      </Button>
     </View>
     {children}
@@ -57,7 +59,7 @@ const styles = StyleSheet.create({
   width: '100%',
  },
  modalContent: {
-  backgroundColor: Colors.dark.background,
+  backgroundColor: MatrixColors.matrixDarkBG,
   position: 'absolute',
   bottom: 0,
   padding: 20,

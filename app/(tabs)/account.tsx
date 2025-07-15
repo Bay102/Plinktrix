@@ -3,13 +3,14 @@ import { UserStats } from '@/components/pages/Account/UserStats'
 import DigitalRain from '@/components/pages/Plinko/DigitalRain'
 import ParallaxScrollView from '@/components/ParallaxScrollView'
 import MatrixButton from '@/components/ui/MatrixButton'
-import { Theme } from '@/constants/Colors'
+import { createTheme } from '@/constants/Colors'
+
 import { useAuthProvider, useUserProvider } from '@/providers'
 import { createAccount } from '@/supabase/api/create-account'
 import { login } from '@/supabase/api/login'
 import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { ScrollView, StyleSheet } from 'react-native'
+import { ScrollView, StyleSheet, useColorScheme } from 'react-native'
 import { Button, Text, TextInput } from 'react-native-paper'
 
 interface LoginFormData {
@@ -29,6 +30,8 @@ export default function AccountScreen() {
  const { user } = useAuthProvider()
  const [formMode, setFormMode] = useState<FormMode>('none')
  const { settingsModalVisible, setSettingsModalVisible } = useUserProvider()
+ const colorScheme = useColorScheme()
+ const theme = createTheme(colorScheme)
  const loginForm = useForm<LoginFormData>({
   defaultValues: {
    email: '',
@@ -80,7 +83,7 @@ export default function AccountScreen() {
  }
 
  return (
-  <ScrollView style={{ flex: 1 }}>
+  <ScrollView>
    {user ? (
     // User is logged in
     <>
@@ -146,7 +149,7 @@ export default function AccountScreen() {
           // @ts-ignore - React Native Paper doesn't have proper types for helperText
           helperText={loginForm.formState.errors.email?.message}
           contentStyle={{
-           color: Theme.colors.primary,
+           color: theme.colors.primary,
           }}
          />
         )}
@@ -170,7 +173,7 @@ export default function AccountScreen() {
           // @ts-ignore - React Native Paper doesn't have proper types for helperText
           helperText={loginForm.formState.errors.password?.message}
           contentStyle={{
-           color: Theme.colors.primary,
+           color: theme.colors.primary,
           }}
          />
         )}
@@ -213,7 +216,7 @@ export default function AccountScreen() {
           // @ts-ignore - React Native Paper doesn't have proper types for helperText
           helperText={signupForm.formState.errors.email?.message}
           contentStyle={{
-           color: Theme.colors.primary,
+           color: theme.colors.primary,
           }}
          />
         )}
@@ -240,7 +243,7 @@ export default function AccountScreen() {
           // @ts-ignore - React Native Paper doesn't have proper types for helperText
           helperText={signupForm.formState.errors.username?.message}
           contentStyle={{
-           color: Theme.colors.primary,
+           color: theme.colors.primary,
           }}
          />
         )}
@@ -268,7 +271,8 @@ export default function AccountScreen() {
           // @ts-ignore - React Native Paper doesn't have proper types for helperText
           helperText={signupForm.formState.errors.password?.message}
           contentStyle={{
-           color: Theme.colors.primary,
+           color: theme.colors.primary,
+           borderColor: theme.colors.primary,
           }}
          />
         )}

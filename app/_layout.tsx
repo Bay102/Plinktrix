@@ -1,9 +1,4 @@
-import {
- DarkTheme as CustomDarkTheme,
- LightTheme as CustomLightTheme,
- CustomNavigationDarkTheme,
- CustomNavigationLightTheme,
-} from '@/constants/Colors'
+import { createNavigationTheme, createTheme } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { AuthProvider } from '@/providers/AuthProvider'
 import { UserProvider } from '@/providers/UserProvider'
@@ -28,16 +23,8 @@ export default function RootLayout() {
  return (
   <AuthProvider>
    <UserProvider>
-    <PaperProvider
-     theme={colorScheme === 'dark' ? CustomDarkTheme : CustomLightTheme}
-    >
-     <ThemeProvider
-      value={
-       colorScheme === 'dark'
-        ? CustomNavigationDarkTheme
-        : CustomNavigationLightTheme
-      }
-     >
+    <PaperProvider theme={createTheme(colorScheme)}>
+     <ThemeProvider value={createNavigationTheme(colorScheme)}>
       <Stack>
        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
        <Stack.Screen name="+not-found" />
