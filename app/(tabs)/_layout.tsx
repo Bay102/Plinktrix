@@ -16,7 +16,8 @@ export default function TabLayout() {
  return (
   <Tabs
    screenOptions={{
-    tabBarActiveTintColor: theme.colors.primary,
+    tabBarActiveTintColor: theme.colors.matrixGreen,
+    animation: 'shift',
     headerShown: false,
     tabBarIconStyle: {
      marginTop: 10,

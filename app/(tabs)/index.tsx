@@ -1,10 +1,9 @@
 import ParallaxScrollView from '@/components/ParallaxScrollView'
-import { ThemedText } from '@/components/ThemedText'
 import DigitalRain from '@/components/pages/Plinko/DigitalRain'
 import { MatrixContainer } from '@/components/ui/MatrixContainer'
-import { createTheme } from '@/constants/Colors'
+import { createTheme, MatrixColors } from '@/constants/Colors'
 import React from 'react'
-import { useColorScheme } from 'react-native'
+import { StyleSheet, useColorScheme } from 'react-native'
 import { Text } from 'react-native-paper'
 
 const Index = () => {
@@ -19,8 +18,7 @@ const Index = () => {
    headerImage={<DigitalRain />}
   >
    <MatrixContainer title="WELCOME">
-    <Text>Welcome to the Matrix</Text>
-    <ThemedText>Hello World</ThemedText>
+    <Text style={styles.text}>Get ready to play Plinktrix!</Text>
    </MatrixContainer>
   </ParallaxScrollView>
  )
@@ -28,4 +26,8 @@ const Index = () => {
 
 export default Index
 
-// const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+ text: {
+  color: MatrixColors.white,
+ },
+})

@@ -1,6 +1,6 @@
 import { DebugOverlay } from '@/components/development/PlinkoDebug'
 import DigitalRain from '@/components/pages/Plinko/DigitalRain' // Assuming this component exists
-import Overlay from '@/components/pages/Plinko/Overlay'
+import PlinkoControls from '@/components/pages/Plinko/PlinkoControls'
 import { MatrixColors } from '@/constants/Colors'
 import { FONT_FAMILY } from '@/constants/Fonts'
 import { useAuthProvider } from '@/providers'
@@ -15,7 +15,6 @@ import {
  Animated,
  Dimensions,
  ScrollView,
- StatusBar,
  StyleSheet,
  View,
 } from 'react-native'
@@ -237,15 +236,15 @@ const Plinko: React.FC = () => {
  // --- Game Configuration & Constants ---
  const gameConstants = useMemo(
   () => ({
-   ROWS: 11,
-   PEG_HORIZONTAL_SPACING: 35,
-   PEG_VERTICAL_SPACING: 40,
-   LOW_GRAVITY: 0.05,
-   HIGH_GRAVITY: 0.09,
-   DAMPENING: 0.6,
-   PEG_RADIUS: 4,
-   BALL_RADIUS: 10,
-   MAX_TOTAL_BALLS: 50,
+   ROWS: 11, // Number of peg rows on the board
+   PEG_HORIZONTAL_SPACING: 35, // Horizontal distance between pegs
+   PEG_VERTICAL_SPACING: 40, // Vertical distance between peg rows
+   LOW_GRAVITY: 0.06, // Gravity for small ball counts
+   HIGH_GRAVITY: 0.09, // Gravity for large ball counts
+   DAMPENING: 0.6, // Collision energy reduction factor
+   PEG_RADIUS: 4, // Size of collision pegs
+   BALL_RADIUS: 10, // Size of dropped balls
+   MAX_TOTAL_BALLS: 50, // Maximum balls per game
   }),
   []
  )
@@ -778,7 +777,6 @@ const Plinko: React.FC = () => {
    style={styles.screen}
    contentContainerStyle={styles.scrollContent}
   >
-   <StatusBar barStyle="light-content" />
    <DigitalRain />
    <View style={styles.container}>
     <View style={styles.header}>
@@ -805,7 +803,7 @@ const Plinko: React.FC = () => {
       />
      )}
 
-     <Overlay
+     <PlinkoControls
       isDropping={gameState.isDropping}
       regularBallCount={ballCounts.regular}
       setRegularBallCount={handleRegularBallCountChange}

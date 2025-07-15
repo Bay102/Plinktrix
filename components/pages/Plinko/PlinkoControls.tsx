@@ -21,7 +21,7 @@ type PrizeCounts = {
  [key: string]: PrizeCount
 }
 
-interface OverlayProps {
+interface PlinkoControlsProps {
  isDropping: boolean
  regularBallCount: number
  setRegularBallCount: (count: number) => void
@@ -45,7 +45,7 @@ interface OverlayProps {
  setIsDebugMode: (isDebugMode: boolean) => void
 }
 
-const Overlay: React.FC<OverlayProps> = ({
+const PlinkoControls: React.FC<PlinkoControlsProps> = ({
  isDropping,
  regularBallCount,
  setRegularBallCount,
@@ -275,7 +275,7 @@ const Overlay: React.FC<OverlayProps> = ({
  )
 }
 
-export default Overlay
+export default PlinkoControls
 
 const styles = StyleSheet.create({
  gameOverlay: {

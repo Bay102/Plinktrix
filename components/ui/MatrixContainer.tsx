@@ -1,7 +1,7 @@
+import { MatrixColors } from '@/constants/Colors'
+import { FONT_FAMILY } from '@/constants/Fonts'
 import React from 'react'
-import { Platform, StyleSheet, Text, View } from 'react-native'
-
-const FONT_FAMILY = Platform.OS === 'ios' ? 'VT323' : 'VT323'
+import { StyleSheet, Text, View } from 'react-native'
 
 export const formatDate = (dateString: string) => {
  const date = new Date(dateString)
@@ -58,22 +58,22 @@ export const MatrixContainer = ({
 const styles = StyleSheet.create({
  section: {
   marginBottom: 25,
-  backgroundColor: 'rgba(0, 0, 0, 0.6)',
+  backgroundColor: MatrixColors.matrixDarkBG,
   borderWidth: 1,
-  borderColor: '#0F0',
+  borderColor: MatrixColors.matrixGreen,
   borderRadius: 8,
   padding: 15,
  },
  sectionTitle: {
   fontFamily: FONT_FAMILY,
   fontSize: 18,
-  color: '#0F0',
+  color: MatrixColors.matrixGreen,
   marginBottom: 15,
-  textShadowColor: 'rgba(0, 255, 0, 0.5)',
+  textShadowColor: MatrixColors.matrixGreenShadow,
   textShadowOffset: { width: 0, height: 0 },
   textShadowRadius: 5,
   borderBottomWidth: 1,
-  borderBottomColor: '#070',
+  borderBottomColor: MatrixColors.matrixGreen,
   paddingBottom: 8,
  },
  sectionContent: {
@@ -85,10 +85,10 @@ const styles = StyleSheet.create({
   alignItems: 'center',
   paddingVertical: 8,
   paddingHorizontal: 12,
-  backgroundColor: 'rgba(0, 0, 0, 0.4)',
+  backgroundColor: MatrixColors.matrixDarkBG,
   borderRadius: 4,
   borderLeftWidth: 3,
-  borderLeftColor: '#0F0',
+  borderLeftColor: MatrixColors.matrixGreen,
  },
  statLabel: {
   fontFamily: FONT_FAMILY,
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
   textAlign: 'right',
  },
  highlightValue: {
-  textShadowColor: 'rgba(255, 215, 0, 0.5)',
+  textShadowColor: MatrixColors.matrixGold,
   textShadowOffset: { width: 0, height: 0 },
   textShadowRadius: 8,
  },

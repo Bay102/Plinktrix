@@ -10,11 +10,8 @@ import { MD3DarkTheme, MD3LightTheme } from 'react-native-paper'
 
 // Base colors that are shared between light and dark themes
 export const MatrixColors = {
- primary: '#0f0',
- secondary: '#0F0',
- error: '#B00020',
- success: '#28a745',
- warning: '#ffc107',
+ white: '#FFF',
+ black: '#000',
  // Matrix theme colors
  matrixCyan: '#0CF',
  matrixBlue: '#0AF',
@@ -25,13 +22,13 @@ export const MatrixColors = {
  matrixGray: '#AAA',
  matrixDarkGray: '#666',
  // Matrix backgrounds and effects
- matrixDarkBG: 'rgba(0, 0, 0, 0.9)',
+ matrixDarkBG: 'rgba(0, 0, 0, 0.75)',
  matrixGreenShadow: 'rgba(0, 255, 0, 0.7)',
  matrixGreenBG: 'rgba(0, 255, 0, 0.1)',
 }
 
 // Theme-specific colors
-const themeColors = {
+const baseColors = {
  light: {
   text: '#11181C',
   background: '#ffffff',
@@ -39,8 +36,8 @@ const themeColors = {
   surfaceVariant: '#e1e1e1',
   icon: MatrixColors.matrixDarkBG,
   tabIconDefault: '#687076',
-  tabIconSelected: MatrixColors.primary,
-  tint: MatrixColors.primary,
+  tabIconSelected: MatrixColors.matrixGreen,
+  tint: MatrixColors.matrixGreen,
  },
  dark: {
   text: '#ECEDEE',
@@ -49,8 +46,8 @@ const themeColors = {
   surfaceVariant: '#2c2c2c',
   icon: MatrixColors.matrixGreen,
   tabIconDefault: '#9BA1A6',
-  tabIconSelected: MatrixColors.primary,
-  tint: MatrixColors.primary,
+  tabIconSelected: MatrixColors.matrixGreen,
+  tint: MatrixColors.matrixGreen,
  },
 }
 
@@ -59,7 +56,7 @@ export const createTheme = (colorScheme: ColorSchemeName = 'light') => {
  const isDark = colorScheme === 'dark'
  const colors = {
   ...MatrixColors,
-  ...themeColors[isDark ? 'dark' : 'light'],
+  ...baseColors[isDark ? 'dark' : 'light'],
  }
 
  const baseTheme = isDark ? MD3DarkTheme : MD3LightTheme
@@ -98,25 +95,25 @@ export const createNavigationTheme = (
  colorScheme: ColorSchemeName = 'light'
 ) => {
  const isDark = colorScheme === 'dark'
- const colors = themeColors[isDark ? 'dark' : 'light']
+ const colors = baseColors[isDark ? 'dark' : 'light']
  const baseNavTheme = isDark ? NavigationDarkTheme : NavigationDefaultTheme
 
  return {
   ...baseNavTheme,
   colors: {
    ...baseNavTheme.colors,
-   primary: MatrixColors.primary,
+   primary: MatrixColors.matrixGreen,
    background: colors.background,
    card: colors.surface,
    text: colors.text,
    border: colors.surfaceVariant,
-   notification: MatrixColors.error,
+   notification: MatrixColors.matrixRed,
   },
  }
 }
 
-// // Legacy exports for backward compatibility
+// Legacy exports for backward compatibility
 export const Colors = {
- light: themeColors.light,
- dark: themeColors.dark,
+ light: baseColors.light,
+ dark: baseColors.dark,
 }
