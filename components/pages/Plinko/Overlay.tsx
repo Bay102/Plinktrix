@@ -219,7 +219,7 @@ const Overlay: React.FC<OverlayProps> = ({
           {regular > 0 && (
            <View style={styles.resultRow}>
             <Text style={styles.resultText}>
-             <Text style={{ color: '#FFF' }}>
+             <Text style={styles.resultText}>
               {Number(value).toLocaleString()}
              </Text>
             </Text>
@@ -229,7 +229,7 @@ const Overlay: React.FC<OverlayProps> = ({
           {gold > 0 && (
            <View style={styles.resultRow}>
             <Text style={styles.resultText}>
-             <Text style={{ color: '#FFD700' }}>
+             <Text style={{ color: MatrixColors.matrixGold }}>
               {Number(value).toLocaleString()} (x2)
              </Text>
             </Text>
@@ -390,14 +390,14 @@ const styles = StyleSheet.create({
   padding: 8,
   backgroundColor: MatrixColors.matrixDarkBG,
   borderWidth: 1,
-  borderColor: '#FFA500',
+  borderColor: MatrixColors.matrixGold,
   borderRadius: 4,
   width: '100%',
  },
  warningText: {
   fontFamily: FONT_FAMILY,
   fontSize: 16,
-  color: '#FFA500',
+  color: MatrixColors.matrixGold,
   textAlign: 'center',
  },
  totalBallsContainer: {

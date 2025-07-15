@@ -9,7 +9,7 @@ import { ColorSchemeName } from 'react-native'
 import { MD3DarkTheme, MD3LightTheme } from 'react-native-paper'
 
 // Base colors that are shared between light and dark themes
-const baseColors = {
+export const MatrixColors = {
  primary: '#0f0',
  secondary: '#0F0',
  error: '#B00020',
@@ -37,20 +37,20 @@ const themeColors = {
   background: '#ffffff',
   surface: '#f5f5f5',
   surfaceVariant: '#e1e1e1',
-  icon: baseColors.matrixDarkBG,
+  icon: MatrixColors.matrixDarkBG,
   tabIconDefault: '#687076',
-  tabIconSelected: baseColors.primary,
-  tint: baseColors.primary,
+  tabIconSelected: MatrixColors.primary,
+  tint: MatrixColors.primary,
  },
  dark: {
   text: '#ECEDEE',
   background: '#151718',
   surface: '#000',
   surfaceVariant: '#2c2c2c',
-  icon: baseColors.matrixGreen,
+  icon: MatrixColors.matrixGreen,
   tabIconDefault: '#9BA1A6',
-  tabIconSelected: baseColors.primary,
-  tint: baseColors.primary,
+  tabIconSelected: MatrixColors.primary,
+  tint: MatrixColors.primary,
  },
 }
 
@@ -58,7 +58,7 @@ const themeColors = {
 export const createTheme = (colorScheme: ColorSchemeName = 'light') => {
  const isDark = colorScheme === 'dark'
  const colors = {
-  ...baseColors,
+  ...MatrixColors,
   ...themeColors[isDark ? 'dark' : 'light'],
  }
 
@@ -105,24 +105,18 @@ export const createNavigationTheme = (
   ...baseNavTheme,
   colors: {
    ...baseNavTheme.colors,
-   primary: baseColors.primary,
+   primary: MatrixColors.primary,
    background: colors.background,
    card: colors.surface,
    text: colors.text,
    border: colors.surfaceVariant,
-   notification: baseColors.error,
+   notification: MatrixColors.error,
   },
  }
 }
-
-// // Export matrix colors for direct access
-export { baseColors as MatrixColors }
 
 // // Legacy exports for backward compatibility
 export const Colors = {
  light: themeColors.light,
  dark: themeColors.dark,
 }
-
-// // Default theme export
-// export const Theme = createTheme('light')

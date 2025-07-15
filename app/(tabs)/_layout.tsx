@@ -123,7 +123,12 @@ export default function TabLayout() {
      headerShown: true,
      headerRight: () => (
       <TouchableOpacity onPress={() => setSettingsModalVisible(true)}>
-       <IconSymbol size={28} name="gearshape.fill" color={theme.colors.icon} />
+       <IconSymbol
+        size={22}
+        style={{ marginRight: 5 }}
+        name="gearshape.fill"
+        color={theme.colors.icon}
+       />
       </TouchableOpacity>
      ),
      tabBarIcon: ({ color }) => (

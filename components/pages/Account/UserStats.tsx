@@ -36,29 +36,32 @@ export const UserStats = () => {
      isHighlight={true}
     />
     <StatItem
-     label="Score"
-     value={score ? `${score} bytes` : '0 bytes'}
-     color={MatrixColors.matrixGreen}
-    />
-    <StatItem
      label="Account Level"
      value={formatAccountLevel(accountLevel)}
      color={MatrixColors.matrixGreen}
     />
     <StatItem
-     label="Bonus Packets"
-     value={bonusPackets ? bonusPackets.toString() : '0'}
-     color={MatrixColors.matrixGold}
+     label="Member Since"
+     value={createdAt ? formatDate(createdAt) : 'N/A'}
+     color={MatrixColors.matrixGreen}
+    />
+   </MatrixContainer>
+
+   <MatrixContainer title="SCORE">
+    <StatItem
+     label="Score"
+     value={score ? `${score} bytes` : '0 bytes'}
+     color={MatrixColors.matrixGreen}
     />
     <StatItem
-     label="Regular Packets"
+     label="Packets"
      value={regularPackets ? regularPackets.toString() : '0'}
      color={MatrixColors.matrixBlue}
     />
     <StatItem
-     label="Member Since"
-     value={createdAt ? formatDate(createdAt) : 'N/A'}
-     color={MatrixColors.matrixGreen}
+     label="Bonus Packets"
+     value={bonusPackets ? bonusPackets.toString() : '0'}
+     color={MatrixColors.matrixGold}
     />
    </MatrixContainer>
   </SafeAreaView>

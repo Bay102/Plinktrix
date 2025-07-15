@@ -1,5 +1,6 @@
 // DigitalRain.tsx
 
+import { MatrixColors } from '@/constants/Colors'
 import React, { useEffect, useRef } from 'react'
 import { Animated, Dimensions, StyleSheet, View } from 'react-native'
 
@@ -65,11 +66,11 @@ const DigitalRain: React.FC = () => {
 const styles = StyleSheet.create({
  char: {
   fontFamily: 'VT323',
-  color: '#0F0',
+  color: MatrixColors.matrixGreen,
   fontSize: FONT_SIZE,
   position: 'absolute',
-  // top: 70,
-  textShadowColor: 'rgba(0, 255, 0, 0.7)',
+  top: 15,
+  textShadowColor: MatrixColors.matrixGreen,
   textShadowOffset: { width: 0, height: 0 },
   textShadowRadius: 10,
  },

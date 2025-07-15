@@ -451,7 +451,7 @@ const Plinko: React.FC = () => {
     const lastRowY =
      gameConstants.PEG_VERTICAL_SPACING * (gameConstants.ROWS + 1)
     const distanceFromCenter = Math.abs(ball.x - boardWidth / 2)
-    if (distanceFromCenter < 20 && ball.y > lastRowY) {
+    if (distanceFromCenter < 25 && ball.y > lastRowY) {
      const pushDirection = ball.x > boardWidth / 2 ? 1 : -1
      ball.vx += pushDirection * 0.2
     }
@@ -873,9 +873,9 @@ const styles = StyleSheet.create({
  board: {
   position: 'relative',
   backgroundColor: MatrixColors.matrixDarkBG,
-  borderWidth: 2,
-  borderColor: MatrixColors.matrixGreen,
-  borderRadius: 8,
+  // borderWidth: 2,
+  // borderColor: MatrixColors.matrixGreen,
+  // borderRadius: 8,
  },
  peg: {
   width: 8,
@@ -901,10 +901,8 @@ const styles = StyleSheet.create({
   height: 35,
   alignItems: 'center',
   justifyContent: 'center',
-  borderTopWidth: 2,
-  borderTopColor: MatrixColors.matrixGreen,
-  borderRightColor: MatrixColors.matrixGreen,
-  borderRightWidth: 2,
+  borderWidth: 2,
+  borderColor: MatrixColors.matrixDarkGreen,
  },
  prizeSlotText: {
   fontFamily: FONT_FAMILY,
