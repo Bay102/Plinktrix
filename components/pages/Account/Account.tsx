@@ -1,17 +1,19 @@
+import { useState } from 'react'
+
+import { SafeAreaView, StyleSheet, useColorScheme } from 'react-native'
+
+import { Controller, useForm } from 'react-hook-form'
+import { Button, Text, TextInput } from 'react-native-paper'
+
 import { UserSettingsModal } from '@/components/pages/Account/UserSettingsModal'
 import { UserStats } from '@/components/pages/Account/UserStats'
 import DigitalRain from '@/components/pages/Plinko/DigitalRain'
 import ParallaxScrollView from '@/components/ParallaxScrollView'
 import MatrixButton from '@/components/ui/MatrixButton'
 import { createTheme } from '@/constants/Colors'
-
 import { useAuthProvider, useUserProvider } from '@/providers'
 import { createAccount } from '@/supabase/api/create-account'
 import { login } from '@/supabase/api/login'
-import { useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
-import { SafeAreaView, StyleSheet, useColorScheme } from 'react-native'
-import { Button, Text, TextInput } from 'react-native-paper'
 
 interface LoginFormData {
  email: string

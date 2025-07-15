@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { Platform, StyleSheet, Text, TouchableOpacity } from 'react-native'
 const FONT_FAMILY = Platform.OS === 'ios' ? 'VT323' : 'VT323'
 

@@ -1,7 +1,5 @@
-import { MatrixColors } from '@/constants/Colors'
-import { FONT_FAMILY } from '@/constants/Fonts'
-import Slider from '@react-native-community/slider'
 import React from 'react'
+
 import {
  Platform,
  StyleSheet,
@@ -9,6 +7,11 @@ import {
  TouchableOpacity,
  View,
 } from 'react-native'
+
+import Slider from '@react-native-community/slider'
+
+import { MatrixColors } from '@/constants/Colors'
+import { FONT_FAMILY } from '@/constants/Fonts'
 // import { Text } from 'react-native-paper'
 
 // --- Type Definitions ---

@@ -1,8 +1,11 @@
+import React from 'react'
+
+import { StyleSheet, View } from 'react-native'
+
+import { Text } from 'react-native-paper'
+
 import { MatrixColors } from '@/constants/Colors'
 import { FONT_FAMILY } from '@/constants/Fonts'
-import React from 'react'
-import { StyleSheet, View } from 'react-native'
-import { Text } from 'react-native-paper'
 
 interface DebugOverlayProps {
  boardWidth: number
@@ -14,7 +17,7 @@ interface DebugOverlayProps {
 export const DebugOverlay = React.memo<DebugOverlayProps>(
  ({ boardWidth, boardHeight, gameConstants }) => {
   const centerX = boardWidth / 2
-  const antiCenterZoneWidth = 20 // 10 pixels on each side of center
+  const antiCenterZoneWidth = 28 // 14 pixels on each side of center
   const activeZoneStartY =
    gameConstants.PEG_VERTICAL_SPACING * (gameConstants.ROWS + 1)
 

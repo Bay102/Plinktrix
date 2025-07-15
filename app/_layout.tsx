@@ -1,12 +1,15 @@
-import { createNavigationTheme, createTheme } from '@/constants/Colors'
-import { useColorScheme } from '@/hooks/useColorScheme'
-import { AuthProvider } from '@/providers/AuthProvider'
-import { UserProvider } from '@/providers/UserProvider'
 import { ThemeProvider } from '@react-navigation/native'
+
 import { useFonts } from 'expo-font'
 import { Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 import { PaperProvider } from 'react-native-paper'
+
+import { createNavigationTheme, createTheme } from '@/constants/Colors'
+import { useColorScheme } from '@/hooks/useColorScheme'
+import { AuthProvider } from '@/providers/AuthProvider'
+import { UserProvider } from '@/providers/UserProvider'
+
 import 'react-native-reanimated'
 
 export default function RootLayout() {

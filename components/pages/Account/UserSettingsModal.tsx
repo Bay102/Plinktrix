@@ -1,7 +1,8 @@
+import { StyleSheet, View } from 'react-native'
+
 import { BaseModal } from '@/components/ui/BaseModal'
 import MatrixButton from '@/components/ui/MatrixButton'
 import { useAuthProvider, useUserProvider } from '@/providers'
-import { StyleSheet, View } from 'react-native'
 
 export const UserSettingsModal = ({
  isVisible = false,

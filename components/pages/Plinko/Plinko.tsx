@@ -1,3 +1,15 @@
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+
+import {
+ Animated,
+ Dimensions,
+ ScrollView,
+ StyleSheet,
+ View,
+} from 'react-native'
+
+import { Text } from 'react-native-paper'
+
 import { DebugOverlay } from '@/components/development/PlinkoDebug'
 import DigitalRain from '@/components/pages/Plinko/DigitalRain' // Assuming this component exists
 import PlinkoControls from '@/components/pages/Plinko/PlinkoControls'
@@ -10,15 +22,6 @@ import {
  updateUserStats,
 } from '@/supabase/api/update-user-stats'
 import { UserData } from '@/supabase/types'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import {
- Animated,
- Dimensions,
- ScrollView,
- StyleSheet,
- View,
-} from 'react-native'
-import { Text } from 'react-native-paper'
 
 // --- Type Definitions ---
 interface Position {
@@ -245,6 +248,7 @@ const Plinko: React.FC = () => {
    PEG_RADIUS: 4, // Size of collision pegs
    BALL_RADIUS: 10, // Size of dropped balls
    MAX_TOTAL_BALLS: 50, // Maximum balls per game
+   CENTER_BIAS_ZONE_WIDTH: 28, // Width of the center bias zone
   }),
   []
  )
@@ -450,7 +454,10 @@ const Plinko: React.FC = () => {
     const lastRowY =
      gameConstants.PEG_VERTICAL_SPACING * (gameConstants.ROWS + 1)
     const distanceFromCenter = Math.abs(ball.x - boardWidth / 2)
-    if (distanceFromCenter < 25 && ball.y > lastRowY) {
+    if (
+     distanceFromCenter < gameConstants.CENTER_BIAS_ZONE_WIDTH &&
+     ball.y > lastRowY
+    ) {
      const pushDirection = ball.x > boardWidth / 2 ? 1 : -1
      ball.vx += pushDirection * 0.2
     }

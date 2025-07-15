@@ -1,3 +1,7 @@
+import React from 'react'
+
+import { SafeAreaView, StyleSheet, useColorScheme } from 'react-native'
+
 import {
  formatAccountLevel,
  formatDate,
@@ -7,8 +11,6 @@ import {
 import { createTheme, MatrixColors } from '@/constants/Colors'
 import { FONT_FAMILY } from '@/constants/Fonts'
 import { useAuthProvider } from '@/providers'
-import React from 'react'
-import { SafeAreaView, StyleSheet, useColorScheme } from 'react-native'
 
 export const UserStats = () => {
  const { userData } = useAuthProvider()

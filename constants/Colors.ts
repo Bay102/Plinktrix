@@ -1,11 +1,10 @@
-/**
- * Simplified theming system with dynamic color switching
- */
+import { ColorSchemeName } from 'react-native'
+
 import {
  DarkTheme as NavigationDarkTheme,
  DefaultTheme as NavigationDefaultTheme,
 } from '@react-navigation/native'
-import { ColorSchemeName } from 'react-native'
+
 import { MD3DarkTheme, MD3LightTheme } from 'react-native-paper'
 
 // Base colors that are shared between light and dark themes

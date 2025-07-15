@@ -1,8 +1,12 @@
-import { createTheme, MatrixColors } from '@/constants/Colors'
 import React from 'react'
+
 import { StyleSheet, useColorScheme, View } from 'react-native'
+
 import Modal from 'react-native-modal'
 import { Button } from 'react-native-paper'
+
+import { createTheme, MatrixColors } from '@/constants/Colors'
+
 import { IconSymbol } from './IconSymbol'
 
 export const BaseModal = ({

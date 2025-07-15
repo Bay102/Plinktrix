@@ -1,10 +1,13 @@
-import ParallaxScrollView from '@/components/ParallaxScrollView'
+import React from 'react'
+
+import { StyleSheet, useColorScheme } from 'react-native'
+
+import { Text } from 'react-native-paper'
+
 import DigitalRain from '@/components/pages/Plinko/DigitalRain'
+import ParallaxScrollView from '@/components/ParallaxScrollView'
 import { MatrixContainer } from '@/components/ui/MatrixContainer'
 import { createTheme, MatrixColors } from '@/constants/Colors'
-import React from 'react'
-import { StyleSheet, useColorScheme } from 'react-native'
-import { Text } from 'react-native-paper'
 
 const Index = () => {
  const colorScheme = useColorScheme()
