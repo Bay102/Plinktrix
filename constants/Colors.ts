@@ -14,8 +14,10 @@ export const MatrixColors = {
  // Matrix theme colors
  matrixCyan: '#0CF',
  matrixBlue: '#0AF',
+ matrixBlueShadow: 'rgba(0, 173, 255, 0.7)',
  matrixRed: '#F00',
  matrixGold: '#FFD700',
+ matrixGoldShadow: 'rgba(255, 215, 0, 0.7)',
  matrixGreen: '#0F0',
  matrixDarkGreen: '#070',
  matrixGray: '#AAA',

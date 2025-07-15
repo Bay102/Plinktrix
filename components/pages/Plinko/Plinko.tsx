@@ -147,13 +147,23 @@ const PrizeSlot = React.memo<PrizeSlotProps>(({ value, animationType }) => {
 PrizeSlot.displayName = 'PrizeSlot'
 
 const Ball = React.memo<BallProps>(({ position, isGold }) => {
+ const CHARACTERS =
+  'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボpoヴッン'
+ const randomChar = useMemo(
+  () => CHARACTERS.charAt(Math.floor(Math.random() * CHARACTERS.length)),
+  []
+ )
  const ballStyle = isGold ? styles.goldBall : styles.regularBall
  const transform = useMemo(
   () => [{ translateX: position.x - 12 }, { translateY: position.y - 12 }],
   [position.x, position.y]
  )
 
- return <View style={[styles.ball, ballStyle, { transform }]} />
+ return (
+  <View style={[styles.ball, ballStyle, { transform }]}>
+   <Text style={styles.ballText}>{randomChar}</Text>
+  </View>
+ )
 })
 Ball.displayName = 'Ball'
 
@@ -916,14 +926,29 @@ const styles = StyleSheet.create({
   fontWeight: 'bold',
  },
  ball: { position: 'absolute', width: 20, height: 20, borderRadius: 10 },
+ ballText: {
+  color: MatrixColors.matrixDarkBG,
+  fontSize: 12,
+  fontWeight: 'bold',
+ },
  regularBall: {
   backgroundColor: MatrixColors.matrixBlue,
   borderColor: MatrixColors.matrixCyan,
+  shadowColor: MatrixColors.matrixBlueShadow,
+  shadowOffset: { width: 0, height: 0 },
+  shadowOpacity: 1,
+  shadowRadius: 3,
+  elevation: 5,
   borderWidth: 2,
  },
  goldBall: {
   backgroundColor: MatrixColors.matrixGold,
   borderColor: MatrixColors.matrixGold,
+  shadowColor: MatrixColors.matrixGoldShadow,
+  shadowOffset: { width: 0, height: 0 },
+  shadowOpacity: 1,
+  shadowRadius: 8,
+  elevation: 5,
   borderWidth: 2,
  },
  footer: {
