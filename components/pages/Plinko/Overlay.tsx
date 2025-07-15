@@ -255,19 +255,21 @@ const Overlay: React.FC<OverlayProps> = ({
     )}
 
     {/* Debug Mode Toggle */}
-    <TouchableOpacity
-     onPress={() => setIsDebugMode(!isDebugMode)}
-     style={[styles.debugToggle, isDebugMode && styles.debugToggleActive]}
-    >
-     <Text
-      style={[
-       styles.debugToggleText,
-       isDebugMode && styles.debugToggleTextActive,
-      ]}
+    {__DEV__ && (
+     <TouchableOpacity
+      onPress={() => setIsDebugMode(!isDebugMode)}
+      style={[styles.debugToggle, isDebugMode && styles.debugToggleActive]}
      >
-      DEBUG: {isDebugMode ? 'ON' : 'OFF'}
-     </Text>
-    </TouchableOpacity>
+      <Text
+       style={[
+        styles.debugToggleText,
+        isDebugMode && styles.debugToggleTextActive,
+       ]}
+      >
+       DEBUG: {isDebugMode ? 'ON' : 'OFF'}
+      </Text>
+     </TouchableOpacity>
+    )}
    </View>
   </View>
  )

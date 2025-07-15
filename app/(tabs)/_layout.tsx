@@ -2,7 +2,6 @@ import { HapticTab } from '@/components/HapticTab'
 import { IconSymbol } from '@/components/ui/IconSymbol'
 import { createTheme } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme'
-import log from '@/logger'
 import { useAuthProvider, useUserProvider } from '@/providers'
 import { Tabs } from 'expo-router'
 import React from 'react'
@@ -14,13 +13,14 @@ export default function TabLayout() {
  const { setSettingsModalVisible } = useUserProvider()
  const theme = createTheme(colorScheme)
 
- log.debug('Theme', theme)
-
  return (
   <Tabs
    screenOptions={{
     tabBarActiveTintColor: theme.colors.primary,
     headerShown: false,
+    tabBarIconStyle: {
+     marginTop: 10,
+    },
     tabBarButton: HapticTab,
     tabBarStyle: Platform.select({
      ios: {
@@ -123,11 +123,7 @@ export default function TabLayout() {
      headerShown: true,
      headerRight: () => (
       <TouchableOpacity onPress={() => setSettingsModalVisible(true)}>
-       <IconSymbol
-        size={28}
-        name="gearshape.fill"
-        color={theme.colors.primary}
-       />
+       <IconSymbol size={28} name="gearshape.fill" color={theme.colors.icon} />
       </TouchableOpacity>
      ),
      tabBarIcon: ({ color }) => (

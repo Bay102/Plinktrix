@@ -9,7 +9,6 @@ import { FONT_FAMILY } from '@/constants/Fonts'
 import { useAuthProvider } from '@/providers'
 import React from 'react'
 import { SafeAreaView, StyleSheet, useColorScheme } from 'react-native'
-import DigitalRain from '../Plinko/DigitalRain'
 
 export const UserStats = () => {
  const { userData } = useAuthProvider()
@@ -28,7 +27,7 @@ export const UserStats = () => {
   <SafeAreaView
    style={[styles.container, { backgroundColor: theme.colors.background }]}
   >
-   <DigitalRain />
+   {/* <DigitalRain /> */}
    <MatrixContainer title="USER STATS">
     <StatItem
      label="Username"
