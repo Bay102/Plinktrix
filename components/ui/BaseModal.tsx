@@ -11,10 +11,14 @@ import { IconSymbol } from './IconSymbol'
 
 export const BaseModal = ({
  isVisible = false,
+ animationIn = 'slideInUp',
+ animationOut = 'slideOutDown',
  onClose,
  children,
 }: {
  isVisible: boolean
+ animationIn?: string
+ animationOut?: string
  onClose: () => void
  children: React.ReactNode
 }) => {
@@ -25,10 +29,8 @@ export const BaseModal = ({
    isVisible={isVisible}
    onBackdropPress={onClose}
    style={styles.modal}
-   animationIn="fadeIn"
-   animationOut="fadeOut"
-   backdropColor="black"
-   backdropOpacity={0.7}
+   animationIn={animationIn as any}
+   animationOut={animationOut as any}
   >
    <View style={styles.modalContent}>
     <View style={styles.modalHeader}>

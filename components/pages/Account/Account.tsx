@@ -92,7 +92,7 @@ export default function Account() {
     <ParallaxScrollView
      headerImage={<DigitalRain />}
      headerBackgroundColor={{
-      light: theme.colors.surface,
+      light: theme.colors.matrixDarkBG,
       dark: theme.colors.surface,
      }}
     >
@@ -108,7 +108,10 @@ export default function Account() {
     <>
      {formMode === 'none' && (
       <ParallaxScrollView
-       headerBackgroundColor={{ light: '#D0D0D0', dark: '#000' }}
+       headerBackgroundColor={{
+        light: theme.colors.matrixDarkBG,
+        dark: theme.colors.surface,
+       }}
        headerImage={<DigitalRain />}
       >
        <MatrixButton title=" [ LOGIN ]" onPress={() => setFormMode('login')} />
@@ -134,7 +137,10 @@ export default function Account() {
 
      {formMode === 'login' && (
       <ParallaxScrollView
-       headerBackgroundColor={{ light: '#D0D0D0', dark: '#000' }}
+       headerBackgroundColor={{
+        light: theme.colors.matrixDarkBG,
+        dark: theme.colors.surface,
+       }}
        headerImage={<DigitalRain />}
       >
        <Controller
@@ -197,7 +203,10 @@ export default function Account() {
 
      {formMode === 'signup' && (
       <ParallaxScrollView
-       headerBackgroundColor={{ light: '#D0D0D0', dark: '#000' }}
+       headerBackgroundColor={{
+        light: theme.colors.matrixDarkBG,
+        dark: theme.colors.surface,
+       }}
        headerImage={<DigitalRain />}
       >
        <Controller

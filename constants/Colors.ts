@@ -26,7 +26,6 @@ export const MatrixColors = {
  matrixGreenBG: 'rgba(0, 255, 0, 0.1)',
 }
 
-// Theme-specific colors
 const baseColors = {
  light: {
   text: '#11181C',
