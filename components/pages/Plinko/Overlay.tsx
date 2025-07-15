@@ -203,21 +203,6 @@ const Overlay: React.FC<OverlayProps> = ({
      </Text>
     </TouchableOpacity>
 
-    {/* Debug Mode Toggle */}
-    <TouchableOpacity
-     onPress={() => setIsDebugMode(!isDebugMode)}
-     style={[styles.debugToggle, isDebugMode && styles.debugToggleActive]}
-    >
-     <Text
-      style={[
-       styles.debugToggleText,
-       isDebugMode && styles.debugToggleTextActive,
-      ]}
-     >
-      DEBUG: {isDebugMode ? 'ON' : 'OFF'}
-     </Text>
-    </TouchableOpacity>
-
     {/* Results Section */}
     {(totalPrize > 0 || Object.keys(prizeCounts).length > 0) && (
      <View style={styles.resultsContainer}>
@@ -268,6 +253,21 @@ const Overlay: React.FC<OverlayProps> = ({
       </View>
      </View>
     )}
+
+    {/* Debug Mode Toggle */}
+    <TouchableOpacity
+     onPress={() => setIsDebugMode(!isDebugMode)}
+     style={[styles.debugToggle, isDebugMode && styles.debugToggleActive]}
+    >
+     <Text
+      style={[
+       styles.debugToggleText,
+       isDebugMode && styles.debugToggleTextActive,
+      ]}
+     >
+      DEBUG: {isDebugMode ? 'ON' : 'OFF'}
+     </Text>
+    </TouchableOpacity>
    </View>
   </View>
  )

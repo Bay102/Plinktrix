@@ -291,12 +291,7 @@ export default function AccountScreen() {
 }
 
 const styles = StyleSheet.create({
- headerImage: {
-  color: '#808080',
-  bottom: -90,
-  left: -35,
-  position: 'absolute',
- },
+ headerImage: {},
  button: {
   borderRadius: 2,
  },
