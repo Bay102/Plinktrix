@@ -1,10 +1,13 @@
+import { createContext, ReactNode, useEffect, useState } from 'react'
+
+import { Session, User } from '@supabase/supabase-js'
+
+import { router } from 'expo-router'
+
 import { getUserData } from '@/supabase/api/get-user-data'
 import { getUserStats } from '@/supabase/api/update-user-stats'
 import { supabase } from '@/supabase/supabase'
 import { UserData } from '@/supabase/types'
-import { Session, User } from '@supabase/supabase-js'
-import { router } from 'expo-router'
-import { createContext, ReactNode, useEffect, useState } from 'react'
 export interface AuthContextType {
  user: User | null | undefined
  setUser: (user: User | null | undefined) => void

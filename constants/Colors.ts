@@ -5,7 +5,11 @@ import {
  DefaultTheme as NavigationDefaultTheme,
 } from '@react-navigation/native'
 
-import { MD3DarkTheme, MD3LightTheme } from 'react-native-paper'
+import {
+ adaptNavigationTheme,
+ MD3DarkTheme,
+ MD3LightTheme,
+} from 'react-native-paper'
 
 // Base colors that are shared between light and dark themes
 export const MatrixColors = {
@@ -91,12 +95,18 @@ export const createTheme = (colorScheme: ColorSchemeName = 'light') => {
 }
 
 // Navigation theme function
+
+const { LightTheme, DarkTheme } = adaptNavigationTheme({
+ reactNavigationLight: NavigationDefaultTheme,
+ reactNavigationDark: NavigationDarkTheme,
+})
+
 export const createNavigationTheme = (
  colorScheme: ColorSchemeName = 'light'
 ) => {
  const isDark = colorScheme === 'dark'
  const colors = baseColors[isDark ? 'dark' : 'light']
- const baseNavTheme = isDark ? NavigationDarkTheme : NavigationDefaultTheme
+ const baseNavTheme = isDark ? DarkTheme : LightTheme
 
  return {
   ...baseNavTheme,

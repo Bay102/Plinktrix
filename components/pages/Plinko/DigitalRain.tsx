@@ -1,5 +1,3 @@
-// DigitalRain.tsx
-
 import React, { useEffect, useRef } from 'react'
 
 import { Animated, Dimensions, StyleSheet, View } from 'react-native'

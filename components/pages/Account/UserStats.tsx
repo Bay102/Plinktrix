@@ -30,7 +30,7 @@ export const UserStats = () => {
    style={[styles.container, { backgroundColor: theme.colors.background }]}
   >
    {/* <DigitalRain /> */}
-   <MatrixContainer title="USER STATS">
+   <MatrixContainer title="PLAYER INFO">
     <StatItem
      label="Username"
      value={username ?? 'N/A'}

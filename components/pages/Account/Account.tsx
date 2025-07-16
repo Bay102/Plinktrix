@@ -3,11 +3,14 @@ import { useState } from 'react'
 import { SafeAreaView, StyleSheet, useColorScheme } from 'react-native'
 
 import { Controller, useForm } from 'react-hook-form'
-import { Button, Text, TextInput } from 'react-native-paper'
+import { TextInput as PaperTextInput } from 'react-native-paper'
 
 import { UserSettingsModal } from '@/components/pages/Account/UserSettingsModal'
 import { UserStats } from '@/components/pages/Account/UserStats'
 import DigitalRain from '@/components/pages/Plinko/DigitalRain'
+import { Button } from '@/components/PaperBase/Button'
+import { Text } from '@/components/PaperBase/Text'
+import { TextInput } from '@/components/PaperBase/TextInput'
 import ParallaxScrollView from '@/components/ParallaxScrollView'
 import MatrixButton from '@/components/ui/MatrixButton'
 import { createTheme } from '@/constants/Colors'
@@ -161,7 +164,7 @@ export default function Account() {
           onChangeText={onChange}
           onBlur={onBlur}
           error={!!loginForm.formState.errors.email}
-          left={<TextInput.Icon icon="email" />}
+          left={<PaperTextInput.Icon icon="email" />}
           // @ts-ignore - React Native Paper doesn't have proper types for helperText
           helperText={loginForm.formState.errors.email?.message}
          />
@@ -183,7 +186,7 @@ export default function Account() {
           onChangeText={onChange}
           onBlur={onBlur}
           error={!!loginForm.formState.errors.password}
-          left={<TextInput.Icon icon="lock" />}
+          left={<PaperTextInput.Icon icon="lock" />}
           // @ts-ignore - React Native Paper doesn't have proper types for helperText
           helperText={loginForm.formState.errors.password?.message}
          />
@@ -227,7 +230,7 @@ export default function Account() {
           onChangeText={onChange}
           onBlur={onBlur}
           error={!!signupForm.formState.errors.email}
-          left={<TextInput.Icon icon="email" />}
+          left={<PaperTextInput.Icon icon="email" />}
           // @ts-ignore - React Native Paper doesn't have proper types for helperText
           helperText={signupForm.formState.errors.email?.message}
          />
@@ -252,7 +255,7 @@ export default function Account() {
           onChangeText={onChange}
           onBlur={onBlur}
           error={!!signupForm.formState.errors.username}
-          left={<TextInput.Icon icon="account" />}
+          left={<PaperTextInput.Icon icon="account" />}
           // @ts-ignore - React Native Paper doesn't have proper types for helperText
           helperText={signupForm.formState.errors.username?.message}
          />
@@ -278,7 +281,7 @@ export default function Account() {
           onChangeText={onChange}
           onBlur={onBlur}
           error={!!signupForm.formState.errors.password}
-          left={<TextInput.Icon icon="lock" />}
+          left={<PaperTextInput.Icon icon="lock" />}
           // @ts-ignore - React Native Paper doesn't have proper types for helperText
           helperText={signupForm.formState.errors.password?.message}
          />
