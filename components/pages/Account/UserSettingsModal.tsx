@@ -1,7 +1,7 @@
 import { StyleSheet, View } from 'react-native'
 
-import { BaseModal } from '@/components/ui/BaseModal'
-import MatrixButton from '@/components/ui/MatrixButton'
+import { BaseModal } from '@/components/shared/BaseModal'
+import MatrixButton from '@/components/shared/MatrixButton'
 import { useAuthProvider, useUserProvider } from '@/providers'
 
 export const UserSettingsModal = ({

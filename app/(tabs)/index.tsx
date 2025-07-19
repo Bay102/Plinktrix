@@ -6,7 +6,7 @@ import { Text } from 'react-native-paper'
 
 import DigitalRain from '@/components/pages/Plinko/DigitalRain'
 import ParallaxScrollView from '@/components/ParallaxScrollView'
-import { MatrixContainer } from '@/components/ui/MatrixContainer'
+import { MatrixContainer } from '@/components/shared/MatrixContainer'
 import { createTheme, MatrixColors } from '@/constants/Colors'
 
 const Index = () => {

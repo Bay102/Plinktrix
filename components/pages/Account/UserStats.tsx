@@ -7,7 +7,7 @@ import {
  formatDate,
  MatrixContainer,
  StatItem,
-} from '@/components/ui/MatrixContainer'
+} from '@/components/shared/MatrixContainer'
 import { createTheme, MatrixColors } from '@/constants/Colors'
 import { FONT_FAMILY } from '@/constants/Fonts'
 import { useAuthProvider } from '@/providers'
@@ -55,6 +55,9 @@ export const UserStats = () => {
      value={score ? `${score} bytes` : '0 bytes'}
      color={MatrixColors.matrixGreen}
     />
+   </MatrixContainer>
+
+   <MatrixContainer title="PACKETS">
     <StatItem
      label="Packets"
      value={regularPackets ? regularPackets.toString() : '0'}

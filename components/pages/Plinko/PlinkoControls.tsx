@@ -206,56 +206,56 @@ const PlinkoControls: React.FC<PlinkoControlsProps> = ({
      </Text>
     </TouchableOpacity>
 
-    {/* Results Section */}
-    {(totalPrize > 0 || Object.keys(prizeCounts).length > 0) && (
-     <View style={styles.resultsContainer}>
-      <Text style={styles.payoutText}>
-       Bytes: {totalPrize.toLocaleString()}
-      </Text>
+    {userLoggedIn &&
+     (totalPrize > 0 || Object.keys(prizeCounts).length > 0) && (
+      <View style={styles.resultsContainer}>
+       <Text style={styles.payoutText}>
+        Bytes: {totalPrize.toLocaleString()}
+       </Text>
 
-      <View style={styles.analysisSection}>
-       <Text style={styles.analysisTitle}>Data Stream:</Text>
-       {Object.entries(prizeCounts)
-        .sort(([valA], [valB]) => Number(valB) - Number(valA))
-        .map(([value, { regular, gold }]) => (
-         <React.Fragment key={value}>
-          {regular > 0 && (
-           <View style={styles.resultRow}>
-            <Text style={styles.resultText}>
+       <View style={styles.analysisSection}>
+        <Text style={styles.analysisTitle}>Data Stream:</Text>
+        {Object.entries(prizeCounts)
+         .sort(([valA], [valB]) => Number(valB) - Number(valA))
+         .map(([value, { regular, gold }]) => (
+          <React.Fragment key={value}>
+           {regular > 0 && (
+            <View style={styles.resultRow}>
              <Text style={styles.resultText}>
-              {Number(value).toLocaleString()}
+              <Text style={styles.resultText}>
+               {Number(value).toLocaleString()}
+              </Text>
              </Text>
-            </Text>
-            <Text style={styles.resultText}>x {regular}</Text>
-           </View>
-          )}
-          {gold > 0 && (
-           <View style={styles.resultRow}>
-            <Text style={styles.resultText}>
-             <Text style={{ color: MatrixColors.matrixGold }}>
-              {Number(value).toLocaleString()} (x2)
+             <Text style={styles.resultText}>x {regular}</Text>
+            </View>
+           )}
+           {gold > 0 && (
+            <View style={styles.resultRow}>
+             <Text style={styles.resultText}>
+              <Text style={{ color: MatrixColors.matrixGold }}>
+               {Number(value).toLocaleString()} (x2)
+              </Text>
              </Text>
-            </Text>
-            <Text style={styles.resultText}>x {gold}</Text>
-           </View>
-          )}
-         </React.Fragment>
-        ))}
-      </View>
+             <Text style={styles.resultText}>x {gold}</Text>
+            </View>
+           )}
+          </React.Fragment>
+         ))}
+       </View>
 
-      <View style={styles.analysisSection}>
-       <Text style={styles.analysisTitle}>✨ System Commentary:</Text>
-       {isAnalyzing && (
-        <Text style={styles.aiText}> Analyzing data stream...</Text>
-       )}
-       {aiAnalysis && (
-        <Text style={[styles.aiText, { fontStyle: 'italic' }]}>
-         &quot;{aiAnalysis}&quot;
-        </Text>
-       )}
+       <View style={styles.analysisSection}>
+        <Text style={styles.analysisTitle}>✨ System Commentary:</Text>
+        {isAnalyzing && (
+         <Text style={styles.aiText}> Analyzing data stream...</Text>
+        )}
+        {aiAnalysis && (
+         <Text style={[styles.aiText, { fontStyle: 'italic' }]}>
+          &quot;{aiAnalysis}&quot;
+         </Text>
+        )}
+       </View>
       </View>
-     </View>
-    )}
+     )}
 
     {/* Debug Mode Toggle */}
     {__DEV__ && (

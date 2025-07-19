@@ -5,7 +5,7 @@ import { Platform, Text, TouchableOpacity, View } from 'react-native'
 import { Tabs } from 'expo-router'
 
 import { HapticTab } from '@/components/HapticTab'
-import { IconSymbol } from '@/components/ui/IconSymbol'
+import { IconSymbol } from '@/components/shared/IconSymbol'
 import { createTheme } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { useAuthProvider, useUserProvider } from '@/providers'
