@@ -258,7 +258,7 @@ const Plinko: React.FC = () => {
    PEG_RADIUS: 4, // Size of collision pegs
    BALL_RADIUS: 10, // Size of dropped balls
    MAX_TOTAL_BALLS: 50, // Maximum balls per game
-   CENTER_BIAS_ZONE_WIDTH: 28, // Width of the center bias zone
+   CENTER_BIAS_ZONE_WIDTH: 30, // Width of the center bias zone
   }),
   []
  )
@@ -469,7 +469,7 @@ const Plinko: React.FC = () => {
      ball.y > lastRowY
     ) {
      const pushDirection = ball.x > boardWidth / 2 ? 1 : -1
-     ball.vx += pushDirection * 0.2
+     ball.vx += pushDirection * 0.075
     }
 
     // Update position
