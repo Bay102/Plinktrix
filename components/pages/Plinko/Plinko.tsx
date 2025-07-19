@@ -23,82 +23,21 @@ import {
 } from '@/supabase/api/update-user-stats'
 import { UserData } from '@/supabase/types'
 
-// --- Type Definitions ---
-interface Position {
- x: number
- y: number
-}
-
-interface BallType extends Position {
- id: number
- vx: number
- vy: number
- isGold: boolean
- stuckCounter: number
- lastX: number
- lastY: number
-}
-
-interface PegType extends Position {}
-
-interface PrizeCount {
- regular: number
- gold: number
-}
-
-type PrizeCounts = {
- [key: string]: PrizeCount
-}
-
-type AnimationType = 'win' | 'lose' | 'gold' | null
-
-type AnimatingSlots = {
- [key: number]: AnimationType
-}
-
-// --- New State Management Types ---
-interface GameState {
- isDropping: boolean
- totalPrize: number
- currentGravity: number
- isAnalyzing: boolean
- aiAnalysis: string
- gameEndedWithPrize: number | null
-}
-
-interface BallCounts {
- regular: number
- gold: number
-}
-
-interface LoadingState {
- isLoadingStats: boolean
- isUpdatingStats: boolean
-}
-
-// --- Helper Component Props ---
-interface PrizeSlotProps {
- value: number
- animationType: AnimationType
-}
-
-interface BallProps {
- position: { x: number; y: number }
- isGold: boolean
-}
-
-interface PegGridProps {
- pegs: PegType[][]
-}
-
-interface BallLayerProps {
- balls: BallType[]
-}
-
-interface PrizeSlotLayerProps {
- prizeValues: number[]
- animatingSlots: AnimatingSlots
-}
+import {
+ AnimatingSlots,
+ AnimationType,
+ BallCounts,
+ BallLayerProps,
+ BallProps,
+ BallType,
+ GameState,
+ LoadingState,
+ PegGridProps,
+ PegType,
+ PrizeCounts,
+ PrizeSlotLayerProps,
+ PrizeSlotProps,
+} from './types'
 
 // --- Memoized Helper Components ---
 const Peg = React.memo(() => <View style={styles.peg} />)
@@ -269,7 +208,7 @@ const Plinko: React.FC = () => {
  const boardDimensions = useMemo(
   () => ({
    width: boardWidth,
-   height: (gameConstants.ROWS + 5) * gameConstants.PEG_VERTICAL_SPACING,
+   height: (gameConstants.ROWS + 4) * gameConstants.PEG_VERTICAL_SPACING,
   }),
   [boardWidth, gameConstants.ROWS, gameConstants.PEG_VERTICAL_SPACING]
  )

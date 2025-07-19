@@ -83,6 +83,7 @@ export default function TabLayout() {
      title: '',
      headerShown: false,
      headerShadowVisible: false,
+     freezeOnBlur: true,
      headerBackgroundContainerStyle: {
       backgroundColor: 'transparent',
      },
