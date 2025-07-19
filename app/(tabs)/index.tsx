@@ -4,7 +4,7 @@ import { StyleSheet, useColorScheme } from 'react-native'
 
 import { Text } from 'react-native-paper'
 
-import DigitalRain from '@/components/pages/Plinko/DigitalRain'
+import PlinkoDigitalRain from '@/components/pages/Plinko/PlinkoDigitalRain'
 import ParallaxScrollView from '@/components/ParallaxScrollView'
 import { MatrixContainer } from '@/components/shared/MatrixContainer'
 import { createTheme, MatrixColors } from '@/constants/Colors'
@@ -18,7 +18,7 @@ const Index = () => {
     light: theme.colors.surface,
     dark: theme.colors.surface,
    }}
-   headerImage={<DigitalRain />}
+   headerImage={<PlinkoDigitalRain />}
   >
    <MatrixContainer title="WELCOME">
     <Text style={styles.text}>Get ready to play Plinktrix!</Text>
