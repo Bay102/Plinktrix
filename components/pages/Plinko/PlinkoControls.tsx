@@ -206,6 +206,7 @@ const PlinkoControls: React.FC<PlinkoControlsProps> = ({
      </Text>
     </TouchableOpacity>
 
+    {/* Last Drop Results */}
     {userLoggedIn &&
      (totalPrize > 0 || Object.keys(prizeCounts).length > 0) && (
       <View style={styles.resultsContainer}>

@@ -8,6 +8,7 @@ import { PaperProvider } from 'react-native-paper'
 import { createNavigationTheme, createTheme } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { AuthProvider } from '@/providers/AuthProvider'
+import { StoreProvider } from '@/providers/StoreProvider'
 import { UserProvider } from '@/providers/UserProvider'
 
 import 'react-native-reanimated'
@@ -25,18 +26,20 @@ export default function RootLayout() {
  }
 
  return (
-  <AuthProvider>
-   <UserProvider>
-    <PaperProvider theme={theme}>
-     <ThemeProvider value={createNavigationTheme(colorScheme)}>
-      <Stack>
-       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-       <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-     </ThemeProvider>
-    </PaperProvider>
-   </UserProvider>
-  </AuthProvider>
+  <StoreProvider>
+   <AuthProvider>
+    <UserProvider>
+     <PaperProvider theme={theme}>
+      <ThemeProvider value={createNavigationTheme(colorScheme)}>
+       <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="+not-found" />
+       </Stack>
+       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
+      </ThemeProvider>
+     </PaperProvider>
+    </UserProvider>
+   </AuthProvider>
+  </StoreProvider>
  )
 }

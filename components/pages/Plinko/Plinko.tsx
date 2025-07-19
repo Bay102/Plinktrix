@@ -359,6 +359,30 @@ const Plinko: React.FC = () => {
   }
  }, [user?.id, fetchUserStats])
 
+ // Clear all game state when user signs out
+ useEffect(() => {
+  if (user === null) {
+   // Reset all game state to initial values
+   setBallCounts({ regular: 1, gold: 0 })
+   setGameState({
+    isDropping: false,
+    totalPrize: 0,
+    currentGravity: 0.11,
+    isAnalyzing: false,
+    aiAnalysis: '',
+    gameEndedWithPrize: null,
+   })
+   setPrizeCounts({})
+   setUserStats(null)
+   setLoadingState({
+    isLoadingStats: false,
+    isUpdatingStats: false,
+   })
+   setBalls([])
+   setAnimatingSlots({})
+  }
+ }, [user])
+
  // Update ball counts when user stats change
  useEffect(() => {
   if (userStats) {

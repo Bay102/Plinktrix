@@ -27,6 +27,11 @@ export const createAccount = async (
   const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
    email,
    password,
+   options: {
+    data: {
+     username: username,
+    },
+   },
   })
 
   if (signUpError) {
@@ -34,29 +39,29 @@ export const createAccount = async (
   }
 
   // If signup was successful and we have a user, create the user_data row
-  if (signUpData.user) {
-   const { data: userData, error: userDataError } = await supabase
-    .from('user_data')
-    .insert({
-     username: username,
-     //  account_level: 'free', // Default account level
-    })
-    .select()
-    .single()
+  // if (signUpData.user) {
+  //  const { data: userData, error: userDataError } = await supabase
+  //   .from('user_data')
+  //   .insert({
+  //    username: username,
+  //    //  account_level: 'free', // Default account level
+  //   })
+  //   .select()
+  //   .single()
 
-   if (userDataError) {
-    return { data: null, error: userDataError }
-   }
+  //  if (userDataError) {
+  //   return { data: null, error: userDataError }
+  //  }
 
-   return {
-    data: {
-     user: signUpData.user,
-     session: signUpData.session,
-     userData: userData,
-    },
-    error: null,
-   }
-  }
+  //  return {
+  //   data: {
+  //    user: signUpData.user,
+  //    session: signUpData.session,
+  //    userData: userData,
+  //   },
+  //   error: null,
+  //  }
+  // }
 
   return { data: signUpData, error: null }
  } catch (error) {
