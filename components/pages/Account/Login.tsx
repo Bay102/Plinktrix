@@ -3,7 +3,6 @@ import { useColorScheme } from 'react-native'
 import { Controller, useForm } from 'react-hook-form'
 import { TextInput as PaperTextInput } from 'react-native-paper'
 
-import DigitalRain from '@/components/pages/Plinko/DigitalRain'
 import { Button } from '@/components/PaperBase/Button'
 import { Text } from '@/components/PaperBase/Text'
 import { TextInput } from '@/components/PaperBase/TextInput'
@@ -11,6 +10,8 @@ import ParallaxScrollView from '@/components/ParallaxScrollView'
 import MatrixButton from '@/components/shared/MatrixButton'
 import { createTheme } from '@/constants/Colors'
 import { login } from '@/supabase/api/login'
+
+import PlinkoDigitalRain from '../Plinko/PlinkoDigitalRain'
 
 interface LoginFormData {
  email: string
@@ -55,7 +56,7 @@ const Login = ({
     light: theme.colors.matrixDarkBG,
     dark: theme.colors.surface,
    }}
-   headerImage={<DigitalRain />}
+   headerImage={<PlinkoDigitalRain />}
   >
    <Controller
     control={loginForm.control}

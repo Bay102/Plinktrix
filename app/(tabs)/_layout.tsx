@@ -126,16 +126,20 @@ export default function TabLayout() {
     options={{
      title: '',
      headerShown: true,
-     headerRight: () => (
-      <TouchableOpacity onPress={() => setSettingsModalVisible(true)}>
-       <IconSymbol
-        size={22}
-        style={{ marginRight: 5 }}
-        name="gearshape.fill"
-        color={theme.colors.icon}
-       />
-      </TouchableOpacity>
-     ),
+     headerRight: () => {
+      return (
+       user && (
+        <TouchableOpacity onPress={() => setSettingsModalVisible(true)}>
+         <IconSymbol
+          size={22}
+          style={{ marginRight: 5 }}
+          name="gearshape.fill"
+          color={theme.colors.icon}
+         />
+        </TouchableOpacity>
+       )
+      )
+     },
      tabBarIcon: ({ color }) => (
       <IconSymbol size={28} name="person.fill" color={color} />
      ),

@@ -3,7 +3,7 @@ import { StyleSheet, useColorScheme } from 'react-native'
 import { Controller, useForm } from 'react-hook-form'
 import { TextInput as PaperTextInput } from 'react-native-paper'
 
-import DigitalRain from '@/components/pages/Plinko/DigitalRain'
+import PlinkoDigitalRain from '@/components/pages/Plinko/PlinkoDigitalRain'
 import { Button } from '@/components/PaperBase/Button'
 import { TextInput } from '@/components/PaperBase/TextInput'
 import ParallaxScrollView from '@/components/ParallaxScrollView'
@@ -61,7 +61,7 @@ const SignUp = ({
     light: theme.colors.matrixDarkBG,
     dark: theme.colors.surface,
    }}
-   headerImage={<DigitalRain />}
+   headerImage={<PlinkoDigitalRain />}
   >
    <Controller
     control={signupForm.control}

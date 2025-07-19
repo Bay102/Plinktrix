@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 
 import { Animated, Dimensions, StyleSheet, View } from 'react-native'
 
@@ -18,18 +18,18 @@ interface RaindropProps {
 
 const Raindrop: React.FC<RaindropProps> = ({ index }) => {
  const fallAnim = useRef(new Animated.Value(0)).current
- const [randomChar, setRandomChar] = useState(
+ const randomCharRef = useRef(
   CHARACTERS.charAt(Math.floor(Math.random() * CHARACTERS.length))
  )
- const [isGold, setIsGold] = useState(Math.random() > 0.7) // Initial state
+ const isGoldRef = useRef(Math.random() > 0.7)
 
  useEffect(() => {
   const animate = () => {
    fallAnim.setValue(0)
    // Randomize character and gold status for each new drop
-   setIsGold(Math.random() > 0.7) // 30% chance for gold balls
-   setRandomChar(
-    CHARACTERS.charAt(Math.floor(Math.random() * CHARACTERS.length))
+   isGoldRef.current = Math.random() > 0.7 // 30% chance for gold balls
+   randomCharRef.current = CHARACTERS.charAt(
+    Math.floor(Math.random() * CHARACTERS.length)
    )
 
    Animated.timing(fallAnim, {
@@ -47,7 +47,7 @@ const Raindrop: React.FC<RaindropProps> = ({ index }) => {
   outputRange: [-BALL_SIZE, height],
  })
 
- const ballStyle = isGold ? styles.goldBall : styles.regularBall
+ const ballStyle = isGoldRef.current ? styles.goldBall : styles.regularBall
 
  return (
   <Animated.View
@@ -60,7 +60,7 @@ const Raindrop: React.FC<RaindropProps> = ({ index }) => {
     },
    ]}
   >
-   <Text style={styles.ballText}>{randomChar}</Text>
+   <Text style={styles.ballText}>{randomCharRef.current}</Text>
   </Animated.View>
  )
 }
