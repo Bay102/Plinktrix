@@ -4,8 +4,8 @@ import { SafeAreaView, useColorScheme } from 'react-native'
 
 import { observer } from 'mobx-react-lite'
 
-import DigitalRain from '@/components/pages/Plinko/DigitalRain'
 import ParallaxScrollView from '@/components/ParallaxScrollView'
+import DigitalRain from '@/components/shared/DigitalRain'
 import MatrixButton from '@/components/shared/MatrixButton'
 import { createTheme } from '@/constants/Colors'
 import { useAuthProvider } from '@/providers'

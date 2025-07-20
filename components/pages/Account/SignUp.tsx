@@ -3,11 +3,11 @@ import { StyleSheet, useColorScheme } from 'react-native'
 import { Controller, useForm } from 'react-hook-form'
 import { TextInput as PaperTextInput } from 'react-native-paper'
 
-import PlinkoDigitalRain from '@/components/pages/Plinko/PlinkoDigitalRain'
 import { Button } from '@/components/PaperBase/Button'
 import { TextInput } from '@/components/PaperBase/TextInput'
 import ParallaxScrollView from '@/components/ParallaxScrollView'
 import MatrixButton from '@/components/shared/MatrixButton'
+import PlinkoDigitalRain from '@/components/shared/PlinkoDigitalRain'
 import { createTheme } from '@/constants/Colors'
 import { createAccount } from '@/supabase/api/create-account'
 

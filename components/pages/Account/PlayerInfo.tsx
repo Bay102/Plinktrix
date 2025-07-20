@@ -6,7 +6,7 @@ import ParallaxScrollView from '@/components/ParallaxScrollView'
 import { createTheme } from '@/constants/Colors'
 import { useUserProvider } from '@/providers'
 
-import DigitalRain from '../Plinko/DigitalRain'
+import DigitalRain from '../../shared/DigitalRain'
 
 import { UserSettingsModal } from './UserSettingsModal'
 import { UserStats } from './UserStats'

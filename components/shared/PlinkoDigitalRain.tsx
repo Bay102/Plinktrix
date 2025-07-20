@@ -34,7 +34,7 @@ const Raindrop: React.FC<RaindropProps> = ({ index }) => {
 
    Animated.timing(fallAnim, {
     toValue: 1,
-    duration: Math.random() * 5000 + 3000,
+    duration: Math.random() * 5000 + 2000,
     delay: Math.random() * 10000,
     useNativeDriver: true,
    }).start(() => animate())

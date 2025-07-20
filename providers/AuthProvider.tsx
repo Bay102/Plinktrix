@@ -31,6 +31,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
  const [userData, setUserData] = useState<UserData | undefined>(undefined)
  const [session, setSession] = useState<Session | null>(null)
  const [isRefreshing, setIsRefreshing] = useState(false)
+
  // Fetch user data when user changes
  useEffect(() => {
   if (!user) {

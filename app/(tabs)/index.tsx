@@ -4,9 +4,9 @@ import { StyleSheet, useColorScheme } from 'react-native'
 
 import { Text } from 'react-native-paper'
 
-import PlinkoDigitalRain from '@/components/pages/Plinko/PlinkoDigitalRain'
 import ParallaxScrollView from '@/components/ParallaxScrollView'
 import { MatrixContainer } from '@/components/shared/MatrixContainer'
+import PlinkoDigitalRain from '@/components/shared/PlinkoDigitalRain'
 import { createTheme, MatrixColors } from '@/constants/Colors'
 
 const Index = () => {

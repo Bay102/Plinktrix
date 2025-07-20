@@ -11,7 +11,7 @@ import MatrixButton from '@/components/shared/MatrixButton'
 import { createTheme } from '@/constants/Colors'
 import { login } from '@/supabase/api/login'
 
-import PlinkoDigitalRain from '../Plinko/PlinkoDigitalRain'
+import PlinkoDigitalRain from '../../shared/PlinkoDigitalRain'
 
 interface LoginFormData {
  email: string

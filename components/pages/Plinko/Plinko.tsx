@@ -11,8 +11,8 @@ import {
 import { Text } from 'react-native-paper'
 
 import { DebugOverlay } from '@/components/development/PlinkoDebug'
-import DigitalRain from '@/components/pages/Plinko/DigitalRain' // Assuming this component exists
 import PlinkoControls from '@/components/pages/Plinko/PlinkoControls'
+import DigitalRain from '@/components/shared/DigitalRain' // Assuming this component exists
 import { MatrixColors } from '@/constants/Colors'
 import { FONT_FAMILY } from '@/constants/Fonts'
 import { useAuthProvider } from '@/providers'

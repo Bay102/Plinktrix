@@ -113,7 +113,6 @@ const PlinkoControls: React.FC<PlinkoControlsProps> = ({
       }
      />
     </View>
-
     {maxGoldBalls !== 0 && (
      <View style={styles.sliderContainer}>
       <Text style={styles.labelText}>
@@ -142,7 +141,6 @@ const PlinkoControls: React.FC<PlinkoControlsProps> = ({
       />
      </View>
     )}
-
     {/* Total balls counter */}
     <View style={styles.totalBallsContainer}>
      <Text style={styles.totalBallsText}>
@@ -151,19 +149,16 @@ const PlinkoControls: React.FC<PlinkoControlsProps> = ({
       <Text style={{ color: '#AAA' }}> / {maxTotalBalls}</Text>
      </Text>
     </View>
-
     {!userLoggedIn && (
      <View style={styles.warningContainer}>
-      <Text style={styles.warningText}>⚠️ Login required to save progress</Text>
+      <Text style={styles.warningText}>⚠️ Login required to play</Text>
      </View>
     )}
-
     {userLoggedIn && hasInsufficientBalls && (
      <View style={styles.warningContainer}>
       <Text style={styles.warningText}>⚠️ Insufficient data packets</Text>
      </View>
     )}
-
     {hasTooManyBalls && (
      <View style={styles.warningContainer}>
       <Text style={styles.warningText}>
@@ -171,16 +166,15 @@ const PlinkoControls: React.FC<PlinkoControlsProps> = ({
       </Text>
      </View>
     )}
-
     {userLoggedIn && isLoadingStats && (
      <View style={styles.warningContainer}>
       <Text style={styles.warningText}>Loading user data...</Text>
      </View>
     )}
-
     <TouchableOpacity
      onPress={handleDropBall}
      disabled={
+      !userLoggedIn ||
       isDropping ||
       hasTooManyBalls ||
       (userLoggedIn &&
@@ -188,6 +182,7 @@ const PlinkoControls: React.FC<PlinkoControlsProps> = ({
      }
      style={[
       styles.button,
+      !userLoggedIn && styles.disabledButton,
       (isDropping ||
        hasTooManyBalls ||
        (userLoggedIn &&
@@ -257,7 +252,6 @@ const PlinkoControls: React.FC<PlinkoControlsProps> = ({
        </View>
       </View>
      )}
-
     {/* Debug Mode Toggle */}
     {__DEV__ && (
      <TouchableOpacity
