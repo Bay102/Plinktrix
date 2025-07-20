@@ -204,7 +204,7 @@ const PlinkoControls: React.FC<PlinkoControlsProps> = ({
    </View>
 
    {/* Debug Mode Toggle */}
-   {/* {__DEV__ && (
+   {__DEV__ && (
     <TouchableOpacity
      onPress={() => setIsDebugMode(!isDebugMode)}
      style={[styles.debugToggle, isDebugMode && styles.debugToggleActive]}
@@ -218,7 +218,7 @@ const PlinkoControls: React.FC<PlinkoControlsProps> = ({
       Anti: {isDebugMode ? 'ON' : 'OFF'}
      </Text>
     </TouchableOpacity>
-   )} */}
+   )}
   </>
  )
 }

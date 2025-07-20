@@ -206,10 +206,10 @@ const Plinko: React.FC = () => {
    tabBarHeight -
    safeAreaPadding
 
-  const boardWidth = screenDimensions.width * 1 // Use 95% of screen width
+  const boardWidth = screenDimensions.width * 1 // Use 100% of screen width
 
   // Calculate optimal spacing based on available space
-  const ROWS = 11
+  const ROWS = 10
   const targetBoardHeight = availableHeight * 0.9 // Use 85% of available height for more conservative sizing
   const optimalVerticalSpacing = Math.max(
    20,
@@ -226,8 +226,8 @@ const Plinko: React.FC = () => {
    DAMPENING: 0.6,
    PEG_RADIUS: 4,
    BALL_RADIUS: 10,
-   MAX_TOTAL_BALLS: 50,
-   CENTER_BIAS_ZONE_WIDTH: 30,
+   MAX_TOTAL_BALLS: 25,
+   CENTER_BIAS_ZONE_WIDTH: 40,
    BOARD_WIDTH: boardWidth,
    AVAILABLE_HEIGHT: availableHeight,
    TAB_BAR_HEIGHT: tabBarHeight,
@@ -241,7 +241,7 @@ const Plinko: React.FC = () => {
   () => ({
    width: gameConstants.BOARD_WIDTH,
    height: Math.min(
-    (gameConstants.ROWS + 5) * gameConstants.PEG_VERTICAL_SPACING,
+    (gameConstants.ROWS + 3.5) * gameConstants.PEG_VERTICAL_SPACING,
     gameConstants.AVAILABLE_HEIGHT
    ),
   }),
@@ -467,7 +467,7 @@ const Plinko: React.FC = () => {
      ball.y > lastRowY
     ) {
      const pushDirection = ball.x > boardDimensions.width / 2 ? 1 : -1
-     ball.vx += pushDirection * 0.095
+     ball.vx += pushDirection * 0.1
     }
 
     // Update position
@@ -775,7 +775,7 @@ const Plinko: React.FC = () => {
      lastY: startY,
     }
     setBalls((prev) => [...prev, newBall])
-   }, i * 150)
+   }, i * 200) // Controls drop interval of balls
   })
  }, [gameValidation.canStartGame, ballCounts, gameConstants, pegs])
 
@@ -933,6 +933,7 @@ const styles = StyleSheet.create({
   justifyContent: 'center',
   borderWidth: 2,
   borderColor: MatrixColors.matrixDarkGreen,
+  zIndex: 10,
  },
  prizeSlotText: {
   fontFamily: FONT_FAMILY,

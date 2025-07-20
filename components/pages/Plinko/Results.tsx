@@ -25,40 +25,45 @@ const Results = ({
  }, [onClose])
 
  return (
-  <View style={styles.resultsContainer}>
-   <Text style={styles.payoutText}>Bytes: {totalPrize.toLocaleString()}</Text>
+  <>
+   {/* Backdrop */}
+   <View style={styles.backdrop} />
 
-   <View style={styles.analysisSection}>
-    <Text style={styles.analysisTitle}>Data Stream:</Text>
-    {Object.entries(prizeCounts)
-     .sort(([valA], [valB]) => Number(valB) - Number(valA))
-     .map(([value, { regular, gold }]) => (
-      <React.Fragment key={value}>
-       {regular > 0 && (
-        <View style={styles.resultRow}>
-         <Text style={styles.resultText}>
+   {/* Modal Content */}
+   <View style={styles.resultsContainer}>
+    <Text style={styles.payoutText}>Bytes: {totalPrize.toLocaleString()}</Text>
+
+    <View style={styles.analysisSection}>
+     <Text style={styles.analysisTitle}>Data Stream:</Text>
+     {Object.entries(prizeCounts)
+      .sort(([valA], [valB]) => Number(valB) - Number(valA))
+      .map(([value, { regular, gold }]) => (
+       <React.Fragment key={value}>
+        {regular > 0 && (
+         <View style={styles.resultRow}>
           <Text style={styles.resultText}>
-           {Number(value).toLocaleString()}
+           <Text style={styles.resultText}>
+            {Number(value).toLocaleString()}
+           </Text>
           </Text>
-         </Text>
-         <Text style={styles.resultText}>x {regular}</Text>
-        </View>
-       )}
-       {gold > 0 && (
-        <View style={styles.resultRow}>
-         <Text style={styles.resultText}>
-          <Text style={{ color: MatrixColors.matrixGold }}>
-           {Number(value).toLocaleString()} (x2)
+          <Text style={styles.resultText}>x {regular}</Text>
+         </View>
+        )}
+        {gold > 0 && (
+         <View style={styles.resultRow}>
+          <Text style={styles.resultText}>
+           <Text style={{ color: MatrixColors.matrixGold }}>
+            {Number(value).toLocaleString()} (x2)
+           </Text>
           </Text>
-         </Text>
-         <Text style={styles.resultText}>x {gold}</Text>
-        </View>
-       )}
-      </React.Fragment>
-     ))}
-   </View>
+          <Text style={styles.resultText}>x {gold}</Text>
+         </View>
+        )}
+       </React.Fragment>
+      ))}
+    </View>
 
-   {/* <View style={styles.analysisSection}>
+    {/* <View style={styles.analysisSection}>
         <Text style={styles.analysisTitle}>✨ System Commentary:</Text>
         {isAnalyzing && (
          <Text style={styles.aiText}> Analyzing data stream...</Text>
@@ -69,13 +74,23 @@ const Results = ({
          </Text>
         )}
        </View> */}
-  </View>
+   </View>
+  </>
  )
 }
 
 export default Results
 
 const styles = StyleSheet.create({
+ backdrop: {
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: 'rgba(0, 0, 0, 0.8)', // Dark semi-transparent backdrop
+  zIndex: 999,
+ },
  resultsContainer: {
   position: 'absolute',
   top: '50%',
@@ -88,11 +103,10 @@ const styles = StyleSheet.create({
   borderWidth: 2,
   borderColor: MatrixColors.matrixGreen,
   borderRadius: 8,
+  zIndex: 1000, // Ensure modal is above backdrop
   // shadowColor: MatrixColors.matrixGreen,
   // shadowOffset: { width: 0, height: 0 },
   // shadowOpacity: 0.8,
-  shadowRadius: 15,
-  elevation: 10,
  },
  payoutText: {
   fontFamily: FONT_FAMILY,
