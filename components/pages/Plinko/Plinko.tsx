@@ -12,7 +12,7 @@ import { Text } from 'react-native-paper'
 
 import { DebugOverlay } from '@/components/development/PlinkoDebug'
 import PlinkoControls from '@/components/pages/Plinko/PlinkoControls'
-import DigitalRain from '@/components/shared/DigitalRain' // Assuming this component exists
+import DigitalRain from '@/components/shared/DigitalRain'
 import { MatrixColors } from '@/constants/Colors'
 import { FONT_FAMILY } from '@/constants/Fonts'
 import { useAuthProvider } from '@/providers'
@@ -197,7 +197,7 @@ const Plinko: React.FC = () => {
   const headerHeight = 120 // Approximate header height (title + subtitle + margins)
   const controlsHeight = 120 // Increased to account for controls height
   const tabBarHeight = 90 // Approximate tab bar height
-  const safeAreaPadding = 40 // Additional safety padding
+  const safeAreaPadding = 10 // Additional safety padding
 
   const availableHeight =
    screenDimensions.height -
@@ -205,10 +205,11 @@ const Plinko: React.FC = () => {
    controlsHeight -
    tabBarHeight -
    safeAreaPadding
+
   const boardWidth = screenDimensions.width * 1 // Use 95% of screen width
 
   // Calculate optimal spacing based on available space
-  const ROWS = 10
+  const ROWS = 11
   const targetBoardHeight = availableHeight * 0.9 // Use 85% of available height for more conservative sizing
   const optimalVerticalSpacing = Math.max(
    20,
@@ -226,7 +227,7 @@ const Plinko: React.FC = () => {
    PEG_RADIUS: 4,
    BALL_RADIUS: 10,
    MAX_TOTAL_BALLS: 50,
-   CENTER_BIAS_ZONE_WIDTH: 20,
+   CENTER_BIAS_ZONE_WIDTH: 30,
    BOARD_WIDTH: boardWidth,
    AVAILABLE_HEIGHT: availableHeight,
    TAB_BAR_HEIGHT: tabBarHeight,
@@ -240,8 +241,8 @@ const Plinko: React.FC = () => {
   () => ({
    width: gameConstants.BOARD_WIDTH,
    height: Math.min(
-    (gameConstants.ROWS + 4) * gameConstants.PEG_VERTICAL_SPACING,
-    gameConstants.AVAILABLE_HEIGHT * 0.85
+    (gameConstants.ROWS + 5) * gameConstants.PEG_VERTICAL_SPACING,
+    gameConstants.AVAILABLE_HEIGHT
    ),
   }),
   [gameConstants]
@@ -466,7 +467,7 @@ const Plinko: React.FC = () => {
      ball.y > lastRowY
     ) {
      const pushDirection = ball.x > boardDimensions.width / 2 ? 1 : -1
-     ball.vx += pushDirection * 0.075
+     ball.vx += pushDirection * 0.095
     }
 
     // Update position
@@ -869,15 +870,13 @@ const styles = StyleSheet.create({
   backgroundColor: MatrixColors.matrixDarkBG,
  },
  container: {
-  flex: 1,
-  justifyContent: 'space-between',
-  alignItems: 'center',
   position: 'relative',
+  flex: 1,
  },
  header: {
   alignItems: 'center',
-  paddingVertical: 10,
-  paddingHorizontal: 16,
+  // paddingVertical: 10,
+  // paddingHorizontal: 16,
  },
  title: {
   fontFamily: FONT_FAMILY,
@@ -905,8 +904,8 @@ const styles = StyleSheet.create({
  },
  controlsArea: {
   width: '100%',
-  paddingBottom: 100, // Increased padding to prevent bleeding under tab bar
-  paddingHorizontal: 10,
+  paddingBottom: 48, // Increased padding to prevent bleeding under tab bar
+  paddingHorizontal: 0,
  },
  peg: {
   width: 8,

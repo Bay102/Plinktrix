@@ -13,8 +13,6 @@ import Slider from '@react-native-community/slider'
 import { MatrixColors } from '@/constants/Colors'
 import { FONT_FAMILY } from '@/constants/Fonts'
 
-// import { Text } from 'react-native-paper'
-
 // --- Type Definitions ---
 interface PrizeCount {
  regular: number
@@ -23,6 +21,17 @@ interface PrizeCount {
 
 type PrizeCounts = {
  [key: string]: PrizeCount
+}
+
+interface SliderControlProps {
+ label: string
+ value: number
+ maxValue: number
+ availableCount: number
+ color: string
+ onValueChange: (value: number) => void
+ disabled: boolean
+ minimumValue?: number
 }
 
 interface PlinkoControlsProps {
@@ -49,6 +58,37 @@ interface PlinkoControlsProps {
  setIsDebugMode: (isDebugMode: boolean) => void
 }
 
+// --- Helper Components ---
+const SliderControl: React.FC<SliderControlProps> = ({
+ label,
+ value,
+ maxValue,
+ availableCount,
+ color,
+ onValueChange,
+ disabled,
+ minimumValue = 0,
+}) => (
+ <View style={styles.sliderContainer}>
+  <Text style={styles.labelText}>
+   {label}: <Text style={{ color }}>{value}</Text>
+   <Text style={styles.availableText}> (Available: {availableCount})</Text>
+  </Text>
+  <Slider
+   style={styles.slider}
+   minimumValue={minimumValue}
+   maximumValue={Math.max(minimumValue, maxValue)}
+   step={1}
+   value={value}
+   onValueChange={onValueChange}
+   disabled={disabled}
+   minimumTrackTintColor={color}
+   maximumTrackTintColor={MatrixColors.matrixDarkGreen}
+   thumbTintColor={Platform.OS === 'ios' ? undefined : color}
+  />
+ </View>
+)
+
 const PlinkoControls: React.FC<PlinkoControlsProps> = ({
  isDropping,
  regularBallCount,
@@ -57,10 +97,6 @@ const PlinkoControls: React.FC<PlinkoControlsProps> = ({
  setGoldBallCount,
  handleDropBall,
  ballsCount,
- totalPrize,
- prizeCounts,
- isAnalyzing,
- aiAnalysis,
  maxRegularBalls,
  maxGoldBalls,
  hasInsufficientBalls,
@@ -72,142 +108,103 @@ const PlinkoControls: React.FC<PlinkoControlsProps> = ({
  isDebugMode,
  setIsDebugMode,
 }) => {
- //  if (isDropping) return null
+ // Early return if dropping
+ if (isDropping) return <View style={{ height: 100 }} />
 
- // Calculate dynamic maximum values for sliders based on 100-ball limit
- const remainingBalls = maxTotalBalls - (regularBallCount + goldBallCount)
- const maxRegularForSlider = userLoggedIn
-  ? Math.min(maxRegularBalls, regularBallCount + remainingBalls)
-  : Math.min(40, regularBallCount + remainingBalls)
- const maxGoldForSlider = userLoggedIn
-  ? Math.min(maxGoldBalls, goldBallCount + remainingBalls)
-  : Math.min(10, goldBallCount + remainingBalls)
+ // --- Helper Functions ---
+ const getWarningMessage = (): string | null => {
+  if (!userLoggedIn) return '⚠️ Login required to play'
+  if (hasInsufficientBalls) return '⚠️ Insufficient data packets'
+  if (hasTooManyBalls) return '⚠️ Maximum data packets allowed per drop'
+  if (isLoadingStats) return 'Loading user data...'
+  return null
+ }
+
+ const getButtonText = (): string => {
+  if (isDropping) return `[${ballsCount}]`
+  if (isUpdatingStats) return 'Updating Stats...'
+  if (isLoadingStats) return 'Loading...'
+  return '[ Drop ]'
+ }
+
+ const isControlsDisabled = (): boolean => {
+  return isDropping || isLoadingStats || !userLoggedIn
+ }
+
+ const isButtonDisabled = (): boolean => {
+  return (
+   !userLoggedIn ||
+   isDropping ||
+   hasTooManyBalls ||
+   hasInsufficientBalls ||
+   isLoadingStats ||
+   isUpdatingStats
+  )
+ }
+
+ const calculateMaxSliderValues = () => {
+  const remainingBalls = maxTotalBalls - (regularBallCount + goldBallCount)
+  const maxRegularForSlider = userLoggedIn
+   ? Math.min(maxRegularBalls, regularBallCount + remainingBalls)
+   : Math.min(40, regularBallCount + remainingBalls)
+  const maxGoldForSlider = userLoggedIn
+   ? Math.min(maxGoldBalls, goldBallCount + remainingBalls)
+   : Math.min(10, goldBallCount + remainingBalls)
+
+  return { maxRegularForSlider, maxGoldForSlider }
+ }
+
+ const warningMessage = getWarningMessage()
+ const { maxRegularForSlider, maxGoldForSlider } = calculateMaxSliderValues()
+ const controlsDisabled = isControlsDisabled()
 
  return (
   <>
    <View style={styles.gameOverlay}>
-    <View style={styles.overlayControls}>
-     <View style={styles.sliders}>
-      <View style={styles.sliderContainer}>
-       <Text style={styles.labelText}>
-        Data Packets:{' '}
-        <Text style={{ color: MatrixColors.matrixGreen }}>
-         {regularBallCount}
-        </Text>
-        {userLoggedIn && (
-         <Text style={{ color: MatrixColors.matrixGray, fontSize: 14 }}>
-          {' '}
-          (Available: {maxRegularBalls})
-         </Text>
-        )}
-       </Text>
-       <Slider
-        style={{ width: 120, height: 40, marginBottom: 10 }}
-        minimumValue={1}
-        maximumValue={Math.max(1, maxRegularForSlider)}
-        step={1}
+    {warningMessage ? (
+     <View style={styles.warningContainer}>
+      <Text style={styles.warningText}>{warningMessage}</Text>
+     </View>
+    ) : (
+     <View style={styles.overlayControls}>
+      <View style={styles.sliders}>
+       <SliderControl
+        label="Data Packets"
         value={regularBallCount}
+        maxValue={maxRegularForSlider}
+        availableCount={maxRegularBalls}
+        color={MatrixColors.matrixGreen}
         onValueChange={setRegularBallCount}
-        disabled={isDropping || isLoadingStats || !userLoggedIn}
-        minimumTrackTintColor={MatrixColors.matrixGreen}
-        maximumTrackTintColor={MatrixColors.matrixDarkGreen}
-        thumbTintColor={
-         Platform.OS === 'ios' ? undefined : MatrixColors.matrixGreen
-        }
+        disabled={controlsDisabled}
+        minimumValue={1}
        />
-      </View>
-      {maxGoldBalls !== 0 && (
-       <View style={styles.sliderContainer}>
-        <Text style={styles.labelText}>
-         Bonus Packets:{' '}
-         <Text style={{ color: MatrixColors.matrixGold }}>{goldBallCount}</Text>
-         {userLoggedIn && (
-          <Text style={{ color: '#AAA', fontSize: 14 }}>
-           {' '}
-           (Available: {maxGoldBalls})
-          </Text>
-         )}
-        </Text>
-        <Slider
-         style={{ width: 120, height: 40, marginBottom: 10 }}
-         minimumValue={0}
-         maximumValue={Math.max(0, maxGoldForSlider)}
-         step={1}
+
+       {maxGoldBalls > 0 && (
+        <SliderControl
+         label="Bonus Packets"
          value={goldBallCount}
+         maxValue={maxGoldForSlider}
+         availableCount={maxGoldBalls}
+         color={MatrixColors.matrixGold}
          onValueChange={setGoldBallCount}
-         disabled={isDropping || isLoadingStats || !userLoggedIn}
-         minimumTrackTintColor={MatrixColors.matrixGold}
-         maximumTrackTintColor={MatrixColors.matrixDarkGreen}
-         thumbTintColor={
-          Platform.OS === 'ios' ? undefined : MatrixColors.matrixGold
-         }
+         disabled={controlsDisabled}
         />
-       </View>
-      )}
+       )}
+      </View>
+
       <TouchableOpacity
        onPress={handleDropBall}
-       disabled={
-        !userLoggedIn ||
-        isDropping ||
-        hasTooManyBalls ||
-        (userLoggedIn &&
-         (hasInsufficientBalls || isLoadingStats || isUpdatingStats))
-       }
-       style={[
-        styles.button,
-        !userLoggedIn && styles.disabledButton,
-        (isDropping ||
-         hasTooManyBalls ||
-         (userLoggedIn &&
-          (hasInsufficientBalls || isLoadingStats || isUpdatingStats))) &&
-         styles.disabledButton,
-       ]}
+       disabled={isButtonDisabled()}
+       style={[styles.button, isButtonDisabled() && styles.disabledButton]}
       >
-       <Text style={styles.buttonText}>
-        {isDropping
-         ? `[${ballsCount}]`
-         : isUpdatingStats
-         ? 'Updating Stats...'
-         : isLoadingStats
-         ? 'Loading...'
-         : `[ Drop ]`}
-       </Text>
+       <Text style={styles.buttonText}>{getButtonText()}</Text>
       </TouchableOpacity>
      </View>
-     {/* Total balls counter */}
-     {/* <View style={styles.totalBallsContainer}>
-     <Text style={styles.totalBallsText}>
-      Total Balls:{' '}
-      <Text style={{ color: '#FFF' }}>{regularBallCount + goldBallCount}</Text>
-      <Text style={{ color: '#AAA' }}> / {maxTotalBalls}</Text>
-     </Text>
-    </View> */}
-     {!userLoggedIn && (
-      <View style={styles.warningContainer}>
-       <Text style={styles.warningText}>⚠️ Login required to play</Text>
-      </View>
-     )}
-     {userLoggedIn && hasInsufficientBalls && (
-      <View style={styles.warningContainer}>
-       <Text style={styles.warningText}>⚠️ Insufficient data packets</Text>
-      </View>
-     )}
-     {hasTooManyBalls && (
-      <View style={styles.warningContainer}>
-       <Text style={styles.warningText}>
-        ⚠️ Maximum {maxTotalBalls} data packets allowed per drop
-       </Text>
-      </View>
-     )}
-     {userLoggedIn && isLoadingStats && (
-      <View style={styles.warningContainer}>
-       <Text style={styles.warningText}>Loading user data...</Text>
-      </View>
-     )}
-    </View>
-    {/* Debug Mode Toggle */}
+    )}
    </View>
-   {__DEV__ && (
+
+   {/* Debug Mode Toggle */}
+   {/* {__DEV__ && (
     <TouchableOpacity
      onPress={() => setIsDebugMode(!isDebugMode)}
      style={[styles.debugToggle, isDebugMode && styles.debugToggleActive]}
@@ -221,7 +218,7 @@ const PlinkoControls: React.FC<PlinkoControlsProps> = ({
       Anti: {isDebugMode ? 'ON' : 'OFF'}
      </Text>
     </TouchableOpacity>
-   )}
+   )} */}
   </>
  )
 }
@@ -236,6 +233,7 @@ const styles = StyleSheet.create({
  overlayControls: {
   flexDirection: 'row',
   alignItems: 'center',
+  justifyContent: 'space-between',
   paddingVertical: 10,
   paddingHorizontal: 5,
   backgroundColor: MatrixColors.matrixDarkBG,
@@ -245,8 +243,11 @@ const styles = StyleSheet.create({
   gap: 15,
   width: '35%',
  },
- sliderContainer: {
-  // width: '40%',
+ sliderContainer: {},
+ slider: {
+  width: 120,
+  height: 40,
+  marginBottom: 10,
  },
  labelText: {
   fontFamily: FONT_FAMILY,
@@ -256,6 +257,10 @@ const styles = StyleSheet.create({
   textShadowColor: MatrixColors.matrixGreenShadow,
   textShadowOffset: { width: 0, height: 0 },
   textShadowRadius: 5,
+ },
+ availableText: {
+  color: MatrixColors.matrixGray,
+  fontSize: 14,
  },
  button: {
   height: 50,
@@ -301,22 +306,6 @@ const styles = StyleSheet.create({
   fontFamily: FONT_FAMILY,
   fontSize: 16,
   color: MatrixColors.matrixGold,
-  textAlign: 'center',
- },
- totalBallsContainer: {
-  marginTop: 8,
-  marginBottom: 8,
-  padding: 6,
-  backgroundColor: MatrixColors.matrixDarkBG,
-  borderWidth: 1,
-  borderColor: MatrixColors.matrixGreen,
-  borderRadius: 4,
-  // width: '100%',
- },
- totalBallsText: {
-  fontFamily: FONT_FAMILY,
-  fontSize: 16,
-  color: MatrixColors.matrixGreen,
   textAlign: 'center',
  },
  debugToggle: {

@@ -19,9 +19,9 @@ const Results = ({
  useEffect(() => {
   const timer = setTimeout(() => {
    onClose()
-  }, 4000) // Close after 5 seconds
+  }, 4000)
 
-  return () => clearTimeout(timer) // Cleanup timer on unmount
+  return () => clearTimeout(timer)
  }, [onClose])
 
  return (
