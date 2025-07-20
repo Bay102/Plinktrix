@@ -788,6 +788,13 @@ const Plinko: React.FC = () => {
   setBallCounts((prev) => ({ ...prev, gold: count }))
  }, [])
 
+ const showResults = useMemo(() => {
+  return (
+   !gameState.isDropping &&
+   (gameState.totalPrize > 0 || Object.keys(prizeCounts).length > 0)
+  )
+ }, [gameState.isDropping, gameState.totalPrize, prizeCounts])
+
  // --- Render ---
  return (
   <SafeAreaView style={styles.screen}>
@@ -846,17 +853,16 @@ const Plinko: React.FC = () => {
      />
     </View>
     {/* Last Drop Results */}
-    {!gameState.isDropping &&
-     (gameState.totalPrize > 0 || Object.keys(prizeCounts).length > 0) && (
-      <Results
-       totalPrize={gameState.totalPrize}
-       prizeCounts={prizeCounts}
-       onClose={() => {
-        setGameState((prev) => ({ ...prev, totalPrize: 0 }))
-        setPrizeCounts({})
-       }}
-      />
-     )}
+    {showResults && (
+     <Results
+      totalPrize={gameState.totalPrize}
+      prizeCounts={prizeCounts}
+      onClose={() => {
+       setGameState((prev) => ({ ...prev, totalPrize: 0 }))
+       setPrizeCounts({})
+      }}
+     />
+    )}
    </View>
   </SafeAreaView>
  )

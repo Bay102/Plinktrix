@@ -267,6 +267,7 @@ const styles = StyleSheet.create({
   width: 75,
   paddingVertical: 5,
   paddingHorizontal: 5,
+  marginRight: 15,
   backgroundColor: MatrixColors.matrixGreen,
   borderWidth: 2,
   borderColor: MatrixColors.matrixGreen,
