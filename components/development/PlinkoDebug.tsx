@@ -17,7 +17,7 @@ interface DebugOverlayProps {
 export const DebugOverlay = React.memo<DebugOverlayProps>(
  ({ boardWidth, boardHeight, gameConstants }) => {
   const centerX = boardWidth / 2
-  const antiCenterZoneWidth = 30 // 15 pixels on each side of center
+  const antiCenterZoneWidth = 20 // 10 pixels on each side of center
   const activeZoneStartY =
    gameConstants.PEG_VERTICAL_SPACING * (gameConstants.ROWS + 1)
 
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
   left: 0,
   right: 0,
   bottom: 0,
-  zIndex: 10,
+  // zIndex: 10,
   pointerEvents: 'none',
  },
  debugCenterLine: {

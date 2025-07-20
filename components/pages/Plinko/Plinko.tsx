@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
  Animated,
  Dimensions,
- ScrollView,
+ SafeAreaView,
  StyleSheet,
  View,
 } from 'react-native'
@@ -23,6 +23,7 @@ import {
 } from '@/supabase/api/update-user-stats'
 import { UserData } from '@/supabase/types'
 
+import Results from './Results'
 import {
  AnimatingSlots,
  AnimationType,
@@ -157,6 +158,12 @@ const Plinko: React.FC = () => {
  // --- Providers ---
  const { user, setUserData } = useAuthProvider()
 
+ // --- Screen Dimensions ---
+ const screenDimensions = useMemo(() => {
+  const { width, height } = Dimensions.get('window')
+  return { width, height }
+ }, [])
+
  // --- Consolidated State Management ---
  const [balls, setBalls] = useState<BallType[]>([])
  const [gameState, setGameState] = useState<GameState>({
@@ -176,7 +183,6 @@ const Plinko: React.FC = () => {
   isUpdatingStats: false,
  })
  const [prizeCounts, setPrizeCounts] = useState<PrizeCounts>({})
- const [boardWidth] = useState<number>(Dimensions.get('window').width)
  const [animatingSlots, setAnimatingSlots] = useState<AnimatingSlots>({})
  const [userStats, setUserStats] = useState<UserData | null>(null)
  const [isDebugMode, setIsDebugMode] = useState<boolean>(false)
@@ -185,32 +191,60 @@ const Plinko: React.FC = () => {
  const animationFrameRef = useRef<number | null>(null)
  const timeoutRefs = useRef<Map<number, number>>(new Map())
 
- // --- Game Configuration & Constants ---
- const gameConstants = useMemo(
-  () => ({
-   ROWS: 11, // Number of peg rows on the board
-   PEG_HORIZONTAL_SPACING: 35, // Horizontal distance between pegs
-   PEG_VERTICAL_SPACING: 40, // Vertical distance between peg rows
-   LOW_GRAVITY: 0.06, // Gravity for small ball counts
-   HIGH_GRAVITY: 0.09, // Gravity for large ball counts
-   DAMPENING: 0.6, // Collision energy reduction factor
-   PEG_RADIUS: 4, // Size of collision pegs
-   BALL_RADIUS: 10, // Size of dropped balls
-   MAX_TOTAL_BALLS: 50, // Maximum balls per game
-   CENTER_BIAS_ZONE_WIDTH: 30, // Width of the center bias zone
-  }),
-  []
- )
+ // --- Responsive Game Configuration & Constants ---
+ const gameConstants = useMemo(() => {
+  // Calculate available space for the game board
+  const headerHeight = 120 // Approximate header height (title + subtitle + margins)
+  const controlsHeight = 120 // Increased to account for controls height
+  const tabBarHeight = 90 // Approximate tab bar height
+  const safeAreaPadding = 40 // Additional safety padding
+
+  const availableHeight =
+   screenDimensions.height -
+   headerHeight -
+   controlsHeight -
+   tabBarHeight -
+   safeAreaPadding
+  const boardWidth = screenDimensions.width * 1 // Use 95% of screen width
+
+  // Calculate optimal spacing based on available space
+  const ROWS = 10
+  const targetBoardHeight = availableHeight * 0.9 // Use 85% of available height for more conservative sizing
+  const optimalVerticalSpacing = Math.max(
+   20,
+   Math.min(35, targetBoardHeight / (ROWS + 4))
+  )
+  const optimalHorizontalSpacing = Math.max(38, Math.min(40, boardWidth / 15))
+
+  return {
+   ROWS,
+   PEG_HORIZONTAL_SPACING: optimalHorizontalSpacing,
+   PEG_VERTICAL_SPACING: optimalVerticalSpacing,
+   LOW_GRAVITY: 0.06,
+   HIGH_GRAVITY: 0.09,
+   DAMPENING: 0.6,
+   PEG_RADIUS: 4,
+   BALL_RADIUS: 10,
+   MAX_TOTAL_BALLS: 50,
+   CENTER_BIAS_ZONE_WIDTH: 20,
+   BOARD_WIDTH: boardWidth,
+   AVAILABLE_HEIGHT: availableHeight,
+   TAB_BAR_HEIGHT: tabBarHeight,
+  }
+ }, [screenDimensions])
 
  const prizeValues = useMemo(() => [1, 5, 10, 0, 100, 0, 10, 5, 1], [])
 
  // --- Memoized Calculations ---
  const boardDimensions = useMemo(
   () => ({
-   width: boardWidth,
-   height: (gameConstants.ROWS + 4) * gameConstants.PEG_VERTICAL_SPACING,
+   width: gameConstants.BOARD_WIDTH,
+   height: Math.min(
+    (gameConstants.ROWS + 4) * gameConstants.PEG_VERTICAL_SPACING,
+    gameConstants.AVAILABLE_HEIGHT * 0.85
+   ),
   }),
-  [boardWidth, gameConstants.ROWS, gameConstants.PEG_VERTICAL_SPACING]
+  [gameConstants]
  )
 
  const maxRegularBalls = userStats?.regular_packets || 0
@@ -353,7 +387,7 @@ const Plinko: React.FC = () => {
    const numPegs = row + 2
    const rowPegs: PegType[] = []
    const rowWidth = (numPegs - 1) * gameConstants.PEG_HORIZONTAL_SPACING
-   const startX = (boardWidth - rowWidth) / 2
+   const startX = (boardDimensions.width - rowWidth) / 2
    for (let col = 0; col < numPegs; col++) {
     rowPegs.push({
      x: startX + col * gameConstants.PEG_HORIZONTAL_SPACING,
@@ -363,7 +397,7 @@ const Plinko: React.FC = () => {
    pegLayout.push(rowPegs)
   }
   return pegLayout
- }, [boardWidth, gameConstants])
+ }, [boardDimensions.width, gameConstants])
 
  // --- Optimized Animation Slot Management ---
  const updateAnimatingSlots = useCallback(
@@ -426,12 +460,12 @@ const Plinko: React.FC = () => {
     // Only apply after the last row of pegs
     const lastRowY =
      gameConstants.PEG_VERTICAL_SPACING * (gameConstants.ROWS + 1)
-    const distanceFromCenter = Math.abs(ball.x - boardWidth / 2)
+    const distanceFromCenter = Math.abs(ball.x - boardDimensions.width / 2)
     if (
      distanceFromCenter < gameConstants.CENTER_BIAS_ZONE_WIDTH &&
      ball.y > lastRowY
     ) {
-     const pushDirection = ball.x > boardWidth / 2 ? 1 : -1
+     const pushDirection = ball.x > boardDimensions.width / 2 ? 1 : -1
      ball.vx += pushDirection * 0.075
     }
 
@@ -443,13 +477,13 @@ const Plinko: React.FC = () => {
     if (ball.x < gameConstants.BALL_RADIUS) {
      ball.x = gameConstants.BALL_RADIUS
      ball.vx = Math.abs(ball.vx) * gameConstants.DAMPENING
-    } else if (ball.x > boardWidth - gameConstants.BALL_RADIUS) {
-     ball.x = boardWidth - gameConstants.BALL_RADIUS
+    } else if (ball.x > boardDimensions.width - gameConstants.BALL_RADIUS) {
+     ball.x = boardDimensions.width - gameConstants.BALL_RADIUS
      ball.vx = -Math.abs(ball.vx) * gameConstants.DAMPENING
     }
    })
   },
-  [gameState.currentGravity, boardWidth, gameConstants]
+  [gameState.currentGravity, boardDimensions.width, gameConstants]
  )
 
  const handlePegCollisions = useCallback(
@@ -568,7 +602,9 @@ const Plinko: React.FC = () => {
    let newPrize = 0
 
    landedBalls.forEach((ball) => {
-    const slotIndex = Math.floor((ball.x / boardWidth) * prizeValues.length)
+    const slotIndex = Math.floor(
+     (ball.x / boardDimensions.width) * prizeValues.length
+    )
     const prize =
      prizeValues[Math.max(0, Math.min(slotIndex, prizeValues.length - 1))]
 
@@ -614,7 +650,7 @@ const Plinko: React.FC = () => {
     })
    }, 0)
   },
-  [boardWidth, prizeValues, updateAnimatingSlots]
+  [boardDimensions.width, prizeValues, updateAnimatingSlots]
  )
 
  const handleGameEnd = useCallback(() => {
@@ -753,10 +789,7 @@ const Plinko: React.FC = () => {
 
  // --- Render ---
  return (
-  <ScrollView
-   style={styles.screen}
-   contentContainerStyle={styles.scrollContent}
-  >
+  <SafeAreaView style={styles.screen}>
    <DigitalRain />
    <View style={styles.container}>
     <View style={styles.header}>
@@ -766,23 +799,27 @@ const Plinko: React.FC = () => {
      </Text>
     </View>
 
-    <View style={[styles.board, boardDimensions]}>
-     <PegGrid pegs={pegs} />
-     <BallLayer balls={balls} />
-     <PrizeSlotLayer
-      prizeValues={prizeValues}
-      animatingSlots={animatingSlots}
-     />
-
-     {/* Debug Overlay */}
-     {isDebugMode && (
-      <DebugOverlay
-       boardWidth={boardWidth}
-       boardHeight={boardDimensions.height}
-       gameConstants={gameConstants}
+    <View style={styles.gameArea}>
+     <View style={[styles.board, boardDimensions]}>
+      <PegGrid pegs={pegs} />
+      <BallLayer balls={balls} />
+      <PrizeSlotLayer
+       prizeValues={prizeValues}
+       animatingSlots={animatingSlots}
       />
-     )}
 
+      {/* Debug Overlay */}
+      {isDebugMode && (
+       <DebugOverlay
+        boardWidth={boardDimensions.width}
+        boardHeight={boardDimensions.height}
+        gameConstants={gameConstants}
+       />
+      )}
+     </View>
+    </View>
+
+    <View style={styles.controlsArea}>
      <PlinkoControls
       isDropping={gameState.isDropping}
       regularBallCount={ballCounts.regular}
@@ -807,36 +844,44 @@ const Plinko: React.FC = () => {
       setIsDebugMode={setIsDebugMode}
      />
     </View>
-    <Text style={styles.footer}> Plinko_v2.5.sys - &copy; 2025</Text>
+    {/* Last Drop Results */}
+    {!gameState.isDropping &&
+     (gameState.totalPrize > 0 || Object.keys(prizeCounts).length > 0) && (
+      <Results
+       totalPrize={gameState.totalPrize}
+       prizeCounts={prizeCounts}
+       onClose={() => {
+        setGameState((prev) => ({ ...prev, totalPrize: 0 }))
+        setPrizeCounts({})
+       }}
+      />
+     )}
    </View>
-  </ScrollView>
+  </SafeAreaView>
  )
 }
 
 // --- Styles ---
 
 const styles = StyleSheet.create({
- screen: { flex: 1 },
- scrollContent: {
-  flexGrow: 1,
-  paddingTop: 40,
-  paddingBottom: 100, // Add bottom padding to account for tab bar
+ screen: {
+  flex: 1,
+  backgroundColor: MatrixColors.matrixDarkBG,
  },
  container: {
   flex: 1,
-  alignItems: 'center',
   justifyContent: 'space-between',
-  paddingVertical: 16,
+  alignItems: 'center',
+  position: 'relative',
  },
- loadingText: {
-  fontFamily: FONT_FAMILY,
-  color: MatrixColors.matrixGreen,
-  fontSize: 24,
+ header: {
+  alignItems: 'center',
+  paddingVertical: 10,
+  paddingHorizontal: 16,
  },
- header: { alignItems: 'center', marginTop: 10 },
  title: {
   fontFamily: FONT_FAMILY,
-  fontSize: 64,
+  fontSize: 48, // Reduced from 64 for better fit
   color: MatrixColors.matrixGreen,
   textShadowColor: MatrixColors.matrixGreenShadow,
   textShadowOffset: { width: 0, height: 0 },
@@ -844,16 +889,24 @@ const styles = StyleSheet.create({
  },
  subtitle: {
   fontFamily: FONT_FAMILY,
-  fontSize: 16,
+  fontSize: 14, // Reduced from 16
   color: '#AAA',
   marginTop: 4,
+ },
+ gameArea: {
+  flex: 1,
+  justifyContent: 'center',
+  alignItems: 'center',
+  width: '100%',
  },
  board: {
   position: 'relative',
   backgroundColor: MatrixColors.matrixDarkBG,
-  // borderWidth: 2,
-  // borderColor: MatrixColors.matrixGreen,
-  // borderRadius: 8,
+ },
+ controlsArea: {
+  width: '100%',
+  paddingBottom: 100, // Increased padding to prevent bleeding under tab bar
+  paddingHorizontal: 10,
  },
  peg: {
   width: 8,
@@ -913,12 +966,6 @@ const styles = StyleSheet.create({
   shadowRadius: 8,
   elevation: 5,
   borderWidth: 2,
- },
- footer: {
-  fontFamily: FONT_FAMILY,
-  color: '#666',
-  fontSize: 12,
-  marginBottom: 5,
  },
 })
 

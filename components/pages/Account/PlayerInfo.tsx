@@ -3,10 +3,9 @@ import React from 'react'
 import { useColorScheme } from 'react-native'
 
 import ParallaxScrollView from '@/components/ParallaxScrollView'
+import PlinkoDigitalRain from '@/components/shared/PlinkoDigitalRain'
 import { createTheme } from '@/constants/Colors'
 import { useUserProvider } from '@/providers'
-
-import DigitalRain from '../../shared/DigitalRain'
 
 import { UserSettingsModal } from './UserSettingsModal'
 import { UserStats } from './UserStats'
@@ -18,7 +17,7 @@ const PlayerInfo = () => {
 
  return (
   <ParallaxScrollView
-   headerImage={<DigitalRain />}
+   headerImage={<PlinkoDigitalRain />}
    headerBackgroundColor={{
     light: theme.colors.matrixDarkBG,
     dark: theme.colors.surface,
