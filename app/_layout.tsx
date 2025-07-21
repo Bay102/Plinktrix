@@ -10,6 +10,7 @@ import { useColorScheme } from '@/hooks/useColorScheme'
 import { AuthProvider } from '@/providers/AuthProvider'
 import { StoreProvider } from '@/providers/StoreProvider'
 import { UserProvider } from '@/providers/UserProvider'
+import { AppStore } from '@/stores/plinko'
 
 import 'react-native-reanimated'
 
@@ -26,7 +27,7 @@ export default function RootLayout() {
  }
 
  return (
-  <StoreProvider>
+  <StoreProvider store={AppStore}>
    <AuthProvider>
     <UserProvider>
      <PaperProvider theme={theme}>

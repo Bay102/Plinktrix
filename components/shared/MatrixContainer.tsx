@@ -1,7 +1,8 @@
 import React from 'react'
 
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 
+import { Text } from '@/components/PaperBase/Text'
 import { MatrixColors } from '@/constants/Colors'
 import { FONT_FAMILY } from '@/constants/Fonts'
 

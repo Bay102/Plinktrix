@@ -24,10 +24,12 @@ export const MatrixColors = {
  matrixGoldShadow: 'rgba(255, 215, 0, 0.7)',
  matrixGreen: '#0F0',
  matrixDarkGreen: '#070',
- matrixGray: '#AAA',
+ matrixGray: '#adb5bd',
  matrixDarkGray: '#666',
+
  // Matrix backgrounds and effects
- matrixDarkBG: 'rgba(0, 0, 0, 0.75)',
+ matrixDarkBG: 'rgba(0, 0, 0, 0.85)',
+ matrixLightBGOpacity: 'rgba(222, 226, 230, 0.75)',
  matrixGreenShadow: 'rgba(0, 255, 0, 0.7)',
  matrixGreenBG: 'rgba(0, 255, 0, 0.1)',
 }
@@ -35,8 +37,8 @@ export const MatrixColors = {
 const baseColors = {
  light: {
   text: '#11181C',
-  background: '#ffffff',
-  surface: '#f5f5f5',
+  background: MatrixColors.matrixLightBGOpacity,
+  surface: '#e9ecef',
   surfaceVariant: '#e1e1e1',
   icon: MatrixColors.matrixDarkBG,
   tabIconDefault: '#687076',
@@ -45,8 +47,8 @@ const baseColors = {
  },
  dark: {
   text: '#ECEDEE',
-  background: '#151718',
-  surface: '#000',
+  background: MatrixColors.matrixDarkBG,
+  surface: '#212529',
   surfaceVariant: '#2c2c2c',
   icon: MatrixColors.matrixGreen,
   tabIconDefault: '#9BA1A6',

@@ -873,7 +873,6 @@ const Plinko: React.FC = () => {
 const styles = StyleSheet.create({
  screen: {
   flex: 1,
-  backgroundColor: MatrixColors.matrixDarkBG,
  },
  container: {
   position: 'relative',
@@ -881,12 +880,10 @@ const styles = StyleSheet.create({
  },
  header: {
   alignItems: 'center',
-  // paddingVertical: 10,
-  // paddingHorizontal: 16,
  },
  title: {
   fontFamily: FONT_FAMILY,
-  fontSize: 48, // Reduced from 64 for better fit
+  fontSize: 54,
   color: MatrixColors.matrixGreen,
   textShadowColor: MatrixColors.matrixGreenShadow,
   textShadowOffset: { width: 0, height: 0 },
@@ -894,7 +891,7 @@ const styles = StyleSheet.create({
  },
  subtitle: {
   fontFamily: FONT_FAMILY,
-  fontSize: 14, // Reduced from 16
+  fontSize: 14,
   color: '#AAA',
   marginTop: 4,
  },
@@ -910,7 +907,7 @@ const styles = StyleSheet.create({
  },
  controlsArea: {
   width: '100%',
-  paddingBottom: 48, // Increased padding to prevent bleeding under tab bar
+  paddingBottom: 48,
   paddingHorizontal: 0,
  },
  peg: {

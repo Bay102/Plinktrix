@@ -97,7 +97,6 @@ const styles = StyleSheet.create({
   left: '50%',
   transform: [{ translateX: -150 }, { translateY: -150 }], // Half of width and height for perfect centering
   width: 300,
-  height: 300,
   padding: 12,
   backgroundColor: MatrixColors.black,
   borderWidth: 2,

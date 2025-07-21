@@ -38,6 +38,9 @@ export const updateUserStats = async (
   currentUser.bonus_packets - gameResult.ballsUsed.gold
  )
  const newScore = currentUser.bytes_downloaded + gameResult.scoreEarned
+ const totalBallsDropped =
+  gameResult.ballsUsed.regular + gameResult.ballsUsed.gold
+ const newPacketsDropped = currentUser.packets_dropped + totalBallsDropped
 
  // Update user stats in a single transaction
  const { data: updatedUser, error: updateError } = await supabase
@@ -46,6 +49,7 @@ export const updateUserStats = async (
    regular_packets: newRegularBalls,
    bonus_packets: newBonusBalls,
    bytes_downloaded: newScore,
+   packets_dropped: newPacketsDropped,
   })
   .eq('id', userId)
   .select()

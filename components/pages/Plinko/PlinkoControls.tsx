@@ -236,7 +236,6 @@ const styles = StyleSheet.create({
   justifyContent: 'space-between',
   paddingVertical: 10,
   paddingHorizontal: 5,
-  backgroundColor: MatrixColors.matrixDarkBG,
  },
  sliders: {
   flexDirection: 'row',

@@ -20,6 +20,7 @@ export const UserStats = () => {
  const accountLevel = userData?.account_level
  const bonusPackets = userData?.bonus_packets
  const regularPackets = userData?.regular_packets
+ const packetsDropped = userData?.packets_dropped
  const createdAt = userData?.created_at
 
  const colorScheme = useColorScheme()
@@ -29,7 +30,6 @@ export const UserStats = () => {
   <SafeAreaView
    style={[styles.container, { backgroundColor: theme.colors.background }]}
   >
-   {/* <DigitalRain /> */}
    <MatrixContainer title="PLAYER INFO">
     <StatItem
      label="Username"
@@ -50,6 +50,11 @@ export const UserStats = () => {
    </MatrixContainer>
 
    <MatrixContainer title="SCORE">
+    <StatItem
+     label="Packets Dropped"
+     value={packetsDropped ? packetsDropped.toString() : '0'}
+     color={MatrixColors.matrixGray}
+    />
     <StatItem
      label="Score"
      value={score ? `${score} bytes` : '0 bytes'}
@@ -76,7 +81,6 @@ export const UserStats = () => {
 const styles = StyleSheet.create({
  container: {
   flex: 1,
-  // padding: 20,
   backgroundColor: MatrixColors.matrixDarkBG,
  },
  header: {
