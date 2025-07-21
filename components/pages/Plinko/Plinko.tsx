@@ -241,7 +241,7 @@ const Plinko: React.FC = () => {
   () => ({
    width: gameConstants.BOARD_WIDTH,
    height: Math.min(
-    (gameConstants.ROWS + 3.5) * gameConstants.PEG_VERTICAL_SPACING,
+    (gameConstants.ROWS + 3) * gameConstants.PEG_VERTICAL_SPACING,
     gameConstants.AVAILABLE_HEIGHT
    ),
   }),

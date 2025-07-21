@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
   backgroundColor: MatrixColors.matrixDarkBG,
  },
  text: {
-  fontSize: 16,
+  fontSize: 18,
   fontFamily: FONT_FAMILY,
   color: MatrixColors.white,
  },

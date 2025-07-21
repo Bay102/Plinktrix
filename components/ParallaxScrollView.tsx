@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native'
+import { RefreshControlProps, StyleSheet } from 'react-native'
 
 import type { PropsWithChildren, ReactElement } from 'react'
 import Animated, {
@@ -8,8 +8,8 @@ import Animated, {
  useScrollViewOffset,
 } from 'react-native-reanimated'
 
-import { ThemedView } from '@/components/ThemedView'
 import { useBottomTabOverflow } from '@/components/shared/TabBarBackground'
+import { ThemedView } from '@/components/ThemedView'
 import { useColorScheme } from '@/hooks/useColorScheme'
 
 const HEADER_HEIGHT = 225
@@ -17,12 +17,14 @@ const HEADER_HEIGHT = 225
 type Props = PropsWithChildren<{
  headerImage: ReactElement
  headerBackgroundColor: { dark: string; light: string }
+ refreshControl?: ReactElement<RefreshControlProps>
 }>
 
 export default function ParallaxScrollView({
  children,
  headerImage,
  headerBackgroundColor,
+ refreshControl,
 }: Props) {
  const colorScheme = useColorScheme() ?? 'light'
  const scrollRef = useAnimatedRef<Animated.ScrollView>()
@@ -56,6 +58,7 @@ export default function ParallaxScrollView({
     scrollEventThrottle={16}
     scrollIndicatorInsets={{ bottom }}
     contentContainerStyle={{ paddingBottom: bottom }}
+    refreshControl={refreshControl}
    >
     <Animated.View
      style={[

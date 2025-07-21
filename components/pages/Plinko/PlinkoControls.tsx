@@ -176,7 +176,7 @@ const PlinkoControls: React.FC<PlinkoControlsProps> = ({
         color={MatrixColors.matrixGreen}
         onValueChange={setRegularBallCount}
         disabled={controlsDisabled}
-        minimumValue={1}
+        minimumValue={0}
        />
 
        {maxGoldBalls > 0 && (
