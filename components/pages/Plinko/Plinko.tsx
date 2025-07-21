@@ -877,9 +877,11 @@ const styles = StyleSheet.create({
  container: {
   position: 'relative',
   flex: 1,
+  backgroundColor: MatrixColors.matrixDarkBG,
  },
  header: {
   alignItems: 'center',
+  paddingTop: 10,
  },
  title: {
   fontFamily: FONT_FAMILY,
@@ -898,12 +900,13 @@ const styles = StyleSheet.create({
  gameArea: {
   flex: 1,
   justifyContent: 'center',
-  alignItems: 'center',
+  paddingBottom: 100,
   width: '100%',
  },
  board: {
   position: 'relative',
-  backgroundColor: MatrixColors.matrixDarkBG,
+  paddingHorizontal: 10,
+  // backgroundColor: MatrixColors.matrixDarkBG,
  },
  controlsArea: {
   width: '100%',
@@ -928,6 +931,7 @@ const styles = StyleSheet.create({
   right: 0,
   flexDirection: 'row',
   justifyContent: 'center',
+  paddingHorizontal: 10,
  },
  prizeSlot: {
   flex: 1,
@@ -936,6 +940,7 @@ const styles = StyleSheet.create({
   justifyContent: 'center',
   borderWidth: 2,
   borderColor: MatrixColors.matrixDarkGreen,
+
   zIndex: 10,
  },
  prizeSlotText: {

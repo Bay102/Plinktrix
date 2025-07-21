@@ -28,21 +28,21 @@ export const MatrixColors = {
  matrixDarkGray: '#666',
 
  // Matrix backgrounds and effects
- matrixDarkBG: 'rgba(0, 0, 0, 0.85)',
+ matrixDarkBG: 'rgba(0, 0, 0, 0.9)',
  matrixLightBGOpacity: 'rgba(222, 226, 230, 0.75)',
  matrixGreenShadow: 'rgba(0, 255, 0, 0.7)',
- matrixGreenBG: 'rgba(0, 255, 0, 0.1)',
+ matrixGreenBG: 'rgba(0, 255, 0, 0.5)',
 }
 
 const baseColors = {
  light: {
   text: '#11181C',
   background: MatrixColors.matrixLightBGOpacity,
-  surface: '#e9ecef',
+  surface: '#e9ecef', // navigation BG color
   surfaceVariant: '#e1e1e1',
   icon: MatrixColors.matrixDarkBG,
-  tabIconDefault: '#687076',
-  tabIconSelected: MatrixColors.matrixGreen,
+  tabIconDefault: '#687076', // navigation tab icon color
+  tabIconSelected: MatrixColors.matrixGreen, // navigation icon selected
   tint: MatrixColors.matrixGreen,
  },
  dark: {

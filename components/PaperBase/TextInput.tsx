@@ -17,6 +17,9 @@ export const TextInput = (props: TextInputProps) => {
      primary: theme.colors.matrixGreen,
      onPrimaryContainer: theme.colors.matrixGreen,
      onPrimary: theme.colors.matrixGreen,
+     tertiary: theme.colors.matrixGreen,
+     onTertiary: theme.colors.matrixGreen,
+     outline: theme.colors.black,
     },
    }}
    {...props}

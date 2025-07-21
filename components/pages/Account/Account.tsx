@@ -5,8 +5,8 @@ import { SafeAreaView, useColorScheme } from 'react-native'
 import { observer } from 'mobx-react-lite'
 
 import ParallaxScrollView from '@/components/ParallaxScrollView'
-import DigitalRain from '@/components/shared/DigitalRain'
 import MatrixButton from '@/components/shared/MatrixButton'
+import PlinkoDigitalRain from '@/components/shared/PlinkoDigitalRain'
 import { createTheme } from '@/constants/Colors'
 import { useAuthProvider } from '@/providers'
 
@@ -35,9 +35,9 @@ export default observer(function Account() {
         light: theme.colors.matrixDarkBG,
         dark: theme.colors.surface,
        }}
-       headerImage={<DigitalRain />}
+       headerImage={<PlinkoDigitalRain />}
       >
-       <MatrixButton title=" [ LOGIN ]" onPress={() => setFormMode('login')} />
+       <MatrixButton title="[ LOGIN ]" onPress={() => setFormMode('login')} />
        <MatrixButton
         title="[ SIGN UP ]"
         onPress={() => setFormMode('signup')}

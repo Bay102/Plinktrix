@@ -1,4 +1,4 @@
-import { StyleSheet, useColorScheme } from 'react-native'
+import { StyleSheet, useColorScheme, View } from 'react-native'
 
 import { Controller, useForm } from 'react-hook-form'
 import { TextInput as PaperTextInput } from 'react-native-paper'
@@ -63,89 +63,90 @@ const SignUp = ({
    }}
    headerImage={<PlinkoDigitalRain />}
   >
-   <Controller
-    control={signupForm.control}
-    name="email"
-    rules={{
-     required: 'Email is required',
-     pattern: {
-      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-      message: 'Invalid email address',
-     },
-    }}
-    render={({ field: { onChange, onBlur, value } }) => (
-     <TextInput
-      label="Email"
-      mode="outlined"
-      value={value}
-      onChangeText={onChange}
-      onBlur={onBlur}
-      error={!!signupForm.formState.errors.email}
-      left={<PaperTextInput.Icon icon="email" />}
-      // @ts-ignore - React Native Paper doesn't have proper types for helperText
-      helperText={signupForm.formState.errors.email?.message}
-     />
-    )}
-   />
+   <View style={styles.container}>
+    <Controller
+     control={signupForm.control}
+     name="email"
+     rules={{
+      required: 'Email is required',
+      pattern: {
+       value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+       message: 'Invalid email address',
+      },
+     }}
+     render={({ field: { onChange, onBlur, value } }) => (
+      <TextInput
+       label="Email"
+       mode="outlined"
+       value={value}
+       onChangeText={onChange}
+       onBlur={onBlur}
+       error={!!signupForm.formState.errors.email}
+       left={<PaperTextInput.Icon icon="email" />}
+       // @ts-ignore - React Native Paper doesn't have proper types for helperText
+       helperText={signupForm.formState.errors.email?.message}
+      />
+     )}
+    />
 
-   <Controller
-    control={signupForm.control}
-    name="username"
-    rules={{
-     required: 'Username is required',
-     minLength: {
-      value: 3,
-      message: 'Username must be at least 3 characters',
-     },
-    }}
-    render={({ field: { onChange, onBlur, value } }) => (
-     <TextInput
-      label="Username"
-      mode="outlined"
-      value={value}
-      onChangeText={onChange}
-      onBlur={onBlur}
-      error={!!signupForm.formState.errors.username}
-      left={<PaperTextInput.Icon icon="account" />}
-      // @ts-ignore - React Native Paper doesn't have proper types for helperText
-      helperText={signupForm.formState.errors.username?.message}
-     />
-    )}
-   />
+    <Controller
+     control={signupForm.control}
+     name="username"
+     rules={{
+      required: 'Username is required',
+      minLength: {
+       value: 3,
+       message: 'Username must be at least 3 characters',
+      },
+     }}
+     render={({ field: { onChange, onBlur, value } }) => (
+      <TextInput
+       label="Username"
+       mode="outlined"
+       value={value}
+       onChangeText={onChange}
+       onBlur={onBlur}
+       error={!!signupForm.formState.errors.username}
+       left={<PaperTextInput.Icon icon="account" />}
+       // @ts-ignore - React Native Paper doesn't have proper types for helperText
+       helperText={signupForm.formState.errors.username?.message}
+      />
+     )}
+    />
 
-   <Controller
-    control={signupForm.control}
-    name="password"
-    rules={{
-     required: 'Password is required',
-     minLength: {
-      value: 8,
-      message: 'Password must be at least 8 characters',
-     },
-    }}
-    render={({ field: { onChange, onBlur, value } }) => (
-     <TextInput
-      label="Password"
-      mode="outlined"
-      secureTextEntry
-      value={value}
-      onChangeText={onChange}
-      onBlur={onBlur}
-      error={!!signupForm.formState.errors.password}
-      left={<PaperTextInput.Icon icon="lock" />}
-      // @ts-ignore - React Native Paper doesn't have proper types for helperText
-      helperText={signupForm.formState.errors.password?.message}
-     />
-    )}
-   />
+    <Controller
+     control={signupForm.control}
+     name="password"
+     rules={{
+      required: 'Password is required',
+      minLength: {
+       value: 8,
+       message: 'Password must be at least 8 characters',
+      },
+     }}
+     render={({ field: { onChange, onBlur, value } }) => (
+      <TextInput
+       label="Password"
+       mode="outlined"
+       secureTextEntry
+       value={value}
+       onChangeText={onChange}
+       onBlur={onBlur}
+       error={!!signupForm.formState.errors.password}
+       left={<PaperTextInput.Icon icon="lock" />}
+       // @ts-ignore - React Native Paper doesn't have proper types for helperText
+       helperText={signupForm.formState.errors.password?.message}
+      />
+     )}
+    />
 
-   <MatrixButton
-    title=" [ SIGN UP ]"
-    onPress={signupForm.handleSubmit(onSignupSubmit)}
-    loading={signupForm.formState.isSubmitting}
-    // disabled={signupForm.formState.isSubmitting}
-   />
-
+    <MatrixButton
+     title=" [ SIGN UP ]"
+     onPress={signupForm.handleSubmit(onSignupSubmit)}
+     loading={signupForm.formState.isSubmitting}
+     // disabled={signupForm.formState.isSubmitting}
+    />
+   </View>
    <Button onPress={resetForm}>Cancel</Button>
   </ParallaxScrollView>
  )
@@ -153,4 +154,9 @@ const SignUp = ({
 
 export default SignUp
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+ container: {
+  flex: 1,
+  gap: 12,
+ },
+})

@@ -64,6 +64,7 @@ const styles = StyleSheet.create({
   justifyContent: 'space-between',
   alignItems: 'center',
   paddingVertical: 8,
+  paddingHorizontal: 8,
   borderBottomWidth: 0.5,
   borderBottomColor: MatrixColors.matrixGreen,
  },
@@ -71,7 +72,7 @@ const styles = StyleSheet.create({
   backgroundColor: MatrixColors.matrixDarkBG,
  },
  text: {
-  fontSize: 18,
+  fontSize: 20,
   fontFamily: FONT_FAMILY,
   color: MatrixColors.white,
  },

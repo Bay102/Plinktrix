@@ -227,7 +227,7 @@ export default PlinkoControls
 
 const styles = StyleSheet.create({
  gameOverlay: {
-  backgroundColor: MatrixColors.matrixDarkBG,
+  // backgroundColor: MatrixColors.matrixDarkBG,
   width: '100%',
  },
  overlayControls: {

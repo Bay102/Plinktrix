@@ -39,7 +39,7 @@ export const createAccount = async (
   // create the user_data row. We need to wait a moment and then fetch it.
   if (signUpData.user) {
    // Wait for the trigger to complete (small delay)
-   await new Promise((resolve) => setTimeout(resolve, 200))
+   await new Promise((resolve) => setTimeout(resolve, 400))
 
    // Fetch the created user_data (now that we're authenticated)
    const { data: userData, error: userDataError } = await supabase

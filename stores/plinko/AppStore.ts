@@ -1,4 +1,4 @@
-import { autorun, makeAutoObservable } from 'mobx'
+import { action, autorun, makeAutoObservable } from 'mobx'
 
 import log from '@/logger'
 import { getLeaderboard } from '@/supabase/api/leaderboard'
@@ -27,6 +27,7 @@ export class AppStore {
   }
  }
 
+ @action
  updateLeaderboard(leaderboard: Leaderboard) {
   this.leaderboard = leaderboard
  }

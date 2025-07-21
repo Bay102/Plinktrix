@@ -114,7 +114,7 @@ const Login = ({
 
    {/* Dev Login */}
    <Button
-    mode="elevated"
+    mode="text"
     onPress={() => {
      setFormMode('login')
      loginForm.setValue('email', 'dev@dev.com')
