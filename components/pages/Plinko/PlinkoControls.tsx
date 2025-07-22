@@ -296,11 +296,11 @@ const styles = StyleSheet.create({
   marginTop: 8,
   marginBottom: 8,
   padding: 8,
+  marginHorizontal: 8,
   backgroundColor: MatrixColors.matrixDarkBG,
   borderWidth: 1,
   borderColor: MatrixColors.matrixGold,
   borderRadius: 4,
-  width: '100%',
  },
  warningText: {
   fontFamily: FONT_FAMILY,

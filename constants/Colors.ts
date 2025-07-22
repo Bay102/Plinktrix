@@ -28,7 +28,7 @@ export const MatrixColors = {
  matrixDarkGray: '#666',
 
  // Matrix backgrounds and effects
- matrixDarkBG: 'rgba(0, 0, 0, 0.9)',
+ matrixDarkBG: 'rgba(0, 0, 0, 0.75)',
  matrixLightBGOpacity: 'rgba(222, 226, 230, 0.75)',
  matrixGreenShadow: 'rgba(0, 255, 0, 0.7)',
  matrixGreenBG: 'rgba(0, 255, 0, 0.5)',

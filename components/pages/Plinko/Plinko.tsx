@@ -222,12 +222,12 @@ const Plinko: React.FC = () => {
    PEG_HORIZONTAL_SPACING: optimalHorizontalSpacing,
    PEG_VERTICAL_SPACING: optimalVerticalSpacing,
    LOW_GRAVITY: 0.06,
-   HIGH_GRAVITY: 0.09,
+   HIGH_GRAVITY: 0.1,
    DAMPENING: 0.6,
    PEG_RADIUS: 4,
    BALL_RADIUS: 10,
    MAX_TOTAL_BALLS: 25,
-   CENTER_BIAS_ZONE_WIDTH: 40,
+   CENTER_BIAS_ZONE_WIDTH: 30,
    BOARD_WIDTH: boardWidth,
    AVAILABLE_HEIGHT: availableHeight,
    TAB_BAR_HEIGHT: tabBarHeight,
@@ -459,15 +459,14 @@ const Plinko: React.FC = () => {
 
     // Anti-center bias - subtly push balls away from center to reduce center hits
     // Only apply after the last row of pegs
-    const lastRowY =
-     gameConstants.PEG_VERTICAL_SPACING * (gameConstants.ROWS + 1)
+    const lastRowY = gameConstants.PEG_VERTICAL_SPACING * gameConstants.ROWS
     const distanceFromCenter = Math.abs(ball.x - boardDimensions.width / 2)
     if (
      distanceFromCenter < gameConstants.CENTER_BIAS_ZONE_WIDTH &&
      ball.y > lastRowY
     ) {
      const pushDirection = ball.x > boardDimensions.width / 2 ? 1 : -1
-     ball.vx += pushDirection * 0.1
+     ball.vx += pushDirection * 0.2
     }
 
     // Update position
