@@ -113,16 +113,18 @@ const Login = ({
    />
 
    {/* Dev Login */}
-   <Button
-    mode="text"
-    onPress={() => {
-     setFormMode('login')
-     loginForm.setValue('email', 'dev@dev.com')
-     loginForm.setValue('password', '00000000')
-    }}
-   >
-    <Text>[ DEV LOGIN ]</Text>
-   </Button>
+   {__DEV__ && (
+    <Button
+     mode="text"
+     onPress={() => {
+      setFormMode('login')
+      loginForm.setValue('email', 'dev@dev.com')
+      loginForm.setValue('password', '00000000')
+     }}
+    >
+     <Text>[ DEV LOGIN ]</Text>
+    </Button>
+   )}
 
    <Button onPress={resetForm}>Cancel</Button>
   </ParallaxScrollView>

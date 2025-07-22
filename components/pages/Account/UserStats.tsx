@@ -81,7 +81,6 @@ export const UserStats = () => {
 const styles = StyleSheet.create({
  container: {
   flex: 1,
-  backgroundColor: MatrixColors.matrixDarkBG,
  },
  header: {
   alignItems: 'center',

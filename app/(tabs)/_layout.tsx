@@ -126,6 +126,7 @@ export default function TabLayout() {
     options={{
      title: '',
      headerShown: true,
+     freezeOnBlur: true,
      headerRight: () => {
       return (
        user && (

@@ -72,7 +72,7 @@ const SliderControl: React.FC<SliderControlProps> = ({
  <View style={styles.sliderContainer}>
   <Text style={styles.labelText}>
    {label}: <Text style={{ color }}>{value}</Text>
-   <Text style={styles.availableText}> (Available: {availableCount})</Text>
+   <Text style={styles.availableText}> Available: {availableCount}</Text>
   </Text>
   <Slider
    style={styles.slider}
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
  labelText: {
   fontFamily: FONT_FAMILY,
   color: MatrixColors.matrixGreen,
-  fontSize: 18,
+  fontSize: 20,
   marginBottom: 4,
   textShadowColor: MatrixColors.matrixGreenShadow,
   textShadowOffset: { width: 0, height: 0 },
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
  },
  availableText: {
   color: MatrixColors.matrixGray,
-  fontSize: 14,
+  fontSize: 18,
  },
  button: {
   height: 50,

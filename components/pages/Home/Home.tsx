@@ -8,6 +8,7 @@ import ParallaxScrollView from '@/components/ParallaxScrollView'
 import { MatrixContainer } from '@/components/shared/MatrixContainer'
 import PlinkoDigitalRain from '@/components/shared/PlinkoDigitalRain'
 import { createTheme, MatrixColors } from '@/constants/Colors'
+import { FONT_FAMILY } from '@/constants/Fonts'
 import { useAppStore } from '@/providers/StoreProvider'
 
 const Home = () => {
@@ -45,6 +46,7 @@ const Home = () => {
    }
   >
    <View style={styles.container}>
+    <Text style={styles.title}>Plinktrix</Text>
     <MatrixContainer title="WELCOME">
      <Text style={styles.text}>Get ready to play Plinktrix!</Text>
     </MatrixContainer>
@@ -58,10 +60,20 @@ const Home = () => {
 export default Home
 
 const styles = StyleSheet.create({
- container: {
-  paddingTop: 20,
+ container: {},
+ title: {
+  fontFamily: FONT_FAMILY,
+  fontSize: 54,
+  color: MatrixColors.matrixGreen,
+  textShadowColor: MatrixColors.matrixGreenShadow,
+  textShadowOffset: { width: 0, height: 0 },
+  textShadowRadius: 10,
+  textAlign: 'center',
+  marginBottom: 20,
  },
  text: {
   color: MatrixColors.white,
+  fontFamily: FONT_FAMILY,
+  fontSize: 24,
  },
 })

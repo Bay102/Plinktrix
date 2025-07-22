@@ -95,13 +95,13 @@ const styles = StyleSheet.create({
  },
  statLabel: {
   fontFamily: FONT_FAMILY,
-  fontSize: 18,
+  fontSize: 20,
   color: '#AAA',
   flex: 1,
  },
  statValue: {
   fontFamily: FONT_FAMILY,
-  fontSize: 18,
+  fontSize: 20,
   fontWeight: 'bold',
   textAlign: 'right',
  },

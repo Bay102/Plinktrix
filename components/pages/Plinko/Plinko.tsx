@@ -215,6 +215,7 @@ const Plinko: React.FC = () => {
    20,
    Math.min(35, targetBoardHeight / (ROWS + 4))
   )
+
   const optimalHorizontalSpacing = Math.max(38, Math.min(40, boardWidth / 15))
 
   return {
@@ -459,7 +460,7 @@ const Plinko: React.FC = () => {
 
     // Anti-center bias - subtly push balls away from center to reduce center hits
     // Only apply after the last row of pegs
-    const lastRowY = gameConstants.PEG_VERTICAL_SPACING * gameConstants.ROWS
+    const lastRowY = gameConstants.PEG_VERTICAL_SPACING * gameConstants.ROWS + 5
     const distanceFromCenter = Math.abs(ball.x - boardDimensions.width / 2)
     if (
      distanceFromCenter < gameConstants.CENTER_BIAS_ZONE_WIDTH &&
