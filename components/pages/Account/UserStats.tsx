@@ -27,9 +27,7 @@ export const UserStats = () => {
  const theme = createTheme(colorScheme)
 
  return (
-  <SafeAreaView
-   style={[styles.container, { backgroundColor: theme.colors.background }]}
-  >
+  <SafeAreaView style={[styles.container, {}]}>
    <MatrixContainer title="PLAYER INFO">
     <StatItem
      label="Username"
