@@ -588,7 +588,7 @@ const Plinko: React.FC = () => {
  const processBallPositions = useCallback(
   (newBalls: BallType[]) => {
    const boardHeight =
-    (gameConstants.ROWS + 5) * gameConstants.PEG_VERTICAL_SPACING
+    (gameConstants.ROWS + 3) * gameConstants.PEG_VERTICAL_SPACING
    return {
     landedBalls: newBalls.filter((ball) => ball.y > boardHeight),
     activeBalls: newBalls.filter((ball) => ball.y <= boardHeight),
@@ -603,11 +603,24 @@ const Plinko: React.FC = () => {
    let newPrize = 0
 
    landedBalls.forEach((ball) => {
+    // The prize container spans the full board width but has its own internal padding
+    // Ball coordinates are relative to the board, which also has padding
+    // Since both have the same 10px padding, they should align perfectly
     const slotIndex = Math.floor(
      (ball.x / boardDimensions.width) * prizeValues.length
     )
     const prize =
      prizeValues[Math.max(0, Math.min(slotIndex, prizeValues.length - 1))]
+
+    // Debug logging
+    if (__DEV__) {
+     console.log(
+      `Ball landed at x=${ball.x.toFixed(
+       1
+      )}, slotIndex=${slotIndex}, prize=${prize}`
+     )
+     console.log(`Board width=${boardDimensions.width}`)
+    }
 
     const finalPrize = ball.isGold && prize !== 0 ? prize * 2 : prize
     newPrize += finalPrize
@@ -822,6 +835,7 @@ const Plinko: React.FC = () => {
         boardWidth={boardDimensions.width}
         boardHeight={boardDimensions.height}
         gameConstants={gameConstants}
+        prizeValues={prizeValues}
        />
       )}
      </View>

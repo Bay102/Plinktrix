@@ -11,15 +11,20 @@ interface DebugOverlayProps {
  boardWidth: number
  boardHeight: number
  gameConstants: any
+ prizeValues?: number[]
 }
 
 // --- Debug Overlay Component ---
 export const DebugOverlay = React.memo<DebugOverlayProps>(
- ({ boardWidth, boardHeight, gameConstants }) => {
+ ({ boardWidth, boardHeight, gameConstants, prizeValues = [] }) => {
   const centerX = boardWidth / 2
   const antiCenterZoneWidth = 30 // 10 pixels on each side of center
   const activeZoneStartY =
    gameConstants.PEG_VERTICAL_SPACING * gameConstants.ROWS + 5
+
+  // Calculate slot boundaries (same logic as scoring)
+  // Prize container spans full board width with internal padding matching ball coordinate system
+  const slotWidth = boardWidth / prizeValues.length
 
   return (
    <View style={styles.debugOverlay}>
@@ -70,6 +75,54 @@ export const DebugOverlay = React.memo<DebugOverlayProps>(
     >
      Anti-Center Zone (Post-Pegs)
     </Text>
+
+    {/* Slot boundaries */}
+    {prizeValues.map((value, index) => {
+     const slotStartX = index * slotWidth
+     const slotEndX = (index + 1) * slotWidth
+
+     return (
+      <React.Fragment key={`slot-${index}`}>
+       {/* Slot boundary line */}
+       <View
+        style={[
+         styles.debugSlotBoundary,
+         {
+          left: slotStartX,
+          top: boardHeight - 40,
+          height: 40,
+         },
+        ]}
+       />
+       {/* Slot label */}
+       <Text
+        style={[
+         styles.debugSlotLabel,
+         {
+          left: slotStartX + slotWidth / 2 - 10,
+          top: boardHeight - 35,
+         },
+        ]}
+       >
+        {value}
+       </Text>
+      </React.Fragment>
+     )
+    })}
+
+    {/* Final boundary line */}
+    {prizeValues.length > 0 && (
+     <View
+      style={[
+       styles.debugSlotBoundary,
+       {
+        left: prizeValues.length * slotWidth,
+        top: boardHeight - 40,
+        height: 40,
+       },
+      ]}
+     />
+    )}
    </View>
   )
  }
@@ -111,6 +164,24 @@ const styles = StyleSheet.create({
   paddingHorizontal: 5,
   paddingVertical: 2,
   borderRadius: 3,
+ },
+ debugSlotBoundary: {
+  position: 'absolute',
+  backgroundColor: MatrixColors.matrixCyan,
+  width: 1,
+  opacity: 0.8,
+ },
+ debugSlotLabel: {
+  position: 'absolute',
+  fontFamily: FONT_FAMILY,
+  backgroundColor: MatrixColors.matrixCyan,
+  color: MatrixColors.matrixDarkBG,
+  fontSize: 10,
+  paddingHorizontal: 3,
+  paddingVertical: 1,
+  borderRadius: 2,
+  textAlign: 'center',
+  width: 20,
  },
 })
 
