@@ -1,14 +1,11 @@
-import { ThemeProvider } from '@react-navigation/native'
-
 import { useFonts } from 'expo-font'
 import { Stack } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
-import { PaperProvider } from 'react-native-paper'
 
-import { createNavigationTheme, createTheme } from '@/constants/Colors'
 import { useColorScheme } from '@/hooks/useColorScheme'
 import { AuthProvider } from '@/providers/AuthProvider'
 import { StoreProvider } from '@/providers/StoreProvider'
+import { UnifiedThemeProvider } from '@/providers/ThemeProvider'
 import { UserProvider } from '@/providers/UserProvider'
 import { AppStore } from '@/stores/plinko'
 
@@ -20,7 +17,6 @@ export default function RootLayout() {
   VT323: require('../assets/fonts/VT323-Regular.ttf'),
  })
  const colorScheme = useColorScheme()
- const theme = createTheme(colorScheme)
 
  if (!loaded) {
   return null
@@ -30,15 +26,13 @@ export default function RootLayout() {
   <StoreProvider store={AppStore}>
    <AuthProvider>
     <UserProvider>
-     <PaperProvider theme={theme}>
-      <ThemeProvider value={createNavigationTheme(colorScheme)}>
-       <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-       </Stack>
-       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      </ThemeProvider>
-     </PaperProvider>
+     <UnifiedThemeProvider>
+      <Stack>
+       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+       <Stack.Screen name="+not-found" />
+      </Stack>
+      <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
+     </UnifiedThemeProvider>
     </UserProvider>
    </AuthProvider>
   </StoreProvider>

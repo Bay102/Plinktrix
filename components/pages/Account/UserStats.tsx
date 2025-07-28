@@ -8,8 +8,8 @@ import {
  MatrixContainer,
  StatItem,
 } from '@/components/shared/MatrixContainer'
-import { createTheme, MatrixColors } from '@/constants/Colors'
 import { FONT_FAMILY } from '@/constants/Fonts'
+import { createTheme, MatrixColors } from '@/constants/Theme'
 import { useAuthProvider } from '@/providers'
 
 export const UserStats = () => {

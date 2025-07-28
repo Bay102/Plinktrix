@@ -7,7 +7,7 @@ import { observer } from 'mobx-react-lite'
 import ParallaxScrollView from '@/components/ParallaxScrollView'
 import MatrixButton from '@/components/shared/MatrixButton'
 import PlinkoDigitalRain from '@/components/shared/PlinkoDigitalRain'
-import { createTheme } from '@/constants/Colors'
+import { createTheme } from '@/constants/Theme'
 import { useAuthProvider } from '@/providers'
 
 import Login from './Login'

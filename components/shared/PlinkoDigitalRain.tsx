@@ -4,7 +4,7 @@ import { Animated, Dimensions, StyleSheet, View } from 'react-native'
 
 import { Text } from 'react-native-paper'
 
-import { MatrixColors } from '@/constants/Colors'
+import { MatrixColors } from '@/constants/Theme'
 
 const { width, height } = Dimensions.get('window')
 const BALL_SIZE = 24

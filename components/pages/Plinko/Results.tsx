@@ -2,8 +2,8 @@ import React, { useEffect } from 'react'
 
 import { StyleSheet, Text, View } from 'react-native'
 
-import { MatrixColors } from '@/constants/Colors'
 import { FONT_FAMILY } from '@/constants/Fonts'
+import { MatrixColors } from '@/constants/Theme'
 
 import { PrizeCounts } from './types'
 

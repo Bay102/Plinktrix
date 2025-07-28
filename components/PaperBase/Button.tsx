@@ -2,9 +2,9 @@ import React from 'react'
 
 import { useColorScheme } from 'react-native'
 
-import { Button as PaperButton,ButtonProps } from 'react-native-paper'
+import { ButtonProps, Button as PaperButton } from 'react-native-paper'
 
-import { createTheme } from '@/constants/Colors'
+import { createTheme } from '@/constants/Theme'
 
 export const Button = (props: ButtonProps) => {
  const colorScheme = useColorScheme()

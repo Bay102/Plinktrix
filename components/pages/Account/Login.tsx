@@ -8,7 +8,7 @@ import { Text } from '@/components/PaperBase/Text'
 import { TextInput } from '@/components/PaperBase/TextInput'
 import ParallaxScrollView from '@/components/ParallaxScrollView'
 import MatrixButton from '@/components/shared/MatrixButton'
-import { createTheme } from '@/constants/Colors'
+import { createTheme } from '@/constants/Theme'
 import { login } from '@/supabase/api/login'
 
 import PlinkoDigitalRain from '../../shared/PlinkoDigitalRain'

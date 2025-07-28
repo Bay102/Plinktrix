@@ -6,8 +6,8 @@ import { observer } from 'mobx-react-lite'
 import { Text } from 'react-native-paper'
 
 import { MatrixContainer } from '@/components/shared/MatrixContainer'
-import { MatrixColors } from '@/constants/Colors'
 import { FONT_FAMILY } from '@/constants/Fonts'
+import { MatrixColors } from '@/constants/Theme'
 import { useAppStore } from '@/providers/StoreProvider'
 
 const Leaderboard = observer(() => {

@@ -3,8 +3,8 @@ import React from 'react'
 import { StyleSheet, View } from 'react-native'
 
 import { Text } from '@/components/PaperBase/Text'
-import { MatrixColors } from '@/constants/Colors'
 import { FONT_FAMILY } from '@/constants/Fonts'
+import { MatrixColors } from '@/constants/Theme'
 
 export const formatDate = (dateString: string) => {
  const date = new Date(dateString)

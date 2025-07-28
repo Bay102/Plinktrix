@@ -13,8 +13,8 @@ import { Text } from 'react-native-paper'
 import { DebugOverlay } from '@/components/development/PlinkoDebug'
 import PlinkoControls from '@/components/pages/Plinko/PlinkoControls'
 import DigitalRain from '@/components/shared/DigitalRain'
-import { MatrixColors } from '@/constants/Colors'
 import { FONT_FAMILY } from '@/constants/Fonts'
+import { MatrixColors } from '@/constants/Theme'
 import { useAuthProvider } from '@/providers'
 import {
  GameResultData,

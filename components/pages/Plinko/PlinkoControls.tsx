@@ -10,8 +10,8 @@ import {
 
 import Slider from '@react-native-community/slider'
 
-import { MatrixColors } from '@/constants/Colors'
 import { FONT_FAMILY } from '@/constants/Fonts'
+import { MatrixColors } from '@/constants/Theme'
 
 // --- Type Definitions ---
 interface PrizeCount {

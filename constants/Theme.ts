@@ -124,6 +124,38 @@ export const createNavigationTheme = (
  }
 }
 
+// Emotion theme function
+export const createEmotionTheme = (colorScheme: ColorSchemeName = 'light') => {
+ const isDark = colorScheme === 'dark'
+ const colors = {
+  ...MatrixColors,
+  ...baseColors[isDark ? 'dark' : 'light'],
+ }
+
+ return {
+  colors,
+  fonts: {
+   regular: 'VT323',
+   mono: 'SpaceMono',
+  },
+  spacing: {
+   xs: 4,
+   sm: 8,
+   md: 16,
+   lg: 24,
+   xl: 32,
+  },
+  borderRadius: {
+   sm: 4,
+   md: 8,
+   lg: 16,
+  },
+  isDark,
+ }
+}
+
+export type EmotionTheme = ReturnType<typeof createEmotionTheme>
+
 // Legacy exports for backward compatibility
 export const Colors = {
  light: baseColors.light,

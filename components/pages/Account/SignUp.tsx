@@ -8,7 +8,7 @@ import { TextInput } from '@/components/PaperBase/TextInput'
 import ParallaxScrollView from '@/components/ParallaxScrollView'
 import MatrixButton from '@/components/shared/MatrixButton'
 import PlinkoDigitalRain from '@/components/shared/PlinkoDigitalRain'
-import { createTheme } from '@/constants/Colors'
+import { createTheme } from '@/constants/Theme'
 import { createAccount } from '@/supabase/api/create-account'
 
 interface SignupFormData {

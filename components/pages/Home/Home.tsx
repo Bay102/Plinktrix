@@ -7,8 +7,8 @@ import { Text } from '@/components/PaperBase/Text'
 import ParallaxScrollView from '@/components/ParallaxScrollView'
 import { MatrixContainer } from '@/components/shared/MatrixContainer'
 import PlinkoDigitalRain from '@/components/shared/PlinkoDigitalRain'
-import { createTheme, MatrixColors } from '@/constants/Colors'
 import { FONT_FAMILY } from '@/constants/Fonts'
+import { createTheme, MatrixColors } from '@/constants/Theme'
 import { useAppStore } from '@/providers/StoreProvider'
 
 const Home = () => {

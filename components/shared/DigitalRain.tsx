@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react'
 
 import { Animated, Dimensions, StyleSheet, View } from 'react-native'
 
-import { MatrixColors } from '@/constants/Colors'
+import { MatrixColors } from '@/constants/Theme'
 
 const { width, height } = Dimensions.get('window')
 const FONT_SIZE = 16

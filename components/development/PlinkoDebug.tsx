@@ -4,8 +4,8 @@ import { StyleSheet, View } from 'react-native'
 
 import { Text } from 'react-native-paper'
 
-import { MatrixColors } from '@/constants/Colors'
 import { FONT_FAMILY } from '@/constants/Fonts'
+import { MatrixColors } from '@/constants/Theme'
 
 interface DebugOverlayProps {
  boardWidth: number

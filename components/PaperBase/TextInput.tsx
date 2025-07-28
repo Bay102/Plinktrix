@@ -4,7 +4,7 @@ import { useColorScheme } from 'react-native'
 
 import { TextInput as PaperTextInput, TextInputProps } from 'react-native-paper'
 
-import { createTheme } from '@/constants/Colors'
+import { createTheme } from '@/constants/Theme'
 
 export const TextInput = (props: TextInputProps) => {
  const colorScheme = useColorScheme()

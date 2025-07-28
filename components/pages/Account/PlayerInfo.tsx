@@ -3,7 +3,7 @@ import React from 'react'
 import { SafeAreaView, StyleSheet, useColorScheme, View } from 'react-native'
 
 import PlinkoDigitalRain from '@/components/shared/PlinkoDigitalRain'
-import { createTheme } from '@/constants/Colors'
+import { createTheme } from '@/constants/Theme'
 import { useUserProvider } from '@/providers'
 
 import { UserSettingsModal } from './UserSettingsModal'

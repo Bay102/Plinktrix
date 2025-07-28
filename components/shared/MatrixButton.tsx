@@ -2,7 +2,7 @@ import React from 'react'
 
 import { Platform, StyleSheet, Text, TouchableOpacity } from 'react-native'
 
-import { MatrixColors } from '@/constants/Colors'
+import { MatrixColors } from '@/constants/Theme'
 
 const FONT_FAMILY = Platform.OS === 'ios' ? 'VT323' : 'VT323'
 
