@@ -1,10 +1,6 @@
 import React from 'react'
 
-import { Platform, StyleSheet, Text, TouchableOpacity } from 'react-native'
-
-import { MatrixColors } from '@/constants/Theme'
-
-const FONT_FAMILY = Platform.OS === 'ios' ? 'VT323' : 'VT323'
+import styled from '@emotion/native'
 
 const MatrixButton = ({
  title,
@@ -16,31 +12,27 @@ const MatrixButton = ({
  loading?: boolean
 }) => {
  return (
-  <TouchableOpacity style={styles.button} onPress={onPress}>
-   <Text style={[styles.text]}>{loading ? '[ LOADING... ]' : title}</Text>
-  </TouchableOpacity>
+  <Button onPress={onPress}>
+   <ButtonText>{loading ? '[ LOADING... ]' : title}</ButtonText>
+  </Button>
  )
 }
 
 export default MatrixButton
 
-const styles = StyleSheet.create({
- button: {
-  marginTop: 10,
-  padding: 8,
-  borderWidth: 1,
-  borderColor: '#0F0',
-  borderRadius: 4,
-  backgroundColor: MatrixColors.matrixGreen,
-  alignSelf: 'center',
- },
- text: {
-  fontFamily: FONT_FAMILY,
-  fontSize: 18,
-  // color: '#0F0',
-  textAlign: 'center',
- },
- textDisabled: {
-  color: '#AAA',
- },
-})
+const Button = styled.TouchableOpacity`
+ background-color: ${({ theme }) => theme.colors.matrixGreen};
+ margin-top: ${({ theme }) => theme.spacing.sm};
+ padding: ${({ theme }) => theme.spacing.sm};
+ border-width: ${({ theme }) => theme.borderWidth.sm};
+ border-color: ${({ theme }) => theme.colors.matrixGreen};
+ border-radius: ${({ theme }) => theme.borderRadius.sm};
+ align-self: center;
+ width: ${({ theme }) => theme.spacing.lg};
+`
+
+const ButtonText = styled.Text`
+ font-family: ${({ theme }) => theme.fonts.regular};
+ font-size: ${({ theme }) => theme.fontSizes.lg};
+ text-align: center;
+`

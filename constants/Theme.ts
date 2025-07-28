@@ -138,12 +138,25 @@ export const createEmotionTheme = (colorScheme: ColorSchemeName = 'light') => {
    regular: 'VT323',
    mono: 'SpaceMono',
   },
+  fontSizes: {
+   xs: 12,
+   sm: 14,
+   md: 16,
+   lg: 18,
+   xl: 20,
+   xxl: 28,
+  },
   spacing: {
    xs: 4,
    sm: 8,
    md: 16,
    lg: 24,
    xl: 32,
+  },
+  borderWidth: {
+   sm: 1,
+   md: 2,
+   lg: 3,
   },
   borderRadius: {
    sm: 4,
