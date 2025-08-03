@@ -612,16 +612,6 @@ const Plinko: React.FC = () => {
     const prize =
      prizeValues[Math.max(0, Math.min(slotIndex, prizeValues.length - 1))]
 
-    // Debug logging
-    if (__DEV__) {
-     console.log(
-      `Ball landed at x=${ball.x.toFixed(
-       1
-      )}, slotIndex=${slotIndex}, prize=${prize}`
-     )
-     console.log(`Board width=${boardDimensions.width}`)
-    }
-
     const finalPrize = ball.isGold && prize !== 0 ? prize * 2 : prize
     newPrize += finalPrize
 

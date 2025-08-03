@@ -132,37 +132,49 @@ export const createEmotionTheme = (colorScheme: ColorSchemeName = 'light') => {
   ...baseColors[isDark ? 'dark' : 'light'],
  }
 
+ const fontSizes = {
+  xs: 12,
+  sm: 14,
+  md: 16,
+  lg: 18,
+  xl: 20,
+  xxl: 28,
+ }
+
+ const spacing = {
+  xs: 4,
+  sm: 8,
+  md: 16,
+  lg: 24,
+  xl: 32,
+ }
+
+ const borderWidth = {
+  sm: 1,
+  md: 2,
+  lg: 3,
+ }
+
+ const borderRadius = {
+  sm: 4,
+  md: 8,
+  lg: 16,
+ }
+
+ // Helper function to convert numbers to px strings for emotion/native
+ const dp = (value: number) => `${value}px`
+
  return {
   colors,
   fonts: {
    regular: 'VT323',
    mono: 'SpaceMono',
   },
-  fontSizes: {
-   xs: '12px',
-   sm: '14px',
-   md: '16px',
-   lg: '18px',
-   xl: '20px',
-   xxl: '28px',
-  },
-  spacing: {
-   xs: '4px',
-   sm: '8px',
-   md: '16px',
-   lg: '24px',
-   xl: '32px',
-  },
-  borderWidth: {
-   sm: '1px',
-   md: '2px',
-   lg: '3px',
-  },
-  borderRadius: {
-   sm: '4px',
-   md: '8px',
-   lg: '16px',
-  },
+  fontSizes,
+  spacing,
+  borderWidth,
+  borderRadius,
+  dp,
   isDark,
  }
 }

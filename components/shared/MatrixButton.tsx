@@ -22,16 +22,16 @@ export default MatrixButton
 
 const Button = styled.TouchableOpacity`
  background-color: ${({ theme }) => theme.colors.matrixGreen};
- margin-top: ${({ theme }) => theme.spacing.sm};
- padding: ${({ theme }) => theme.spacing.sm};
- border-width: ${({ theme }) => theme.borderWidth.sm};
+ margin-top: ${({ theme }) => theme.dp(theme.spacing.sm)};
+ padding: ${({ theme }) => theme.dp(theme.spacing.sm)};
+ border-width: ${({ theme }) => theme.dp(theme.borderWidth.sm)};
  border-color: ${({ theme }) => theme.colors.matrixGreen};
- border-radius: ${({ theme }) => theme.borderRadius.sm};
+ border-radius: ${({ theme }) => theme.dp(theme.borderRadius.sm)};
  align-self: center;
 `
 
 const ButtonText = styled.Text`
  font-family: ${({ theme }) => theme.fonts.regular};
- font-size: ${({ theme }) => theme.fontSizes.lg};
+ font-size: ${({ theme }) => theme.dp(theme.fontSizes.lg)};
  text-align: center;
 `

@@ -7,27 +7,29 @@ import { useEmotionTheme, useMatrixTheme } from '@/providers'
 // Styled components using the theme
 const Container = styled.View`
  background-color: ${({ theme }) => theme.colors.background};
- padding: ${({ theme }) => theme.spacing.md}px;
- border-radius: ${({ theme }) => theme.borderRadius.md}px;
- margin: ${({ theme }) => theme.spacing.sm}px;
+ padding: ${({ theme }) => theme.dp(theme.spacing.md)};
+ border-radius: ${({ theme }) => theme.dp(theme.borderRadius.md)};
+ margin: ${({ theme }) => theme.dp(theme.spacing.sm)};
 `
 
 const MatrixText = styled.Text`
  color: ${({ theme }) => theme.colors.matrixGreen};
  font-family: ${({ theme }) => theme.fonts.regular};
- font-size: 18px;
+ font-size: ${({ theme }) => theme.dp(theme.fontSizes.lg)};
  text-shadow: 0 0 5px ${({ theme }) => theme.colors.matrixGreenShadow};
  text-align: center;
- margin-bottom: ${({ theme }) => theme.spacing.sm}px;
+ margin-bottom: ${({ theme }) => theme.dp(theme.spacing.sm)};
 `
 
 const StyledButton = styled.Pressable<{ variant?: 'primary' | 'secondary' }>`
  background-color: ${({ theme, variant }) =>
   variant === 'secondary' ? theme.colors.surface : theme.colors.matrixGreen};
- padding: ${({ theme }) => `${theme.spacing.sm}px ${theme.spacing.md}px`};
- border-radius: ${({ theme }) => theme.borderRadius.sm}px;
- border: 1px solid ${({ theme }) => theme.colors.matrixGreen};
- margin: ${({ theme }) => theme.spacing.xs}px 0;
+ padding: ${({ theme }) =>
+  `${theme.dp(theme.spacing.sm)} ${theme.dp(theme.spacing.md)}`};
+ border-radius: ${({ theme }) => theme.dp(theme.borderRadius.sm)};
+ border: ${({ theme }) => theme.dp(theme.borderWidth.sm)} solid
+  ${({ theme }) => theme.colors.matrixGreen};
+ margin: ${({ theme }) => theme.dp(theme.spacing.xs)} 0;
 `
 
 const ButtonText = styled.Text<{ variant?: 'primary' | 'secondary' }>`
@@ -35,7 +37,7 @@ const ButtonText = styled.Text<{ variant?: 'primary' | 'secondary' }>`
   variant === 'secondary' ? theme.colors.matrixGreen : theme.colors.black};
  font-family: ${({ theme }) => theme.fonts.regular};
  text-align: center;
- font-size: 16px;
+ font-size: ${({ theme }) => theme.dp(theme.fontSizes.md)};
 `
 
 export const EmotionExample: React.FC = () => {
@@ -55,13 +57,13 @@ export const EmotionExample: React.FC = () => {
     <ButtonText variant="secondary">Secondary Button</ButtonText>
    </StyledButton>
 
-   {/* Example of using theme directly */}
+   {/* Example of using theme directly with numeric values for React Native styles */}
    <MatrixText
     style={{
      color: matrixTheme.isDark
       ? emotionTheme.colors.matrixCyan
       : emotionTheme.colors.matrixBlue,
-     fontSize: 14,
+     fontSize: emotionTheme.fontSizes.sm,
     }}
    >
     Theme aware text: {matrixTheme.isDark ? 'Dark Mode' : 'Light Mode'}
