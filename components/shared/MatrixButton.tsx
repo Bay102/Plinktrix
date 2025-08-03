@@ -28,7 +28,6 @@ const Button = styled.TouchableOpacity`
  border-color: ${({ theme }) => theme.colors.matrixGreen};
  border-radius: ${({ theme }) => theme.borderRadius.sm};
  align-self: center;
- width: ${({ theme }) => theme.spacing.lg};
 `
 
 const ButtonText = styled.Text`
