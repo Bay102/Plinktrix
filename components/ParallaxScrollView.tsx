@@ -1,4 +1,4 @@
-import { RefreshControlProps, StyleSheet } from 'react-native'
+import { RefreshControlProps } from 'react-native'
 
 import styled from '@emotion/native'
 
@@ -54,7 +54,7 @@ export default function ParallaxScrollView({
  })
 
  return (
-  <ThemedView style={styles.container}>
+  <Container>
    <Animated.ScrollView
     ref={scrollRef}
     scrollEventThrottle={16}
@@ -71,24 +71,22 @@ export default function ParallaxScrollView({
     >
      {headerImage}
     </Header>
-    <ThemedView style={styles.content}>{children}</ThemedView>
+    <Content>{children}</Content>
    </Animated.ScrollView>
-  </ThemedView>
+  </Container>
  )
 }
 
+const Container = styled(ThemedView)<{ height?: number }>`
+ flex: 1;
+ ${({ height, theme }) => (height ? theme.dp(height) : 250)}
+`
 const Header = styled(Animated.View)<{ height: number }>`
  height: ${({ height, theme }) => (height ? theme.dp(height) : 250)};
 `
-
-const styles = StyleSheet.create({
- container: {
-  flex: 1,
- },
- content: {
-  flex: 1,
-  padding: 32,
-  gap: 16,
-  overflow: 'hidden',
- },
-})
+const Content = styled(ThemedView)`
+ flex: 1;
+ padding: 32px;
+ gap: 16px;
+ overflow: hidden;
+`

@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
  },
  overlayControls: {
   flexDirection: 'row',
-  alignItems: 'center',
+  alignItems: 'flex-end',
   justifyContent: 'space-between',
   paddingVertical: 10,
   paddingHorizontal: 5,
@@ -292,14 +292,10 @@ const styles = StyleSheet.create({
   fontWeight: 'bold',
  },
  warningContainer: {
-  marginTop: 8,
-  marginBottom: 8,
-  padding: 8,
-  marginHorizontal: 8,
+  marginBottom: 10,
+  justifyContent: 'center',
+  height: 120,
   backgroundColor: MatrixColors.matrixDarkBG,
-  borderWidth: 1,
-  borderColor: MatrixColors.matrixGold,
-  borderRadius: 4,
  },
  warningText: {
   fontFamily: FONT_FAMILY,
