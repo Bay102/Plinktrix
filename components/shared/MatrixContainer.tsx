@@ -1,10 +1,6 @@
 import React from 'react'
 
-import { StyleSheet, View } from 'react-native'
-
-import { Text } from '@/components/PaperBase/Text'
-import { FONT_FAMILY } from '@/constants/Fonts'
-import { MatrixColors } from '@/constants/Theme'
+import styled from '@emotion/native'
 
 export const formatDate = (dateString: string) => {
  const date = new Date(dateString)
@@ -27,20 +23,12 @@ export const StatItem: React.FC<{
  color?: string
  isHighlight?: boolean
 }> = ({ label, value, color = '#0F0', isHighlight = false }) => (
- <View style={styles.statItem}>
-  <Text style={[styles.statLabel, { color: isHighlight ? '#FFD700' : '#AAA' }]}>
-   {label}
-  </Text>
-  <Text
-   style={[
-    styles.statValue,
-    { color: isHighlight ? '#FFD700' : color },
-    isHighlight && styles.highlightValue,
-   ]}
-  >
+ <StyledStatItem>
+  <StyledStatLabel isHighlight={isHighlight}>{label}</StyledStatLabel>
+  <StyledStatValue isHighlight={isHighlight} valueColor={color}>
    {value}
-  </Text>
- </View>
+  </StyledStatValue>
+ </StyledStatItem>
 )
 
 export const MatrixContainer = ({
@@ -51,63 +39,75 @@ export const MatrixContainer = ({
  children: React.ReactNode
 }) => {
  return (
-  <View style={styles.section}>
-   <Text style={styles.sectionTitle}>{title}</Text>
-   <View style={styles.sectionContent}>{children}</View>
-  </View>
+  <StyledSection>
+   <StyledSectionTitle>{title}</StyledSectionTitle>
+   <StyledSectionContent>{children}</StyledSectionContent>
+  </StyledSection>
  )
 }
 
-const styles = StyleSheet.create({
- section: {
-  marginBottom: 25,
-  backgroundColor: MatrixColors.matrixDarkBG,
-  borderWidth: 1,
-  borderColor: MatrixColors.matrixGreen,
-  borderRadius: 8,
-  padding: 15,
- },
- sectionTitle: {
-  fontFamily: FONT_FAMILY,
-  fontSize: 18,
-  color: MatrixColors.matrixGreen,
-  marginBottom: 15,
-  textShadowColor: MatrixColors.matrixGreenShadow,
-  textShadowOffset: { width: 0, height: 0 },
-  textShadowRadius: 5,
-  borderBottomWidth: 1,
-  borderBottomColor: MatrixColors.matrixGreen,
-  paddingBottom: 8,
- },
- sectionContent: {
-  gap: 12,
- },
- statItem: {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  paddingVertical: 8,
-  paddingHorizontal: 12,
-  backgroundColor: MatrixColors.matrixDarkBG,
-  borderRadius: 4,
-  borderLeftWidth: 3,
-  borderLeftColor: MatrixColors.matrixGreen,
- },
- statLabel: {
-  fontFamily: FONT_FAMILY,
-  fontSize: 20,
-  color: '#AAA',
-  flex: 1,
- },
- statValue: {
-  fontFamily: FONT_FAMILY,
-  fontSize: 20,
-  fontWeight: 'bold',
-  textAlign: 'right',
- },
- highlightValue: {
-  textShadowColor: MatrixColors.matrixGold,
-  textShadowOffset: { width: 0, height: 0 },
-  textShadowRadius: 8,
- },
-})
+// Styled Components
+const StyledSection = styled.View`
+ margin-bottom: ${({ theme }) => theme.dp(25)};
+ background-color: ${({ theme }) => theme.colors.matrixDarkBG};
+ border-width: ${({ theme }) => theme.dp(1)};
+ border-color: ${({ theme }) => theme.colors.matrixGreen};
+ border-radius: ${({ theme }) => theme.dp(8)};
+ padding: ${({ theme }) => theme.dp(15)};
+`
+
+const StyledSectionTitle = styled.Text`
+ font-family: ${({ theme }) => theme.fonts.regular};
+ font-size: ${({ theme }) => theme.dp(18)};
+ color: ${({ theme }) => theme.colors.matrixGreen};
+ margin-bottom: ${({ theme }) => theme.dp(15)};
+ text-shadow-color: ${({ theme }) => theme.colors.matrixGreenShadow};
+ text-shadow-offset: 0px 0px;
+ text-shadow-radius: ${({ theme }) => theme.dp(5)};
+ border-bottom-width: ${({ theme }) => theme.dp(1)};
+ border-bottom-color: ${({ theme }) => theme.colors.matrixGreen};
+ padding-bottom: ${({ theme }) => theme.dp(8)};
+`
+
+const StyledSectionContent = styled.View`
+ gap: ${({ theme }) => theme.dp(12)};
+`
+
+const StyledStatItem = styled.View`
+ flex-direction: row;
+ justify-content: space-between;
+ align-items: center;
+ padding-vertical: ${({ theme }) => theme.dp(8)};
+ padding-horizontal: ${({ theme }) => theme.dp(12)};
+ background-color: ${({ theme }) => theme.colors.matrixDarkBG};
+ border-radius: ${({ theme }) => theme.dp(4)};
+ border-left-width: ${({ theme }) => theme.dp(3)};
+ border-left-color: ${({ theme }) => theme.colors.matrixGreen};
+`
+
+const StyledStatLabel = styled.Text<{ isHighlight?: boolean }>`
+ font-family: ${({ theme }) => theme.fonts.regular};
+ font-size: ${({ theme }) => theme.dp(20)};
+ color: ${({ isHighlight }) => (isHighlight ? '#FFD700' : '#AAA')};
+ flex: 1;
+`
+
+const StyledStatValue = styled.Text<{
+ isHighlight?: boolean
+ valueColor?: string
+}>`
+ font-family: ${({ theme }) => theme.fonts.regular};
+ font-size: ${({ theme }) => theme.dp(20)};
+ font-weight: bold;
+ text-align: right;
+ color: ${({ isHighlight, valueColor }) =>
+  isHighlight ? '#FFD700' : valueColor || '#0F0'};
+ ${({ isHighlight, theme }) =>
+  isHighlight
+   ? `
+   text-shadow-color: ${theme.colors.matrixGold};
+   text-shadow-offset: 0px 0px;
+   text-shadow-radius: ${theme.dp(8)};
+  `
+   : ''}
+`

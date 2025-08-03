@@ -48,7 +48,7 @@ const baseColors = {
  dark: {
   text: '#ECEDEE',
   background: MatrixColors.matrixDarkBG,
-  surface: '#212529',
+  surface: '#1B1A22',
   surfaceVariant: '#2c2c2c',
   icon: MatrixColors.matrixGreen,
   tabIconDefault: '#9BA1A6',

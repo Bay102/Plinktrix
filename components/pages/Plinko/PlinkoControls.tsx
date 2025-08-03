@@ -109,7 +109,7 @@ const PlinkoControls: React.FC<PlinkoControlsProps> = ({
  setIsDebugMode,
 }) => {
  // Early return if dropping
- if (isDropping) return <View style={{ height: 100 }} />
+ if (isDropping) return <View style={{ height: 90 }} />
 
  // --- Helper Functions ---
  const getWarningMessage = (): string | null => {
@@ -227,7 +227,6 @@ export default PlinkoControls
 
 const styles = StyleSheet.create({
  gameOverlay: {
-  // backgroundColor: MatrixColors.matrixDarkBG,
   width: '100%',
  },
  overlayControls: {

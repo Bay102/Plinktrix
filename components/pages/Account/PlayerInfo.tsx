@@ -20,8 +20,9 @@ const PlayerInfo = () => {
    headerImage={<PlinkoDigitalRain />}
    headerBackgroundColor={{
     light: theme.colors.matrixDarkBG,
-    dark: theme.colors.surface,
+    dark: theme.colors.matrixDarkBG,
    }}
+   headerHeight={110}
   >
    <UserStats />
    <UserSettingsModal

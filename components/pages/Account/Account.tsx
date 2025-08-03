@@ -37,10 +37,15 @@ export default observer(function Account() {
        }}
        headerImage={<PlinkoDigitalRain />}
       >
-       <MatrixButton title="[ LOGIN ]" onPress={() => setFormMode('login')} />
+       <MatrixButton
+        title="[ LOGIN ]"
+        onPress={() => setFormMode('login')}
+        width={150}
+       />
        <MatrixButton
         title="[ SIGN UP ]"
         onPress={() => setFormMode('signup')}
+        width={150}
        />
       </ParallaxScrollView>
      )}

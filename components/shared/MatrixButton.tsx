@@ -6,13 +6,15 @@ const MatrixButton = ({
  title,
  onPress,
  loading,
+ width,
 }: {
  title: string
  onPress: () => void
  loading?: boolean
+ width?: number
 }) => {
  return (
-  <Button onPress={onPress}>
+  <Button onPress={onPress} width={width}>
    <ButtonText>{loading ? '[ LOADING... ]' : title}</ButtonText>
   </Button>
  )
@@ -20,8 +22,9 @@ const MatrixButton = ({
 
 export default MatrixButton
 
-const Button = styled.TouchableOpacity`
+const Button = styled.TouchableOpacity<{ width?: number }>`
  background-color: ${({ theme }) => theme.colors.matrixGreen};
+ width: ${({ width, theme }) => (width ? theme.dp(width) : 'auto')};
  margin-top: ${({ theme }) => theme.dp(theme.spacing.sm)};
  padding: ${({ theme }) => theme.dp(theme.spacing.sm)};
  border-width: ${({ theme }) => theme.dp(theme.borderWidth.sm)};

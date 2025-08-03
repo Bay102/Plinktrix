@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { SafeAreaView, StyleSheet, useColorScheme } from 'react-native'
+import { SafeAreaView, StyleSheet } from 'react-native'
 
 import {
  formatAccountLevel,
@@ -9,7 +9,7 @@ import {
  StatItem,
 } from '@/components/shared/MatrixContainer'
 import { FONT_FAMILY } from '@/constants/Fonts'
-import { createTheme, MatrixColors } from '@/constants/Theme'
+import { MatrixColors } from '@/constants/Theme'
 import { useAuthProvider } from '@/providers'
 
 export const UserStats = () => {
@@ -22,9 +22,6 @@ export const UserStats = () => {
  const regularPackets = userData?.regular_packets
  const packetsDropped = userData?.packets_dropped
  const createdAt = userData?.created_at
-
- const colorScheme = useColorScheme()
- const theme = createTheme(colorScheme)
 
  return (
   <SafeAreaView style={[styles.container, {}]}>

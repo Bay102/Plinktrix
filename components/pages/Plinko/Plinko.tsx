@@ -820,7 +820,7 @@ const Plinko: React.FC = () => {
       />
 
       {/* Debug Overlay */}
-      {isDebugMode && (
+      {isDebugMode && __DEV__ && (
        <DebugOverlay
         boardWidth={boardDimensions.width}
         boardHeight={boardDimensions.height}
@@ -910,12 +910,12 @@ const styles = StyleSheet.create({
  board: {
   position: 'relative',
   paddingHorizontal: 10,
-  // backgroundColor: MatrixColors.matrixDarkBG,
  },
  controlsArea: {
   width: '100%',
   paddingBottom: 48,
   paddingHorizontal: 0,
+  height: 150,
  },
  peg: {
   width: 8,
@@ -944,7 +944,6 @@ const styles = StyleSheet.create({
   justifyContent: 'center',
   borderWidth: 2,
   borderColor: MatrixColors.matrixDarkGreen,
-
   zIndex: 10,
  },
  prizeSlotText: {
