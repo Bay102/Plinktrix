@@ -80,7 +80,7 @@ const PrizeSlot = React.memo<PrizeSlotProps>(({ value, animationType }) => {
   <Animated.View
    style={[styles.prizeSlot, { backgroundColor: animatedBackgroundColor }]}
   >
-   <Text style={styles.prizeSlotText}>{value.toLocaleString()}</Text>
+   <Text style={styles.prizeSlotText}>x{value}</Text>
   </Animated.View>
  )
 })
@@ -173,9 +173,10 @@ const Plinko: React.FC = () => {
   isAnalyzing: false,
   aiAnalysis: '',
   gameEndedWithPrize: null,
+  ballsUsedInGame: null,
  })
  const [ballCounts, setBallCounts] = useState<BallCounts>({
-  regular: 1,
+  regular: 0,
   gold: 0,
  })
  const [loadingState, setLoadingState] = useState<LoadingState>({
@@ -235,7 +236,7 @@ const Plinko: React.FC = () => {
   }
  }, [screenDimensions])
 
- const prizeValues = useMemo(() => [1, 5, 10, 0, 100, 0, 10, 5, 1], [])
+ const prizeValues = useMemo(() => [1.1, 1.8, 3, 0.4, 25, 0.4, 3, 1.8, 1.1], [])
 
  // --- Memoized Calculations ---
  const boardDimensions = useMemo(
@@ -252,21 +253,33 @@ const Plinko: React.FC = () => {
  const maxRegularBalls = userStats?.regular_packets || 0
  const maxGoldBalls = userStats?.bonus_packets || 0
 
+ // Memoize user login status to prevent unnecessary re-renders
+ const isUserLoggedIn = useMemo(() => !!user?.id, [user?.id])
+
  const gameValidation = useMemo(() => {
   const hasInsufficientBalls =
    ballCounts.regular > maxRegularBalls || ballCounts.gold > maxGoldBalls
+
   const hasTooManyBalls =
    ballCounts.regular + ballCounts.gold > gameConstants.MAX_TOTAL_BALLS
+
+  const hasNoBallsAvailable = maxRegularBalls === 0 && maxGoldBalls === 0
+
+  const hasNoBallsSelected = ballCounts.regular === 0 && ballCounts.gold === 0
+
   const canStartGame =
    !gameState.isDropping &&
    !hasInsufficientBalls &&
    !hasTooManyBalls &&
-   (ballCounts.regular > 0 || ballCounts.gold > 0) &&
-   !!user?.id
+   !hasNoBallsAvailable &&
+   !hasNoBallsSelected &&
+   isUserLoggedIn
 
   return {
    hasInsufficientBalls,
    hasTooManyBalls,
+   hasNoBallsAvailable,
+   hasNoBallsSelected,
    canStartGame,
   }
  }, [
@@ -274,7 +287,7 @@ const Plinko: React.FC = () => {
   maxRegularBalls,
   maxGoldBalls,
   gameState.isDropping,
-  user?.id,
+  isUserLoggedIn,
   gameConstants.MAX_TOTAL_BALLS,
  ])
 
@@ -299,7 +312,7 @@ const Plinko: React.FC = () => {
  }, [user?.id, setUserData])
 
  const updateUserStatsAfterGame = useCallback(
-  async (scoreEarned: number) => {
+  async (scoreEarned: number, ballsUsed: BallCounts) => {
    if (!user?.id || loadingState.isUpdatingStats) return
 
    try {
@@ -307,8 +320,8 @@ const Plinko: React.FC = () => {
 
     const gameResult: GameResultData = {
      ballsUsed: {
-      regular: ballCounts.regular,
-      gold: ballCounts.gold,
+      regular: ballsUsed.regular,
+      gold: ballsUsed.gold,
      },
      scoreEarned,
     }
@@ -317,14 +330,23 @@ const Plinko: React.FC = () => {
     if (updatedStats) {
      setUserStats(updatedStats)
      setUserData(updatedStats)
+
+     // Double-check by fetching fresh data to ensure sync
+
+     await fetchUserStats()
+    } else {
+     console.warn('⚠️ No updated stats returned from API')
     }
    } catch (error) {
-    console.error('Error updating user stats:', error)
+    console.error('❌ Error updating user stats:', error)
+    // If update failed, refresh to get accurate data
+
+    await fetchUserStats()
    } finally {
     setLoadingState((prev) => ({ ...prev, isUpdatingStats: false }))
    }
   },
-  [user?.id, loadingState.isUpdatingStats, ballCounts, setUserData]
+  [user?.id, loadingState.isUpdatingStats, setUserData, fetchUserStats]
  )
 
  // Fetch user stats when user changes
@@ -338,7 +360,7 @@ const Plinko: React.FC = () => {
  useEffect(() => {
   if (user === null) {
    // Reset all game state to initial values
-   setBallCounts({ regular: 1, gold: 0 })
+   setBallCounts({ regular: 0, gold: 0 })
    setGameState({
     isDropping: false,
     totalPrize: 0,
@@ -346,6 +368,7 @@ const Plinko: React.FC = () => {
     isAnalyzing: false,
     aiAnalysis: '',
     gameEndedWithPrize: null,
+    ballsUsedInGame: null,
    })
    setPrizeCounts({})
    setUserStats(null)
@@ -364,7 +387,7 @@ const Plinko: React.FC = () => {
    setBallCounts((prev) => ({
     regular:
      prev.regular > userStats.regular_packets
-      ? Math.max(1, userStats.regular_packets)
+      ? Math.max(0, userStats.regular_packets)
       : prev.regular,
     gold:
      prev.gold > userStats.bonus_packets
@@ -376,11 +399,27 @@ const Plinko: React.FC = () => {
 
  // Handle game end and stats update
  useEffect(() => {
-  if (gameState.gameEndedWithPrize !== null && user?.id) {
-   updateUserStatsAfterGame(gameState.gameEndedWithPrize)
-   setGameState((prev) => ({ ...prev, gameEndedWithPrize: null }))
+  if (
+   gameState.gameEndedWithPrize !== null &&
+   gameState.ballsUsedInGame &&
+   user?.id
+  ) {
+   updateUserStatsAfterGame(
+    gameState.gameEndedWithPrize,
+    gameState.ballsUsedInGame
+   )
+   setGameState((prev) => ({
+    ...prev,
+    gameEndedWithPrize: null,
+    ballsUsedInGame: null,
+   }))
   }
- }, [gameState.gameEndedWithPrize, user?.id, updateUserStatsAfterGame])
+ }, [
+  gameState.gameEndedWithPrize,
+  gameState.ballsUsedInGame,
+  user?.id,
+  updateUserStatsAfterGame,
+ ])
 
  // --- Peg Generation ---
  const pegs = useMemo<PegType[][]>(() => {
@@ -609,14 +648,26 @@ const Plinko: React.FC = () => {
     const slotIndex = Math.floor(
      (ball.x / boardDimensions.width) * prizeValues.length
     )
-    const prize =
+    const multiplier =
      prizeValues[Math.max(0, Math.min(slotIndex, prizeValues.length - 1))]
 
-    const finalPrize = ball.isGold && prize !== 0 ? prize * 2 : prize
+    // Ball scoring: regular ball = 1 * multiplier, bonus ball = 5 * multiplier
+    // Special case: 0.4 multiplier is a loss, subtract instead of add
+    const ballBaseValue = ball.isGold ? 5 : 1
+    let finalPrize: number
+
+    if (multiplier === 0.4) {
+     // Loss: subtract the calculated amount
+     finalPrize = -(ballBaseValue * multiplier)
+    } else {
+     // Normal scoring
+     finalPrize = ballBaseValue * multiplier
+    }
+
     newPrize += finalPrize
 
     let animationType: AnimationType = 'win'
-    if (prize === 0) {
+    if (multiplier < 1) {
      animationType = 'lose'
     } else if (ball.isGold) {
      animationType = 'gold'
@@ -624,7 +675,7 @@ const Plinko: React.FC = () => {
 
     updateAnimatingSlots(slotIndex, animationType)
 
-    const prizeKey = String(prize)
+    const prizeKey = String(multiplier)
     if (!newCounts[prizeKey]) {
      newCounts[prizeKey] = { regular: 0, gold: 0 }
     }
@@ -635,34 +686,42 @@ const Plinko: React.FC = () => {
     }
    })
 
-   // Batch state updates
-   setTimeout(() => {
-    setGameState((prev) => ({
+   // Update state synchronously to avoid race conditions
+   setGameState((prev) => {
+    const newTotal = prev.totalPrize + newPrize
+
+    return {
      ...prev,
-     totalPrize: prev.totalPrize + newPrize,
-    }))
-    setPrizeCounts((prev) => {
-     const updatedCounts = { ...prev }
-     for (const prize in newCounts) {
-      if (!updatedCounts[prize]) {
-       updatedCounts[prize] = { regular: 0, gold: 0 }
-      }
-      updatedCounts[prize].regular += newCounts[prize].regular
-      updatedCounts[prize].gold += newCounts[prize].gold
+     totalPrize: newTotal,
+    }
+   })
+
+   setPrizeCounts((prev) => {
+    const updatedCounts = { ...prev }
+    for (const prize in newCounts) {
+     if (!updatedCounts[prize]) {
+      updatedCounts[prize] = { regular: 0, gold: 0 }
      }
-     return updatedCounts
-    })
-   }, 0)
+     updatedCounts[prize].regular += newCounts[prize].regular
+     updatedCounts[prize].gold += newCounts[prize].gold
+    }
+    return updatedCounts
+   })
+
+   // Return the score change for immediate use
+   return newPrize
   },
   [boardDimensions.width, prizeValues, updateAnimatingSlots]
  )
 
  const handleGameEnd = useCallback(() => {
-  setGameState((prev) => ({
-   ...prev,
-   isDropping: false,
-   gameEndedWithPrize: prev.totalPrize,
-  }))
+  setGameState((prev) => {
+   return {
+    ...prev,
+    isDropping: false,
+    gameEndedWithPrize: prev.totalPrize,
+   }
+  })
  }, [])
 
  // --- Optimized Main Physics & Animation Loop ---
@@ -682,7 +741,10 @@ const Plinko: React.FC = () => {
    }
 
    if (activeBalls.length === 0 && prevBalls.length > 0) {
-    handleGameEnd()
+    // Give a small delay to ensure state updates have processed
+    setTimeout(() => {
+     handleGameEnd()
+    }, 50)
    }
 
    return activeBalls
@@ -731,7 +793,7 @@ const Plinko: React.FC = () => {
   const newGravity =
    totalBalls <= 10 ? gameConstants.LOW_GRAVITY : gameConstants.HIGH_GRAVITY
 
-  // Reset game state
+  // Reset game state and capture ball counts used for this game
   setBalls([])
   setPrizeCounts({})
   setGameState((prev) => ({
@@ -740,6 +802,10 @@ const Plinko: React.FC = () => {
    totalPrize: 0,
    aiAnalysis: '',
    currentGravity: newGravity,
+   ballsUsedInGame: {
+    regular: ballCounts.regular,
+    gold: ballCounts.gold,
+   },
   }))
 
   const ballsToDrop: { isGold: boolean }[] = []
@@ -840,22 +906,21 @@ const Plinko: React.FC = () => {
       setGoldBallCount={handleGoldBallCountChange}
       handleDropBall={handleDropBall}
       ballsCount={balls.length}
-      totalPrize={gameState.totalPrize}
-      prizeCounts={prizeCounts}
-      isAnalyzing={gameState.isAnalyzing}
-      aiAnalysis={gameState.aiAnalysis}
       maxRegularBalls={maxRegularBalls}
       maxGoldBalls={maxGoldBalls}
       hasInsufficientBalls={gameValidation.hasInsufficientBalls}
       hasTooManyBalls={gameValidation.hasTooManyBalls}
+      hasNoBallsAvailable={gameValidation.hasNoBallsAvailable}
+      hasNoBallsSelected={gameValidation.hasNoBallsSelected}
       maxTotalBalls={gameConstants.MAX_TOTAL_BALLS}
       isLoadingStats={loadingState.isLoadingStats}
       isUpdatingStats={loadingState.isUpdatingStats}
-      userLoggedIn={!!user?.id}
+      userLoggedIn={isUserLoggedIn}
       isDebugMode={isDebugMode}
       setIsDebugMode={setIsDebugMode}
      />
     </View>
+
     {/* Last Drop Results */}
     {showResults && (
      <Results

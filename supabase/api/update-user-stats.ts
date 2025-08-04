@@ -17,7 +17,6 @@ export const updateUserStats = async (
   throw new Error('User ID is required')
  }
 
- // First, get current user data
  const { data: currentUser, error: fetchError } = await supabase
   .from('user_data')
   .select('*')
@@ -28,19 +27,29 @@ export const updateUserStats = async (
   throw new Error('Error fetching current user data')
  }
 
+ // Validate ball usage
+ //  if (gameResult.ballsUsed.regular > currentUser.regular_packets) {
+ //   throw new Error('Insufficient regular balls')
+ //  }
+
+ //  if (gameResult.ballsUsed.gold > currentUser.bonus_packets) {
+ //   throw new Error('Insufficient bonus balls')
+ //  }
+
  // Calculate new values
- const newRegularBalls = Math.max(
-  0,
+ const newRegularBalls =
   currentUser.regular_packets - gameResult.ballsUsed.regular
- )
- const newBonusBalls = Math.max(
-  0,
-  currentUser.bonus_packets - gameResult.ballsUsed.gold
- )
- const newScore = currentUser.bytes_downloaded + gameResult.scoreEarned
- const totalBallsDropped =
-  gameResult.ballsUsed.regular + gameResult.ballsUsed.gold
- const newPacketsDropped = currentUser.packets_dropped + totalBallsDropped
+
+ const newBonusBalls = currentUser.bonus_packets - gameResult.ballsUsed.gold
+
+ const newScore =
+  Math.round((currentUser.bytes_downloaded + gameResult.scoreEarned) * 100) /
+  100
+
+ const newPacketsDropped =
+  currentUser.packets_dropped +
+  gameResult.ballsUsed.regular +
+  gameResult.ballsUsed.gold
 
  // Update user stats in a single transaction
  const { data: updatedUser, error: updateError } = await supabase
@@ -56,6 +65,7 @@ export const updateUserStats = async (
   .single()
 
  if (updateError) {
+  console.error('❌ Error updating user stats in database:', updateError)
   throw new Error('Error updating user stats')
  }
 

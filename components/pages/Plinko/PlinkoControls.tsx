@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 
 import {
  Platform,
@@ -14,14 +14,6 @@ import { FONT_FAMILY } from '@/constants/Fonts'
 import { MatrixColors } from '@/constants/Theme'
 
 // --- Type Definitions ---
-interface PrizeCount {
- regular: number
- gold: number
-}
-
-type PrizeCounts = {
- [key: string]: PrizeCount
-}
 
 interface SliderControlProps {
  label: string
@@ -42,14 +34,12 @@ interface PlinkoControlsProps {
  setGoldBallCount: (count: number) => void
  handleDropBall: () => void
  ballsCount: number
- totalPrize: number
- prizeCounts: PrizeCounts
- isAnalyzing: boolean
- aiAnalysis: string
  maxRegularBalls: number
  maxGoldBalls: number
  hasInsufficientBalls: boolean
  hasTooManyBalls: boolean
+ hasNoBallsAvailable: boolean
+ hasNoBallsSelected: boolean
  maxTotalBalls: number
  isLoadingStats: boolean
  isUpdatingStats: boolean
@@ -59,35 +49,48 @@ interface PlinkoControlsProps {
 }
 
 // --- Helper Components ---
-const SliderControl: React.FC<SliderControlProps> = ({
- label,
- value,
- maxValue,
- availableCount,
- color,
- onValueChange,
- disabled,
- minimumValue = 0,
-}) => (
- <View style={styles.sliderContainer}>
-  <Text style={styles.labelText}>
-   {label}: <Text style={{ color }}>{value}</Text>
-   <Text style={styles.availableText}> Available: {availableCount}</Text>
-  </Text>
-  <Slider
-   style={styles.slider}
-   minimumValue={minimumValue}
-   maximumValue={Math.max(minimumValue, maxValue)}
-   step={1}
-   value={value}
-   onValueChange={onValueChange}
-   disabled={disabled}
-   minimumTrackTintColor={color}
-   maximumTrackTintColor={MatrixColors.matrixDarkGreen}
-   thumbTintColor={Platform.OS === 'ios' ? undefined : color}
-  />
- </View>
+const SliderControl: React.FC<SliderControlProps> = React.memo(
+ ({
+  label,
+  value,
+  maxValue,
+  availableCount,
+  color,
+  onValueChange,
+  disabled,
+  minimumValue = 0,
+ }) => {
+  // Memoize the style object to prevent re-creation
+  const valueStyle = useMemo(() => ({ color }), [color])
+  const maximumValue = useMemo(
+   () => Math.max(minimumValue, maxValue),
+   [minimumValue, maxValue]
+  )
+
+  return (
+   <View style={styles.sliderContainer}>
+    <Text style={styles.labelText}>
+     {label}: <Text style={valueStyle}>{value}</Text>
+     <Text style={styles.availableText}> Available: {availableCount}</Text>
+    </Text>
+    <Slider
+     style={styles.slider}
+     minimumValue={minimumValue}
+     maximumValue={maximumValue}
+     step={1}
+     value={value}
+     onValueChange={onValueChange}
+     disabled={disabled}
+     minimumTrackTintColor={color}
+     maximumTrackTintColor={MatrixColors.matrixDarkGreen}
+     thumbTintColor={Platform.OS === 'ios' ? undefined : color}
+    />
+   </View>
+  )
+ }
 )
+
+SliderControl.displayName = 'SliderControl'
 
 const PlinkoControls: React.FC<PlinkoControlsProps> = ({
  isDropping,
@@ -101,6 +104,8 @@ const PlinkoControls: React.FC<PlinkoControlsProps> = ({
  maxGoldBalls,
  hasInsufficientBalls,
  hasTooManyBalls,
+ hasNoBallsAvailable,
+ hasNoBallsSelected,
  maxTotalBalls,
  isLoadingStats,
  isUpdatingStats,
@@ -108,41 +113,58 @@ const PlinkoControls: React.FC<PlinkoControlsProps> = ({
  isDebugMode,
  setIsDebugMode,
 }) => {
- // Early return if dropping
- if (isDropping) return <View style={{ height: 90 }} />
-
- // --- Helper Functions ---
- const getWarningMessage = (): string | null => {
-  if (!userLoggedIn) return '⚠️ Login required to play'
-  if (hasInsufficientBalls) return '⚠️ Insufficient data packets'
-  if (hasTooManyBalls) return '⚠️ Maximum data packets allowed per drop'
-  if (isLoadingStats) return 'Loading user data...'
+ // --- All Hooks Must Come First ---
+ //  --- Memoized Helper Functions ---
+ const warningMessage = useMemo((): string | null => {
+  if (!userLoggedIn) return 'Login required'
+  if (hasNoBallsAvailable) return 'Insufficient data packets'
+  if (hasInsufficientBalls) return 'Insufficient data packets'
+  if (hasTooManyBalls) return 'Maximum data packets allowed per drop'
+  if (hasNoBallsSelected) return 'Select data packets'
+  // if (isLoadingStats) return 'Loading user data...'
   return null
- }
+ }, [
+  userLoggedIn,
+  hasNoBallsAvailable,
+  hasInsufficientBalls,
+  hasTooManyBalls,
+  hasNoBallsSelected,
+ ])
 
- const getButtonText = (): string => {
+ const buttonText = useMemo((): string => {
   if (isDropping) return `[${ballsCount}]`
   if (isUpdatingStats) return 'Updating Stats...'
   if (isLoadingStats) return 'Loading...'
   return '[ Drop ]'
- }
+ }, [isDropping, ballsCount, isUpdatingStats, isLoadingStats])
 
- const isControlsDisabled = (): boolean => {
-  return isDropping || isLoadingStats || !userLoggedIn
- }
+ const controlsDisabled = useMemo((): boolean => {
+  return isDropping || isLoadingStats || !userLoggedIn || hasNoBallsAvailable
+ }, [isDropping, isLoadingStats, userLoggedIn, hasNoBallsAvailable])
 
- const isButtonDisabled = (): boolean => {
+ const buttonDisabled = useMemo((): boolean => {
   return (
    !userLoggedIn ||
    isDropping ||
    hasTooManyBalls ||
    hasInsufficientBalls ||
+   hasNoBallsAvailable ||
+   hasNoBallsSelected ||
    isLoadingStats ||
    isUpdatingStats
   )
- }
+ }, [
+  userLoggedIn,
+  isDropping,
+  hasTooManyBalls,
+  hasInsufficientBalls,
+  hasNoBallsAvailable,
+  hasNoBallsSelected,
+  isLoadingStats,
+  isUpdatingStats,
+ ])
 
- const calculateMaxSliderValues = () => {
+ const sliderValues = useMemo(() => {
   const remainingBalls = maxTotalBalls - (regularBallCount + goldBallCount)
   const maxRegularForSlider = userLoggedIn
    ? Math.min(maxRegularBalls, regularBallCount + remainingBalls)
@@ -152,55 +174,64 @@ const PlinkoControls: React.FC<PlinkoControlsProps> = ({
    : Math.min(10, goldBallCount + remainingBalls)
 
   return { maxRegularForSlider, maxGoldForSlider }
- }
+ }, [
+  maxTotalBalls,
+  regularBallCount,
+  goldBallCount,
+  userLoggedIn,
+  maxRegularBalls,
+  maxGoldBalls,
+ ])
 
- const warningMessage = getWarningMessage()
- const { maxRegularForSlider, maxGoldForSlider } = calculateMaxSliderValues()
- const controlsDisabled = isControlsDisabled()
+ const { maxRegularForSlider, maxGoldForSlider } = sliderValues
+
+ // Early return after all hooks
+ //  if (isDropping) return droppingView
 
  return (
   <>
    <View style={styles.gameOverlay}>
-    {warningMessage ? (
-     <View style={styles.warningContainer}>
-      <Text style={styles.warningText}>{warningMessage}</Text>
-     </View>
-    ) : (
-     <View style={styles.overlayControls}>
-      <View style={styles.sliders}>
+    <View style={styles.overlayControls}>
+     <View style={styles.sliders}>
+      <SliderControl
+       label="Data Packets"
+       value={regularBallCount}
+       maxValue={maxRegularForSlider}
+       availableCount={maxRegularBalls}
+       color={MatrixColors.matrixGreen}
+       onValueChange={setRegularBallCount}
+       disabled={controlsDisabled}
+       minimumValue={0}
+      />
+
+      {maxGoldBalls > 0 && (
        <SliderControl
-        label="Data Packets"
-        value={regularBallCount}
-        maxValue={maxRegularForSlider}
-        availableCount={maxRegularBalls}
-        color={MatrixColors.matrixGreen}
-        onValueChange={setRegularBallCount}
+        label="Bonus Packets"
+        value={goldBallCount}
+        maxValue={maxGoldForSlider}
+        availableCount={maxGoldBalls}
+        color={MatrixColors.matrixGold}
+        onValueChange={setGoldBallCount}
         disabled={controlsDisabled}
-        minimumValue={0}
        />
+      )}
+     </View>
 
-       {maxGoldBalls > 0 && (
-        <SliderControl
-         label="Bonus Packets"
-         value={goldBallCount}
-         maxValue={maxGoldForSlider}
-         availableCount={maxGoldBalls}
-         color={MatrixColors.matrixGold}
-         onValueChange={setGoldBallCount}
-         disabled={controlsDisabled}
-        />
-       )}
+     {warningMessage ? (
+      <View style={styles.warningContainer}>
+       <Text style={styles.warningText}>⚠️</Text>
+       <Text style={styles.warningText}>{warningMessage}</Text>
       </View>
-
+     ) : (
       <TouchableOpacity
        onPress={handleDropBall}
-       disabled={isButtonDisabled()}
-       style={[styles.button, isButtonDisabled() && styles.disabledButton]}
+       disabled={buttonDisabled}
+       style={[styles.button, buttonDisabled && styles.disabledButton]}
       >
-       <Text style={styles.buttonText}>{getButtonText()}</Text>
+       <Text style={styles.buttonText}>{buttonText}</Text>
       </TouchableOpacity>
-     </View>
-    )}
+     )}
+    </View>
    </View>
 
    {/* Debug Mode Toggle */}
@@ -223,6 +254,9 @@ const PlinkoControls: React.FC<PlinkoControlsProps> = ({
  )
 }
 
+// Custom comparison function to prevent unnecessary re-renders
+PlinkoControls.displayName = 'PlinkoControls'
+
 export default PlinkoControls
 
 const styles = StyleSheet.create({
@@ -234,7 +268,7 @@ const styles = StyleSheet.create({
   alignItems: 'flex-end',
   justifyContent: 'space-between',
   paddingVertical: 10,
-  paddingHorizontal: 5,
+  paddingHorizontal: 10,
  },
  sliders: {
   flexDirection: 'row',
@@ -271,9 +305,9 @@ const styles = StyleSheet.create({
   borderColor: MatrixColors.matrixGreen,
   shadowColor: MatrixColors.matrixGreen,
   shadowOffset: { width: 0, height: 0 },
-  shadowOpacity: 0.8,
-  shadowRadius: 10,
-  elevation: 8,
+  shadowOpacity: 0.5,
+  shadowRadius: 5,
+  elevation: 5,
   borderRadius: 4,
   justifyContent: 'center',
   alignSelf: 'center',
@@ -294,8 +328,9 @@ const styles = StyleSheet.create({
  warningContainer: {
   marginBottom: 10,
   justifyContent: 'center',
-  height: 120,
+  alignSelf: 'center',
   backgroundColor: MatrixColors.matrixDarkBG,
+  width: 125,
  },
  warningText: {
   fontFamily: FONT_FAMILY,
@@ -305,7 +340,7 @@ const styles = StyleSheet.create({
  },
  debugToggle: {
   position: 'absolute',
-  top: -40,
+  top: -600,
   left: 10,
   marginTop: 8,
   marginBottom: 8,

@@ -39,6 +39,7 @@ export interface GameState {
  isAnalyzing: boolean
  aiAnalysis: string
  gameEndedWithPrize: number | null
+ ballsUsedInGame: BallCounts | null
 }
 
 export interface BallCounts {
