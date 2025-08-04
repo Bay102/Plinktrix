@@ -11,7 +11,7 @@ import {
 import { Text } from 'react-native-paper'
 
 import { DebugOverlay } from '@/components/development/PlinkoDebug'
-import PlinkoControls from '@/components/pages/Plinko/PlinkoControls'
+import PlinkoControls from '@/components/pages/Plinko/PlinkoControls/PlinkoControls'
 import DigitalRain from '@/components/shared/DigitalRain'
 import { FONT_FAMILY } from '@/constants/Fonts'
 import { MatrixColors } from '@/constants/Theme'
@@ -23,6 +23,7 @@ import {
 } from '@/supabase/api/update-user-stats'
 import { UserData } from '@/supabase/types'
 
+import UserDetails from './PlinkoControls/UserDetails'
 import Results from './Results'
 import {
  AnimatingSlots,
@@ -196,9 +197,9 @@ const Plinko: React.FC = () => {
  const gameConstants = useMemo(() => {
   // Calculate available space for the game board
   const headerHeight = 120 // Approximate header height (title + subtitle + margins)
-  const controlsHeight = 120 // Increased to account for controls height
+  const controlsHeight = 125 // Increased to account for controls height
   const tabBarHeight = 90 // Approximate tab bar height
-  const safeAreaPadding = 10 // Additional safety padding
+  const safeAreaPadding = 0 // Additional safety padding
 
   const availableHeight =
    screenDimensions.height -
@@ -211,7 +212,7 @@ const Plinko: React.FC = () => {
 
   // Calculate optimal spacing based on available space
   const ROWS = 10
-  const targetBoardHeight = availableHeight * 0.9 // Use 85% of available height for more conservative sizing
+  const targetBoardHeight = availableHeight * 1 // Use 100% of available height for more conservative sizing
   const optimalVerticalSpacing = Math.max(
    20,
    Math.min(35, targetBoardHeight / (ROWS + 4))
@@ -898,6 +899,11 @@ const Plinko: React.FC = () => {
     </View>
 
     <View style={styles.controlsArea}>
+     <UserDetails
+      maxRegularBalls={maxRegularBalls}
+      maxGoldBalls={maxGoldBalls}
+      currentScore={userStats?.bytes_downloaded || 0}
+     />
      <PlinkoControls
       isDropping={gameState.isDropping}
       regularBallCount={ballCounts.regular}
@@ -971,16 +977,14 @@ const styles = StyleSheet.create({
   justifyContent: 'center',
   paddingBottom: 100,
   width: '100%',
+  paddingTop: 50,
  },
  board: {
   position: 'relative',
   paddingHorizontal: 10,
  },
  controlsArea: {
-  width: '100%',
-  paddingBottom: 48,
-  paddingHorizontal: 0,
-  height: 150,
+  paddingBottom: 50,
  },
  peg: {
   width: 8,
@@ -1007,15 +1011,14 @@ const styles = StyleSheet.create({
   height: 35,
   alignItems: 'center',
   justifyContent: 'center',
-  borderWidth: 2,
+  borderWidth: 1,
   borderColor: MatrixColors.matrixDarkGreen,
   zIndex: 10,
  },
  prizeSlotText: {
   fontFamily: FONT_FAMILY,
   color: MatrixColors.matrixGreen,
-  fontSize: 14,
-  fontWeight: 'bold',
+  fontSize: 18,
  },
  ball: { position: 'absolute', width: 20, height: 20, borderRadius: 10 },
  ballText: {

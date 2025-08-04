@@ -21,7 +21,7 @@ const Results = ({
  useEffect(() => {
   timerRef.current = setTimeout(() => {
    onClose()
-  }, 10000)
+  }, 6500)
 
   return () => {
    if (timerRef.current) {
@@ -56,8 +56,7 @@ const Results = ({
       totalPrize < 0 ? styles.lossText : styles.winText,
      ]}
     >
-     {totalPrize >= 0 ? '+' : ''}
-     {totalPrize.toFixed(1)} Bytes
+     {totalPrize >= 0 ? '+' : ''} {totalPrize.toFixed(1)}
     </Text>
     {totalPrize < 0 && (
      <Text style={styles.lossSubtext}>SYSTEM BREACH DETECTED</Text>
@@ -86,7 +85,7 @@ const Results = ({
         >
          <View style={styles.ballInfoContainer}>
           <Text style={[styles.multiplierText, isLoss && styles.lossText]}>
-           x{multiplier} {isLoss ? '⚠️ LOSS' : 'Multiplier'}
+           x{multiplier} {isLoss ? null : 'Multiplier'}
           </Text>
           <Text style={styles.ballCountText}>
            {regular > 0 && `${regular} Regular`}
@@ -144,9 +143,9 @@ const styles = StyleSheet.create({
   width: '98%',
   padding: 12,
   backgroundColor: MatrixColors.black,
-  borderWidth: 2,
+  borderWidth: 1,
   borderColor: MatrixColors.matrixGreen,
-  borderRadius: 8,
+  borderRadius: 6,
   zIndex: 1000, // Ensure modal is above backdrop
   // shadowColor: MatrixColors.matrixGreen,
   // shadowOffset: { width: 0, height: 0 },
@@ -154,14 +153,14 @@ const styles = StyleSheet.create({
  },
  payoutText: {
   fontFamily: FONT_FAMILY,
-  fontSize: 24,
+  fontSize: 38,
   color: '#FFF',
   textAlign: 'center',
   fontWeight: 'bold',
  },
  lossSubtext: {
   fontFamily: FONT_FAMILY,
-  fontSize: 16,
+  fontSize: 18,
   color: MatrixColors.matrixRed,
   textAlign: 'center',
   marginTop: 2,
@@ -202,13 +201,13 @@ const styles = StyleSheet.create({
  },
  multiplierText: {
   fontFamily: FONT_FAMILY,
-  fontSize: 18,
+  fontSize: 22,
   color: '#FFF',
   fontWeight: 'bold',
  },
  ballCountText: {
   fontFamily: FONT_FAMILY,
-  fontSize: 16,
+  fontSize: 18,
   color: '#AAA',
   marginTop: 2,
  },
@@ -220,14 +219,14 @@ const styles = StyleSheet.create({
  },
  calculationText: {
   fontFamily: FONT_FAMILY,
-  fontSize: 16,
+  fontSize: 18,
   color: '#888',
   flex: 1,
   textAlign: 'center',
  },
  pointsText: {
   fontFamily: FONT_FAMILY,
-  fontSize: 18,
+  fontSize: 22,
   fontWeight: 'bold',
   flex: 1,
   textAlign: 'right',

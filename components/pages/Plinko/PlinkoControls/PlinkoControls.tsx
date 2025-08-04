@@ -13,6 +13,8 @@ import Slider from '@react-native-community/slider'
 import { FONT_FAMILY } from '@/constants/Fonts'
 import { MatrixColors } from '@/constants/Theme'
 
+import WarningMessage from './WarningMessage'
+
 // --- Type Definitions ---
 
 interface SliderControlProps {
@@ -62,17 +64,18 @@ const SliderControl: React.FC<SliderControlProps> = React.memo(
  }) => {
   // Memoize the style object to prevent re-creation
   const valueStyle = useMemo(() => ({ color }), [color])
+
   const maximumValue = useMemo(
    () => Math.max(minimumValue, maxValue),
    [minimumValue, maxValue]
   )
 
   return (
-   <View style={styles.sliderContainer}>
-    <Text style={styles.labelText}>
-     {label}: <Text style={valueStyle}>{value}</Text>
-     <Text style={styles.availableText}> Available: {availableCount}</Text>
-    </Text>
+   <View>
+    <Text style={styles.labelText}>{label}</Text>
+
+    {/* <Text style={styles.availableText}> Available: {availableCount}</Text> */}
+
     <Slider
      style={styles.slider}
      minimumValue={minimumValue}
@@ -85,6 +88,7 @@ const SliderControl: React.FC<SliderControlProps> = React.memo(
      maximumTrackTintColor={MatrixColors.matrixDarkGreen}
      thumbTintColor={Platform.OS === 'ios' ? undefined : color}
     />
+    <Text style={[styles.valueText, valueStyle]}>{value}</Text>
    </View>
   )
  }
@@ -121,7 +125,6 @@ const PlinkoControls: React.FC<PlinkoControlsProps> = ({
   if (hasInsufficientBalls) return 'Insufficient data packets'
   if (hasTooManyBalls) return 'Maximum data packets allowed per drop'
   if (hasNoBallsSelected) return 'Select data packets'
-  // if (isLoadingStats) return 'Loading user data...'
   return null
  }, [
   userLoggedIn,
@@ -184,56 +187,48 @@ const PlinkoControls: React.FC<PlinkoControlsProps> = ({
  ])
 
  const { maxRegularForSlider, maxGoldForSlider } = sliderValues
-
- // Early return after all hooks
- //  if (isDropping) return droppingView
+ //  if (isDropping) return null
 
  return (
-  <>
-   <View style={styles.gameOverlay}>
-    <View style={styles.overlayControls}>
-     <View style={styles.sliders}>
-      <SliderControl
-       label="Data Packets"
-       value={regularBallCount}
-       maxValue={maxRegularForSlider}
-       availableCount={maxRegularBalls}
-       color={MatrixColors.matrixGreen}
-       onValueChange={setRegularBallCount}
-       disabled={controlsDisabled}
-       minimumValue={0}
-      />
+  <View style={styles.controlsContainer}>
+   <View style={styles.sliders}>
+    <SliderControl
+     label="Data Packets"
+     value={regularBallCount}
+     maxValue={maxRegularForSlider}
+     availableCount={maxRegularBalls}
+     color={MatrixColors.matrixGreen}
+     onValueChange={setRegularBallCount}
+     disabled={controlsDisabled}
+     minimumValue={0}
+    />
 
-      {maxGoldBalls > 0 && (
-       <SliderControl
-        label="Bonus Packets"
-        value={goldBallCount}
-        maxValue={maxGoldForSlider}
-        availableCount={maxGoldBalls}
-        color={MatrixColors.matrixGold}
-        onValueChange={setGoldBallCount}
-        disabled={controlsDisabled}
-       />
-      )}
-     </View>
-
-     {warningMessage ? (
-      <View style={styles.warningContainer}>
-       <Text style={styles.warningText}>⚠️</Text>
-       <Text style={styles.warningText}>{warningMessage}</Text>
-      </View>
-     ) : (
-      <TouchableOpacity
-       onPress={handleDropBall}
-       disabled={buttonDisabled}
-       style={[styles.button, buttonDisabled && styles.disabledButton]}
-      >
-       <Text style={styles.buttonText}>{buttonText}</Text>
-      </TouchableOpacity>
-     )}
-    </View>
+    {maxGoldBalls > 0 && (
+     <SliderControl
+      label="Bonus Packets"
+      value={goldBallCount}
+      maxValue={maxGoldForSlider}
+      availableCount={maxGoldBalls}
+      color={MatrixColors.matrixGold}
+      onValueChange={setGoldBallCount}
+      disabled={controlsDisabled}
+     />
+    )}
    </View>
 
+   <View style={styles.warningContainer}>
+    {warningMessage ? (
+     <WarningMessage message={warningMessage} />
+    ) : (
+     <TouchableOpacity
+      onPress={handleDropBall}
+      disabled={buttonDisabled}
+      style={[styles.button, buttonDisabled && styles.disabledButton]}
+     >
+      <Text style={styles.buttonText}>{buttonText}</Text>
+     </TouchableOpacity>
+    )}
+   </View>
    {/* Debug Mode Toggle */}
    {__DEV__ && (
     <TouchableOpacity
@@ -250,7 +245,7 @@ const PlinkoControls: React.FC<PlinkoControlsProps> = ({
      </Text>
     </TouchableOpacity>
    )}
-  </>
+  </View>
  )
 }
 
@@ -260,26 +255,25 @@ PlinkoControls.displayName = 'PlinkoControls'
 export default PlinkoControls
 
 const styles = StyleSheet.create({
- gameOverlay: {
-  width: '100%',
- },
- overlayControls: {
+ controlsContainer: {
   flexDirection: 'row',
-  alignItems: 'flex-end',
   justifyContent: 'space-between',
-  paddingVertical: 10,
+  backgroundColor: MatrixColors.matrixDarkBG,
+  alignItems: 'center',
+  height: 120,
   paddingHorizontal: 10,
+ },
+ warningContainer: {
+  justifyContent: 'center',
+  alignItems: 'center',
  },
  sliders: {
   flexDirection: 'row',
-  gap: 15,
-  width: '35%',
+  gap: 25,
  },
- sliderContainer: {},
  slider: {
-  width: 120,
+  width: 125,
   height: 40,
-  marginBottom: 10,
  },
  labelText: {
   fontFamily: FONT_FAMILY,
@@ -290,9 +284,18 @@ const styles = StyleSheet.create({
   textShadowOffset: { width: 0, height: 0 },
   textShadowRadius: 5,
  },
+ valueText: {
+  fontFamily: FONT_FAMILY,
+  fontSize: 28,
+  textAlign: 'right',
+  marginRight: 20,
+  color: MatrixColors.matrixGreen,
+ },
  availableText: {
   color: MatrixColors.matrixGray,
   fontSize: 18,
+  fontFamily: FONT_FAMILY,
+  marginBottom: 4,
  },
  button: {
   height: 50,
@@ -324,19 +327,6 @@ const styles = StyleSheet.create({
   fontFamily: FONT_FAMILY,
   fontSize: 16,
   fontWeight: 'bold',
- },
- warningContainer: {
-  marginBottom: 10,
-  justifyContent: 'center',
-  alignSelf: 'center',
-  backgroundColor: MatrixColors.matrixDarkBG,
-  width: 125,
- },
- warningText: {
-  fontFamily: FONT_FAMILY,
-  fontSize: 16,
-  color: MatrixColors.matrixGold,
-  textAlign: 'center',
  },
  debugToggle: {
   position: 'absolute',
