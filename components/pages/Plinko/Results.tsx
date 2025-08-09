@@ -140,16 +140,9 @@ const styles = StyleSheet.create({
   left: 0,
   right: 0,
   alignSelf: 'center',
-  width: '98%',
   padding: 12,
   backgroundColor: MatrixColors.black,
-  borderWidth: 1,
-  borderColor: MatrixColors.matrixGreen,
-  borderRadius: 6,
-  zIndex: 1000, // Ensure modal is above backdrop
-  // shadowColor: MatrixColors.matrixGreen,
-  // shadowOffset: { width: 0, height: 0 },
-  // shadowOpacity: 0.8,
+  zIndex: 1000,
  },
  payoutText: {
   fontFamily: FONT_FAMILY,

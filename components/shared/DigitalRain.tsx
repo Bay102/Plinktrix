@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
   color: MatrixColors.matrixGreen,
   fontSize: FONT_SIZE,
   position: 'absolute',
-  top: 15,
+  top: 0,
   textShadowColor: MatrixColors.matrixGreen,
   textShadowOffset: { width: 0, height: 0 },
   textShadowRadius: 10,

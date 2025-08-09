@@ -60,7 +60,7 @@ const Home = () => {
 export default Home
 
 const styles = StyleSheet.create({
- container: {},
+ container: { flex: 1 },
  title: {
   fontFamily: FONT_FAMILY,
   fontSize: 54,

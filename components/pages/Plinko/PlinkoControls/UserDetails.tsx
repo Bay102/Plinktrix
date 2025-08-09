@@ -35,7 +35,7 @@ export default function UserDetails({
       currentScore >= 0 ? styles.positiveScore : styles.negativeScore,
      ]}
     >
-     {currentScore >= 0 ? '+' : ''}
+     {currentScore >= 0 ? '' : '-'}
      {currentScore.toFixed(1)}
     </Text>
    </View>
