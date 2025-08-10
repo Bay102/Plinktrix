@@ -22,7 +22,7 @@ const PlayerInfo = () => {
     light: theme.colors.matrixDarkBG,
     dark: theme.colors.matrixDarkBG,
    }}
-   headerHeight={110}
+   headerHeight={1}
   >
    <UserStats />
    <UserSettingsModal

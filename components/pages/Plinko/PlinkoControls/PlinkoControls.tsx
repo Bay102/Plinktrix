@@ -328,9 +328,10 @@ const styles = StyleSheet.create({
   fontSize: 16,
   fontWeight: 'bold',
  },
+ // Debug Mode Toggle
  debugToggle: {
   position: 'absolute',
-  top: -600,
+  top: -500,
   left: 10,
   marginTop: 8,
   marginBottom: 8,

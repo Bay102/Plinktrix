@@ -86,7 +86,8 @@ const Header = styled(Animated.View)<{ height: number }>`
 `
 const Content = styled(ThemedView)`
  flex: 1;
- padding: 32px;
+ padding: 20px;
  gap: 16px;
  overflow: hidden;
+ background-color: transparent;
 `
