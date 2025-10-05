@@ -1,6 +1,7 @@
+import { createClient } from '@supabase/supabase-js'
+
 import { AsyncStorageAdapter } from '@/services/storage.utils'
 import { Database } from '@/supabase/supa-schema'
-import { createClient } from '@supabase/supabase-js'
 
 // Create a single supabase client for interacting with your database
 export const supabase = createClient<Database>(
